@@ -5,7 +5,7 @@ import type { ExplainLevel, Explained, SeededAnswer, SeededIntent, Stock } from 
 import { abs1, changeFromPct, inr, pct, roseFell, upDown } from '../lib/format'
 import { classifyMovement } from '../lib/movement'
 import { parseQuestion, type ParsedQuestion } from './intents'
-import { detectGuardrail } from './safety'
+import { detectGuardrail, normalise } from './safety'
 import type { AnswerBlock, GuardrailKind, LensAnswer, LensIntent, LensRequest, SourceRef } from './types'
 
 /**
@@ -799,7 +799,14 @@ export function composeAnswer(req: LensRequest): LensAnswer {
   const kind = detectGuardrail(req.question)
   if (kind) return guardrail(ctx, kind)
 
-  // 2. "Explain that simply" — re-explain the previous answer in plain language.
+  // 2. A question about a specific timeline event ("Explain: Q2 results announced (Oct 3)").
+  const event = stock.recentEvents.find((e) => parsed.normalised.includes(normalise(e.title)))
+  if (event) {
+    const intent: LensIntent = event.type === 'results' ? 'earnings' : event.type === 'management' ? 'management' : 'what_changed'
+    return eventAnswer(ctx, intent, event.id, ['Why did this stock move today?', 'What are the biggest risks?', 'What changed in the last 7 days?'])
+  }
+
+  // 3. "Explain that simply" — re-explain the previous answer in plain language.
   if (parsed.intent === 'beginner' && parsed.refersBack) {
     const last = [...req.history].reverse().find((m) => m.role === 'lens' && m.answer)?.answer
     if (last && REEXPLAINABLE.includes(last.intent)) {

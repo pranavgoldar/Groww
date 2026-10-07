@@ -159,7 +159,7 @@ export function parseQuestion(question: string): ParsedQuestion {
     : /\b(week|7 days|seven days|few days)\b/.test(q)
       ? 'week'
       : 'today'
-  const assumedDirection = DOWN_WORDS.test(q) ? 'down' : UP_WORDS.test(q) ? 'up' : undefined
+  const assumedDirection: ParsedQuestion['assumedDirection'] = DOWN_WORDS.test(q) ? 'down' : UP_WORDS.test(q) ? 'up' : undefined
   const base = { normalised: q, stockIds, indexId, unknownEntity, wantsSimple, period, assumedDirection }
 
   if (/^(hi+|hello|hey|hiya|yo|namaste|good (morning|afternoon|evening))\b[\s!.]*$/.test(q)) {

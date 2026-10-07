@@ -107,3 +107,16 @@ export function getSeries(anchors: Record<ChartRange, number[]>, range: ChartRan
 export function rangeStats(values: number[]): { low: number; high: number } {
   return { low: Math.min(...values), high: Math.max(...values) }
 }
+
+const cache = new Map<string, SeriesPoint[]>()
+
+/** Memoised series for a stock or index (data never changes at runtime). */
+export function seriesFor(item: { id: string; chartAnchors: Record<ChartRange, number[]> }, range: ChartRange): SeriesPoint[] {
+  const key = `${item.id}:${range}`
+  let s = cache.get(key)
+  if (!s) {
+    s = getSeries(item.chartAnchors, range, item.id)
+    cache.set(key, s)
+  }
+  return s
+}
