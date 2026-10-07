@@ -31,6 +31,7 @@ export type LensIntent =
   | 'greeting'
   | 'thanks'
   | 'unknown_entity'
+  | 'search'
   | 'fallback'
   | 'guardrail'
 

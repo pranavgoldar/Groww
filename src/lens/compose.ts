@@ -554,7 +554,71 @@ function notCovered(ctx: Ctx, lead: string, defaults?: string[]): LensAnswer {
   }
 }
 
+const STOPWORDS = new Set(
+  'the a an and or but is are was were be been being of to in on at for with about from by this that these those it its it’s what whats which who whom when where why how will would could should can does did do has have had any some more most much many very just than then there their they them you your yours i me my we our us tell explain please know confirmed confirm really actually stock stocks share shares company bank price today happen happened going'.split(' '),
+)
+
+function tokens(text: string): string[] {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9&\s]/g, ' ')
+    .split(/\s+/)
+    .filter((w) => w.length >= 3 && !STOPWORDS.has(w))
+    .map((w) => w.replace(/(ies|es|s)$/, ''))
+}
+
+/**
+ * Last step before giving up: keyword retrieval over the stock's own records (events, drivers,
+ * risks, watchpoints, profile). Only matched records are returned — nothing is generated.
+ */
+function search(ctx: Ctx): LensAnswer | undefined {
+  const s = ctx.stock
+  const want = new Set(tokens(ctx.req.question))
+  if (!want.size) return undefined
+  const score = (text: string) => new Set(tokens(text).filter((t) => want.has(t))).size
+
+  const events = s.recentEvents
+    .map((e) => ({ e, n: score(`${e.title} ${e.summary} ${e.whatHappened}`) }))
+    .filter((x) => x.n > 0)
+    .sort((a, b) => b.n - a.n || a.e.daysAgo - b.e.daysAgo)
+    .slice(0, 2)
+  const risksHit = s.risks.filter((r) => score(`${r.title} ${r.detail.standard}`) > 0).slice(0, 2)
+  const watch = s.watchpoints.filter((w) => score(w) > 0).slice(0, 2)
+  const aboutHit = score(s.about) > 0
+  if (!events.length && !risksHit.length && !watch.length && !aboutHit) return undefined
+
+  const blocks: AnswerBlock[] = []
+  const facts = [
+    ...(aboutHit && !events.length ? [{ text: s.about }] : []),
+    ...events.map(({ e }) => ({ title: `${e.date} · ${e.title}`, text: e.whatHappened })),
+  ]
+  if (facts.length) blocks.push({ kind: 'fact', items: facts })
+  if (risksHit.length)
+    blocks.push({ kind: 'risk', items: risksHit.map((r) => ({ title: r.title, text: pick(r.detail, ctx.level), meta: r.scope })) })
+  if (watch.length) blocks.push({ kind: 'list', title: 'Worth keeping an eye on', items: watch.map((text) => ({ text })) })
+  const forecast = /^(will|would|is it going|are they going|when will)\b/.test(ctx.parsed.normalised)
+  blocks.push({
+    kind: 'uncertainty',
+    items: [
+      {
+        text: forecast
+          ? 'I can’t forecast how this will develop. This is what the data shows so far.'
+          : 'This is everything relevant in the data I have. I can’t confirm anything beyond it.',
+      },
+    ],
+  })
+  return {
+    ...base(ctx, 'search'),
+    lead: `Here’s what this prototype’s data says about that for ${s.shortName}.`,
+    blocks,
+    sources: sources(s, [...events.map(({ e }) => e.id), ...(aboutHit || risksHit.length ? ['stats'] : [])]),
+    followUps: followUps(ctx, ['Why did this stock move today?', 'What are the biggest risks?', 'What changed in the last 7 days?'], 'search'),
+  }
+}
+
 function fallback(ctx: Ctx): LensAnswer {
+  const found = search(ctx)
+  if (found) return found
   const s = ctx.stock
   return {
     ...base(ctx, 'fallback'),

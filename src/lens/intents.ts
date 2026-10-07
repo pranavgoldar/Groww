@@ -100,6 +100,8 @@ const RULES: Array<{ intent: LensIntent; pattern: RegExp; weight: number }> = [
 const SIMPLE =
   /new to investing|like i'?m (new|a beginner|five|5|completely new|totally new|a kid)|like (a |to a )?beginner|\beli5\b|\bsimpl(e|er|y)\b|plain (english|words|language)|no jargon|without (the )?jargon|basic terms|dumb (it )?down|don'?t understand|confus(ed|ing)|layman|easy (words|way)|i'?m new|first[- ]time/
 
+const MOVE_WORDS = /\b(fall|fell|drop|dropped|rise|rose|move|moved|down|up|perform|performed|decline|declined|gain|gained)\b/
+
 const REFERS_BACK = /\b(that|this|it|above|the last (one|answer))\b/
 
 const DOWN_WORDS = /\b(fall|falling|fell|fallen|drop|dropped|dropping|down|decline|declined|declining|slip|slipped|crash|crashed|lose|losing|lost)\b/
@@ -189,6 +191,9 @@ export function parseQuestion(question: string): ParsedQuestion {
     const definitional = /^(what is|what's|what are)\b/.test(q) && !/\b(doing|moving|up|down|today)\b/.test(q)
     if (!definitional) return { ...base, intent: 'index', refersBack: false }
   }
+
+  // "What changed in the last month?" is about events, not the price move.
+  if (scores.has('past_move') && scores.has('what_changed') && !MOVE_WORDS.test(q)) scores.delete('past_move')
 
   let best: LensIntent | undefined
   let bestScore = 0

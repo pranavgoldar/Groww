@@ -128,6 +128,23 @@ describe('grounding — answers come from the stock’s own data', () => {
     expect(a.note).toMatch(/Reliance Industries/)
   })
 
+  it('retrieves matching records instead of falling back when the data covers it', () => {
+    const tariff = ask('Is the tariff hike confirmed?', 'reliance')
+    expect(tariff.intent).toBe('search')
+    expect(text(tariff)).toMatch(/No change has been announced|tariff talk isn’t a decision/)
+    const jlr = ask('What is JLR?', 'tata-motors')
+    expect(jlr.intent).toBe('search')
+    expect(text(jlr)).toMatch(/Jaguar Land Rover/)
+    const sales = ask('Will sales improve?', 'tata-motors')
+    expect(text(sales)).toMatch(/can’t forecast/)
+  })
+
+  it('routes "what changed in the last month" to events, not the price move', () => {
+    const a = ask('What changed in the last month?')
+    expect(a.intent).toBe('what_changed')
+    expect(a.blocks[0].items).toHaveLength(6)
+  })
+
   it('falls back honestly on unrelated questions', () => {
     expect(ask('What is the capital of France?').intent).toBe('fallback')
   })
