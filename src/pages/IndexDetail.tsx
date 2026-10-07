@@ -59,7 +59,7 @@ export function IndexDetailPage() {
 
         <section className="bg-white px-4 py-5 sm:px-6 lg:rounded-2xl lg:border lg:border-line">
           <h2 className="text-base font-semibold">What’s happening</h2>
-          <div className="mt-3 space-y-3">
+          <div className="mt-3 space-y-4">
             {(
               [
                 ['fact', idx.context.fact],
@@ -67,9 +67,9 @@ export function IndexDetailPage() {
                 ['uncertainty', idx.context.uncertainty],
               ] as const
             ).map(([kind, text]) => (
-              <div key={kind} className="flex items-start gap-2.5">
-                <StatementTag kind={kind} className="mt-0.5" />
-                <p className="text-[15px] leading-relaxed">{text}</p>
+              <div key={kind}>
+                <StatementTag kind={kind} />
+                <p className="mt-1.5 text-[15px] leading-relaxed">{text}</p>
               </div>
             ))}
           </div>

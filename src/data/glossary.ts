@@ -8,6 +8,8 @@ export interface GlossaryEntry {
   definition: string
   /** Optional stock stat that illustrates the term. */
   stat?: keyof Omit<KeyStats, 'sectorPe'>
+  /** Set to false for everyday words that shouldn't be underlined in running text. */
+  inline?: boolean
 }
 
 export const GLOSSARY: GlossaryEntry[] = [
@@ -116,6 +118,7 @@ export const GLOSSARY: GlossaryEntry[] = [
   },
   {
     id: 'sector',
+    inline: false,
     term: 'Sector',
     aliases: ['sector'],
     definition: 'A group of companies in the same industry, like banks or carmakers. They’re often affected by the same news.',
@@ -129,6 +132,7 @@ export const GLOSSARY: GlossaryEntry[] = [
   },
   {
     id: 'results',
+    inline: false,
     term: 'Quarterly results',
     aliases: ['quarterly results', 'q2 results', 'earnings', 'results'],
     definition:
@@ -143,6 +147,7 @@ export const GLOSSARY: GlossaryEntry[] = [
   },
   {
     id: 'deposits',
+    inline: false,
     term: 'Deposits',
     aliases: ['deposits'],
     definition: 'Money customers keep in a bank. Banks lend this money out and earn interest on the loans.',
@@ -163,6 +168,7 @@ export const GLOSSARY: GlossaryEntry[] = [
   },
   {
     id: 'provisional',
+    inline: false,
     term: 'Provisional figures',
     aliases: ['provisional figures', 'provisional'],
     definition: 'Early numbers a company shares before final results. They can be revised later.',
@@ -187,6 +193,7 @@ export const GLOSSARY: GlossaryEntry[] = [
   },
   {
     id: 'exports',
+    inline: false,
     term: 'Exports',
     aliases: ['exports'],
     definition: 'Products sold to customers in other countries.',
@@ -211,10 +218,13 @@ export const GLOSSARY: GlossaryEntry[] = [
   },
 ]
 
-/** All aliases, longest first — used for matching terms inside text. */
+/** All aliases, longest first — used for answering "what is X?" questions. */
 export const GLOSSARY_ALIASES: Array<{ alias: string; entry: GlossaryEntry }> = GLOSSARY.flatMap((entry) =>
   entry.aliases.map((alias) => ({ alias, entry })),
 ).sort((a, b) => b.alias.length - a.alias.length)
+
+/** Aliases that get underlined (tap-to-define) inside running text. */
+export const INLINE_GLOSSARY_ALIASES = GLOSSARY_ALIASES.filter((a) => a.entry.inline !== false)
 
 export function findGlossaryEntry(query: string): GlossaryEntry | undefined {
   const q = query.toLowerCase()

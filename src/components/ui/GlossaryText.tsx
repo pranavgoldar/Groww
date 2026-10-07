@@ -1,13 +1,13 @@
 import { Fragment, useMemo } from 'react'
-import { escapeRegExp, GLOSSARY_ALIASES } from '../../data/glossary'
+import { escapeRegExp, INLINE_GLOSSARY_ALIASES } from '../../data/glossary'
 import { useApp } from '../../state/AppState'
 import { useGlossary } from '../../state/Glossary'
 
 const PATTERN = new RegExp(
-  `(^|[^A-Za-z0-9])(${GLOSSARY_ALIASES.map((a) => escapeRegExp(a.alias)).join('|')})(?=[^A-Za-z0-9]|$)`,
+  `(^|[^A-Za-z0-9])(${INLINE_GLOSSARY_ALIASES.map((a) => escapeRegExp(a.alias)).join('|')})(?=[^A-Za-z0-9]|$)`,
   'gi',
 )
-const BY_ALIAS = new Map(GLOSSARY_ALIASES.map((a) => [a.alias, a.entry]))
+const BY_ALIAS = new Map(INLINE_GLOSSARY_ALIASES.map((a) => [a.alias, a.entry]))
 
 /**
  * Renders text with jargon turned into tappable definitions — for first-time investors.

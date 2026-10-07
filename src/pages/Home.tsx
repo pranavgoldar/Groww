@@ -74,8 +74,9 @@ export function HomePage() {
                     <div className="min-w-0 flex-1">
                       <div className="text-[15px] font-medium">{s.title}</div>
                       <div className="tnum mt-0.5 text-sm text-ink-3">{s.detail}</div>
+                      <div className="mt-1 text-sm font-medium text-lens-ink sm:hidden">{s.linkLabel}</div>
                     </div>
-                    <span className="shrink-0 text-sm font-medium text-lens-ink">{s.linkLabel}</span>
+                    <span className="hidden shrink-0 text-sm font-medium text-lens-ink sm:inline">{s.linkLabel}</span>
                     <ChevronRight className="size-4 shrink-0 text-ink-3" aria-hidden="true" />
                   </Link>
                 </li>
@@ -89,7 +90,7 @@ export function HomePage() {
               <h2 id="worth" className="text-base font-semibold">
                 Stocks worth understanding
               </h2>
-              <p className="mt-1 text-sm text-ink-3">Notable moves today. Open Lens to see what’s behind them.</p>
+              <p className="mt-1 text-sm text-ink-3">Picked because they moved today — not as recommendations. Open Lens to see what’s behind each move.</p>
             </div>
             <ul className="mt-3 grid gap-3 px-4 sm:grid-cols-3 lg:px-0">
               {featured.map((s) => (
@@ -153,10 +154,11 @@ function FeaturedCard({ stock }: { stock: Stock }) {
           </div>
         </div>
       </div>
-      <Sparkline values={seriesFor(stock, '1D').map((p) => p.value)} className="mt-3 h-10 w-full" />
+      <Sparkline values={seriesFor(stock, '1D').map((p) => p.value)} className="mt-3 hidden h-10 w-full sm:block" />
+      <div className="h-3 shrink-0" aria-hidden="true" />
       <Link
         to={`/stock/${stock.id}/lens`}
-        className="relative z-[1] mt-3 flex items-center justify-between gap-2 rounded-xl bg-lens-soft px-3 py-2.5 text-sm font-semibold text-lens-ink transition-colors hover:bg-lens/15"
+        className="relative z-[1] mt-auto flex items-center justify-between gap-2 rounded-xl bg-lens-soft px-3 py-2.5 text-sm font-semibold text-lens-ink transition-colors hover:bg-lens/15"
       >
         <span className="flex items-center gap-1.5">
           <LensMark className="size-3.5" />
