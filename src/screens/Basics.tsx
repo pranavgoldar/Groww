@@ -1,6 +1,6 @@
 import { derive, useStore, type State } from '../state/store'
 import { inr } from '../lib/format'
-import { HORIZONS, bucketOf, durationText, horizonOf, monthlyFor, planSplit, suggestPlan, type Appetite, type Emergency, type Goal } from '../lib/plan'
+import { HORIZONS, INCOME_HINT, INCOME_LABEL, OCCUPATIONS, bucketOf, durationText, horizonOf, incomeWord, monthlyFor, planSplit, steadyFor, suggestPlan, type Appetite, type Emergency, type Goal, type Occupation } from '../lib/plan'
 import { AmountField, Chips, Icon, Shell } from '../components/ui'
 
 const EMERGENCY: [Emergency, string][] = [['yes', 'Yes'], ['partly', 'Partly'], ['notyet', 'Not yet']]
@@ -20,7 +20,7 @@ function useAnswer() {
   })
 }
 
-/* Step 1, one page of quick taps: salary and expenses, the safety net, comfort with ups and downs, then goals.
+/* Step 1, one page of quick taps: what she does, income and expenses, the safety net, comfort with ups and downs, then goals.
    Everything is prefilled, so most people only change what's different. */
 export function Basics() {
   const { s, d, go } = useStore()
@@ -31,6 +31,11 @@ export function Basics() {
   const addGoal = () =>
     update({ goals: [...s.goals, { id: `g${Date.now()}`, name: '', amount: 0, months: 12, mode: 'short', unit: 'months' }] })
   const removeGoal = (id: string) => update({ goals: s.goals.filter(g => g.id !== id) })
+  // What she does prefills "Is your income steady?"; she can still change it below.
+  const setOccupation = (occupation: Occupation) => {
+    const steady = steadyFor(occupation)
+    update(steady ? { occupation, steady } : { occupation })
+  }
   const needTotal = d.goalMonthly + d.growGoalNeed
   return (
     <Shell summary title="Money Plan" footer={
@@ -43,18 +48,21 @@ export function Basics() {
         </div>
         <span className="time-badge"><Icon.clock size={15} />Takes about 30 seconds</span>
       </div>
-      <p className="lead">Tap what fits and change anything that's different. It's about your money, not about you.</p>
+      <p className="lead">Tap what fits and change anything that's different.</p>
 
       <section className="q" id="moneyQ">
         <h2 className="group-title">What comes in and goes out</h2>
-        <label className="q-label" htmlFor="salary">Monthly take-home salary</label>
+        <p className="q-label sm" id="qOcc" style={{ marginTop: 8 }}>What do you do?</p>
+        <Chips options={OCCUPATIONS} value={s.occupation} labelledBy="qOcc" className="chip-row seg3 occ" onChange={setOccupation} />
+        <label className="q-label" htmlFor="salary" style={{ marginTop: 18 }}>{INCOME_LABEL[s.occupation]}</label>
+        {INCOME_HINT[s.occupation] && <p className="hint" id="incomeHint" style={{ margin: '-4px 0 10px' }}>{INCOME_HINT[s.occupation]}</p>}
         <AmountField id="salary" size="sm" value={s.salary} onChange={n => update({ salary: n })} />
         <label className="q-label" htmlFor="expenses" style={{ marginTop: 16 }}>Monthly expenses</label>
         <AmountField id="expenses" size="sm" value={s.expenses} onChange={n => update({ expenses: n })} describedBy="surplusLine" />
         <p className="hint" id="surplusLine">
           {ok
             ? <>That leaves <b>{inr(d.surplus)}</b> a month to plan.</>
-            : "Your expenses are more than your salary, so there's nothing left to plan yet."}
+            : `Your expenses are more than your ${incomeWord(s.occupation)}, so there's nothing left to plan yet.`}
         </p>
       </section>
 

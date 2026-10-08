@@ -2,7 +2,7 @@ import { useStore } from '../state/store'
 import { Icon, Shell } from '../components/ui'
 
 const STEPS: [string, string][] = [
-  ['About your money', 'Salary and expenses, a few quick taps about your safety net, and any goals. About 30 seconds.'],
+  ['About your money', 'What you do, what comes in and goes out, a few quick taps about your safety net, and any goals. About 30 seconds.'],
   ['What you could invest', 'Worked out for you, with plans to pick from. Then you add money.'],
 ]
 
@@ -16,7 +16,7 @@ export function Start() {
     </>}>
       <p className="eyebrow" style={{ marginTop: 8 }}>Before you add money</p>
       <h1 className="h1">Let's work out how much you can invest</h1>
-      <p className="lead">About a minute. We'll look at your salary and expenses, then show what you could put in each month.</p>
+      <p className="lead">About a minute. We'll look at what comes in and goes out, then show what you could put in each month.</p>
       <ol className="steps">
         {STEPS.map(([t, sub], i) => (
           <li className="step" key={t}>
@@ -43,7 +43,7 @@ export function Explore() {
       </div>
       <div className="card" style={{ marginTop: 20 }}>
         <b style={{ fontSize: 15 }}>Not sure how much to invest?</b>
-        <p className="hint" style={{ marginTop: 4 }}>Plan it first, from your salary and goals. It takes 2 minutes.</p>
+        <p className="hint" style={{ marginTop: 4 }}>Plan it first, from your income and goals. It takes about a minute.</p>
       </div>
     </Shell>
   )

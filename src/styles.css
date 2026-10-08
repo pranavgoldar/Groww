@@ -150,6 +150,8 @@ button:disabled { cursor: not-allowed; }
 .chip-row.seg2 { grid-template-columns: repeat(2, 1fr); }
 .chip-row.seg3 { grid-template-columns: repeat(3, 1fr); }
 .chip-row.seg3 .chip { padding: 0 8px; }
+.chip-row.occ .chip { height: auto; min-height: 40px; padding: 6px 8px; line-height: 18px; text-align: center; }
+@media (max-width: 479px) { .chip-row.occ { grid-template-columns: repeat(2, 1fr); } }
 .chip-row.tight { gap: 7px; margin-top: 6px; }
 .chip-row.tight .chip { padding: 0 12px; }
 .radios { display: flex; flex-direction: column; gap: 10px; }
