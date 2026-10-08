@@ -38,7 +38,7 @@ const PARENT: Partial<Record<ScreenId, ScreenId>> = {
 
 export type Commit = 'wait' | 'recheck' | 'revisit'
 export type NeedWhen = 'week' | 'month' | 'few'
-export type SheetKind = 'sell' | 'gr1' | 'gr1Portfolio' | 'month'
+export type SheetKind = 'sell' | 'gr1' | 'gr1Portfolio' | 'month' | 'account'
 
 export interface State extends Answers {
   salary: number

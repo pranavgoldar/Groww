@@ -1,7 +1,8 @@
-import type { FC } from 'react'
-import { useStore, type SheetKind } from '../state/store'
+import type { FC, ReactNode } from 'react'
+import { useStore, type ScreenId, type SheetKind } from '../state/store'
 import { inr } from '../lib/format'
 import { fallPct } from '../lib/plan'
+import { Icon } from './ui'
 
 function Sell() {
   const { s, d, closeSheet, say } = useStore()
@@ -61,7 +62,52 @@ function MonthDifferent() {
   )
 }
 
+function AcctRow({ icon, label, sub, onClick }: { icon: ReactNode; label: string; sub?: string; onClick: () => void }) {
+  return (
+    <button className="acct-row" onClick={onClick}>
+      <span className="acct-ic" aria-hidden="true">{icon}</span>
+      <span className="acct-main"><b>{label}</b>{sub && <span>{sub}</span>}</span>
+      <span className="acct-chev" aria-hidden="true"><Icon.chevRight /></span>
+    </button>
+  )
+}
+
+/* Groww's account menu, opened from the avatar. Portfolio and the money plan open; the rest belong to the real app. */
+function Account() {
+  const { s, d, go, closeSheet, say } = useStore()
+  const open = (id: ScreenId) => { closeSheet(); go(id) }
+  const elsewhere = (what: string) => { closeSheet(); say(`${what} would open here. It isn't part of this prototype.`) }
+  return (
+    <>
+      <div className="acct-head">
+        <span className="acct-av" aria-hidden="true">R</span>
+        <div className="acct-who">
+          <h2 className="sheet-title" id="sheetTitle">Riya</h2>
+          <span>riya@example.com</span>
+        </div>
+        <button className="icon-btn" aria-label="Settings" onClick={() => elsewhere('Settings')}><Icon.gear /></button>
+      </div>
+      <div className="acct-list">
+        <AcctRow icon={<Icon.chart />} label="Your portfolio"
+          sub={s.ff ? `${inr(d.m3.total)} · month 3` : s.added ? `${inr(s.added)} added` : 'Nothing invested yet'}
+          onClick={() => open('portfolio')} />
+        <AcctRow icon={<Icon.sliders />} label="Your money plan"
+          sub={s.added ? `${inr(d.surplus)} a month` : 'Not set up yet'}
+          onClick={() => open(s.added ? 'plan' : 'start')} />
+        <AcctRow icon={<Icon.receipt />} label="All orders" onClick={() => elsewhere('All orders')} />
+        <AcctRow icon={<Icon.bank />} label="Bank details" onClick={() => elsewhere('Bank details')} />
+        <AcctRow icon={<Icon.headset />} label="24 x 7 Customer Support" onClick={() => elsewhere('Customer support')} />
+        <AcctRow icon={<Icon.doc />} label="Reports" onClick={() => elsewhere('Reports')} />
+      </div>
+      <div className="acct-foot">
+        <button className="link-inline" onClick={() => { closeSheet(); say("Log out isn't part of this prototype.") }}>Log out</button>
+      </div>
+    </>
+  )
+}
+
 export const SHEETS: Record<SheetKind, FC> = {
+  account: Account,
   sell: Sell,
   gr1: function GR1Fall() {
     const { d } = useStore()
