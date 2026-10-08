@@ -46,10 +46,13 @@ export function Mark({ size = 26 }: { size?: number }) {
 }
 
 /* ---------- screen shell ---------- */
-export function Shell({ title, brand, right, footer, children }: {
-  title?: string; brand?: boolean; right?: ReactNode; footer?: ReactNode; children: ReactNode
+/* Phones: app bar on top, main button pinned to the bottom.
+   Laptops: page header, then the content beside a sticky card holding the main button (like Groww's order panel). */
+export function Shell({ title, brand, right, footer, summary, children }: {
+  title?: string; brand?: boolean; right?: ReactNode; footer?: ReactNode; summary?: boolean; children: ReactNode
 }) {
   const { back } = useStore()
+  const side = !!footer || summary
   return (
     <>
       <header className="hdr">
@@ -59,9 +62,35 @@ export function Shell({ title, brand, right, footer, children }: {
         </div>
         <div className="hdr-right">{right}</div>
       </header>
-      <div className={'body' + (footer ? '' : ' pad-home')}>{children}</div>
-      {footer && <footer className="ftr">{footer}</footer>}
+      <div className={'page-grid' + (side ? '' : ' no-side')}>
+        <div className="body">{children}</div>
+        {side && (
+          <aside className="page-side">
+            {summary && <PlanSummary />}
+            {footer && <footer className="ftr">{footer}</footer>}
+          </aside>
+        )}
+      </div>
     </>
+  )
+}
+
+/* Laptop-only side card: the plan as it stands, updating live while the user answers. */
+function PlanSummary() {
+  const { s, d } = useStore()
+  if (d.surplus <= 0) return null
+  return (
+    <div className="side-summary" aria-label="Your Money Plan so far">
+      <p className="label-sm">YOUR MONEY PLAN</p>
+      <div className="row-between"><span className="muted">Free each month</span><b className="side-total">{inr(d.surplus)}</b></div>
+      <StackBar split={s.split} />
+      <div className="side-legend">
+        {KEYS.map(k => (
+          <div key={k}><span><i style={{ background: `var(--${k})` }} />{BUCKET_NAME[k]}</span><b>{inr(s.split[k])}</b></div>
+        ))}
+      </div>
+      <p className="tiny">Invest through Groww: {inr(d.investable)} a month. Keep stays in your bank.</p>
+    </div>
   )
 }
 

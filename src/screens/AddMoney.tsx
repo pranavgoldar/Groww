@@ -20,7 +20,7 @@ export function AddMoney() {
     go('categories')
   }
   return (
-    <Shell title="Add money" footer={<button className="btn-primary" disabled={!ok} onClick={add}>Add {inr(amt)}</button>}>
+    <Shell summary title="Add money" footer={<button className="btn-primary" disabled={!ok} onClick={add}>Add {inr(amt)}</button>}>
       <p className="eyebrow">This month's plan</p>
       <h1 className="h2">Add money to your plan</h1>
       <label className="amt-label" htmlFor="addInput">Amount to add</label>

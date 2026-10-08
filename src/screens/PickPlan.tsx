@@ -23,7 +23,7 @@ export function PickPlan() {
   const invest = investableOf(sp)
 
   return (
-    <Shell title="Money Plan" footer={
+    <Shell summary title="Money Plan" footer={
       <button className="btn-primary" onClick={start}>Start with {PLAN_NAMES[s.plan]}</button>
     }>
       <p className="eyebrow">Step 3 of 3</p>

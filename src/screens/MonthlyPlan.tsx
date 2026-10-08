@@ -57,7 +57,7 @@ export function MonthlyPlan() {
   const setAuto = (auto: boolean) => set({ auto })
 
   return (
-    <Shell title="Monthly plan" footer={<>
+    <Shell summary title="Monthly plan" footer={<>
       <Toggle on={s.auto} onChange={setAuto} label="Apply this plan automatically every time my salary comes in" />
       <button className="btn-primary" onClick={save}>Save my monthly plan</button>
     </>}>

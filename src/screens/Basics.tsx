@@ -32,7 +32,7 @@ export function Basics() {
   const removeGoal = (id: string) => update({ goals: s.goals.filter(g => g.id !== id) })
   const needTotal = d.goalMonthly + d.growGoalNeed
   return (
-    <Shell title="Money Plan" footer={
+    <Shell summary title="Money Plan" footer={
       <button className="btn-primary" disabled={!ok} onClick={() => go('risk')}>Next</button>
     }>
       <p className="eyebrow">Step 1 of 3</p>
@@ -127,7 +127,7 @@ export function Risk() {
   const { s, go } = useStore()
   const update = useAnswer()
   return (
-    <Shell title="Money Plan" footer={<button className="btn-primary" onClick={() => go('pick')}>See what I could invest</button>}>
+    <Shell summary title="Money Plan" footer={<button className="btn-primary" onClick={() => go('pick')}>See what I could invest</button>}>
       <p className="eyebrow">Step 2 of 3</p>
       <h1 className="h1">How much risk your money can take</h1>
       <p className="lead">About your money, not about you. Your answers shape how much of it can take ups and downs.</p>

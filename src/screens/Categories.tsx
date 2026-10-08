@@ -86,7 +86,7 @@ export function Categories() {
   }
 
   return (
-    <Shell title="Place your money" footer={<button className="btn-primary" onClick={() => go('salary')}>Done for now</button>}>
+    <Shell summary title="Place your money" footer={<button className="btn-primary" onClick={() => go('salary')}>Done for now</button>}>
       {s.added > 0 && (
         <div className="success" role="status" style={{ margin: '4px 0 18px' }}>
           <span className="success-ic"><Icon.check /></span>

@@ -2,7 +2,7 @@
 
 **Give every rupee a job.**
 
-A clickable, high-fidelity mobile prototype for a product case study. Money Plan helps first-time investors (roughly 20–26) split their monthly surplus into four buckets, commit to a plan before their first purchase, and see that plan replayed back to them when their money first falls.
+A clickable, high-fidelity prototype for a product case study. It's a responsive web app: phones get the app layout, laptops get Groww's web layout. Money Plan helps first-time investors (roughly 20–26) split their monthly surplus into four buckets, commit to a plan before their first purchase, and see that plan replayed back to them when their money first falls.
 
 Core idea: risk capacity belongs to the money, not the person. The app asks *"What is this money for?"*, never *"What kind of investor are you?"*
 
@@ -23,7 +23,7 @@ Riya, 22. Salary ₹40,000 a month, expenses ₹25,000 (rent ₹12,000 + living 
 
 Money gets a plan before it is added. The app never asks "what's this for?" after the money is already in.
 
-1. **Before you add money.** Tapping Add money for the first time opens this: "Let's work out how much to invest."
+1. **Before you add money.** Tapping Add money for the first time opens this: "Let's work out how much you can invest."
 2. **Your money.** Salary, expenses and goals. ₹40,000 − ₹25,000 leaves ₹15,000 a month to plan. Each goal has its own time: Short (under 1 year), Medium (1–3 years), Long (3+ years) or an exact number of months or years. Short and medium goals are kept steady in Park; long ones sit in Grow. Up to three goals.
 3. **Risk.** Safety questions (capacity) and one comfort question (appetite).
 4. **What you could invest.** ₹15,000 free each month: keep ₹6,000 in the bank as the cushion, invest ₹9,000 a month through Groww. Careful, Balanced or Growth are rules-based model plans the user chooses; when safety and comfort disagree, it starts from the more careful one.
@@ -40,7 +40,14 @@ Money gets a plan before it is added. The app never asks "what's this for?" afte
 
 Goal maths counts only what is put in (₹60,000 ÷ 20 months = ₹3,000 a month), and the app says so: "We don't count on returns; anything extra is a bonus." Time decides where goal money waits, and 12 months before a long-term goal the app suggests moving it from Grow to Park (see the **Goal reminder** screen).
 
-Supporting screens: Explore, Order, Invested, Plan noted, Goal reminder. A switcher under the phone jumps to any screen; **Reset prototype** restores Riya's numbers.
+Supporting screens: Explore, Order, Invested, Plan noted, Goal reminder.
+
+## Layout
+
+- **Phone:** an app bar with back at the top; the main buttons stay pinned to the bottom.
+- **Laptop (900px and wider):** Groww's top bar, the page on the left, and a sticky card on the right with the plan summary and the screen's buttons. Sheets open as centred dialogs.
+
+There's no phone frame or screen switcher: you move through it as a customer would. Each screen also has its own link, such as `/#/plan` or `/#/portfolio`; opening one fills in what the screen needs. Reloading without a link starts over with Riya's numbers.
 
 ## Running it
 
@@ -61,8 +68,8 @@ Import the repository in Vercel. It detects Vite; `vercel.json` pins the build (
 src/
   lib/format.ts      Indian rupee formatting (₹1,20,000), done by hand
   lib/plan.ts        Persona, model plans, slider rebalancing, the month-3 snapshot
-  state/store.tsx    One state object, history-stack navigation, toast, sheets, lock screen
-  components/        Phone frame + slide transitions, sheets, shared UI
+  state/store.tsx    One state object, history-stack navigation, #/screen links, toast, sheets, lock screen
+  components/        App shell (top bar, toast, sheets, lock screen), shared UI
   screens/           One file per screen (or pair of screens)
   styles.css         All styles
 ```

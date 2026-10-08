@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from 'react'
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import {
   PERSONA, goalMonthlyOf, goalsIn, goalsLabel, investableOf, keepTargetOf, month3, needFor, planSplit, suggestPlan, surplusOf,
   type Answers, type BucketKey, type Goal, type Month3, type PlanId, type Split,
@@ -172,6 +172,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const set = useCallback((p: Patch) => setS(prev => ({ ...prev, ...(typeof p === 'function' ? p(prev) : p) })), [])
 
   const show = useCallback((id: ScreenId, dir: Dir, instant = false) => {
+    // Keep the address bar on the current screen, so a link can open any screen.
+    window.history.replaceState(null, '', id === 'start' ? window.location.pathname : `#/${id}`)
     setNav(n => (n.current === id ? n : { current: id, dir, seq: n.seq + 1, instant: instant || reducedMotion() }))
   }, [])
 
@@ -225,7 +227,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       return patch
     })
     if (id === current) return
-    hist.current.push(id)
+    if (hist.current[hist.current.length - 1] !== id) hist.current.push(id)
     show(id, ORDER.indexOf(id) < ORDER.indexOf(current) ? 'back' : 'fwd')
   }, [current, set, show, setLock])
 
@@ -244,6 +246,19 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     show('start', 'back')
     say('Prototype reset to Riya’s starting numbers.')
   }, [say, show, setLock])
+
+  // Links like /#/portfolio open that screen, with earlier steps filled in.
+  const jumpRef = useRef(jump)
+  jumpRef.current = jump
+  useEffect(() => {
+    const fromHash = () => {
+      const id = window.location.hash.replace(/^#\/?/, '') as ScreenId
+      if (ORDER.includes(id)) jumpRef.current(id)
+    }
+    fromHash()
+    window.addEventListener('hashchange', fromHash)
+    return () => window.removeEventListener('hashchange', fromHash)
+  }, [])
 
   const value = useMemo<Store>(() => ({
     s, d: derive(s), set, nav, go, back, jump, replaceTail, reset, toast, say,
