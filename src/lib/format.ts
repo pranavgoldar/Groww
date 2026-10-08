@@ -1,57 +1,33 @@
-const MINUS = '−'
+// Indian rupee formatting, done by hand (last 3 digits, then pairs): ₹1,20,000.
 
-/** ₹1,842.00 — Indian digit grouping. */
-export function inr(value: number, decimals = 2): string {
-  const sign = value < 0 ? MINUS : ''
-  return `${sign}₹${Math.abs(value).toLocaleString('en-IN', {
-    minimumFractionDigits: decimals,
-    maximumFractionDigits: decimals,
-  })}`
+export function groupIN(n: number): string {
+  const s = String(Math.round(Math.abs(n)))
+  if (s.length <= 3) return s
+  const last3 = s.slice(-3)
+  const rest = s.slice(0, -3).replace(/\B(?=(\d{2})+(?!\d))/g, ',')
+  return `${rest},${last3}`
 }
 
-/** 25,184.30 — for index levels. */
-export function num(value: number, decimals = 2): string {
-  return value.toLocaleString('en-IN', { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
+/** ₹40,000 · −₹900 (true minus sign for negatives) */
+export function inr(n: number): string {
+  return (n < 0 ? '−' : '') + '₹' + groupIN(n)
 }
 
-/** +2.4% / −1.7% / 0.0% */
-export function pct(value: number, decimals = 1): string {
-  const rounded = Number(value.toFixed(decimals))
-  const sign = rounded > 0 ? '+' : rounded < 0 ? MINUS : ''
-  return `${sign}${Math.abs(rounded).toFixed(decimals)}%`
+/** ₹7,000–8,000 */
+export function inrRange(a: number, b: number): string {
+  return a === b ? inr(a) : `${inr(a)}–${groupIN(b)}`
 }
 
-/** +₹43.17 / −₹12.01 */
-export function signedInr(value: number, decimals = 2): string {
-  const rounded = Number(value.toFixed(decimals))
-  const sign = rounded > 0 ? '+' : rounded < 0 ? MINUS : ''
-  return `${sign}${inr(Math.abs(rounded), decimals)}`
+export const r100 = (n: number) => Math.round(n / 100) * 100
+export const r50 = (n: number) => Math.round(n / 50) * 50
+
+/** Digits typed into an amount field, capped at 8 digits. */
+export function parseAmount(text: string): number {
+  const digits = text.replace(/\D/g, '').replace(/^0+/, '').slice(0, 8)
+  return digits ? parseInt(digits, 10) : 0
 }
 
-/** Absolute price change implied by a percent change from the previous close. */
-export function changeFromPct(price: number, changePct: number): number {
-  return price - price / (1 + changePct / 100)
-}
-
-export function previousClose(price: number, changePct: number): number {
-  return price / (1 + changePct / 100)
-}
-
-export type Direction = 'up' | 'down' | 'flat'
-
-export function direction(value: number, flatBelow = 0.05): Direction {
-  if (Math.abs(value) < flatBelow) return 'flat'
-  return value > 0 ? 'up' : 'down'
-}
-
-export function upDown(value: number): string {
-  return value >= 0 ? 'up' : 'down'
-}
-
-export function roseFell(value: number): string {
-  return value >= 0 ? 'rose' : 'fell'
-}
-
-export function abs1(value: number): string {
-  return `${Math.abs(value).toFixed(1)}%`
+/** 0.72 → "0.7" */
+export function oneDecimal(n: number): string {
+  return (Math.round(n * 10) / 10).toFixed(1)
 }

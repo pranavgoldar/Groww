@@ -129,3 +129,64 @@ One HTML file. Before writing code, list the 7 screens with one line each to con
 ## Revisions after the brief
 
 * Logo: at the user's request, the Groww logo mark (blue #5367FF / mint #00F3BB) now appears in Screen 1's header beside the "groww" wordmark, on the lock-screen notification and as the browser-tab icon. It is drawn as inline SVG so the file stays self-contained. This replaces the "Do NOT use the real Groww logo" rule above.
+
+## Add-on: monthly surplus plan
+
+Keep the existing 7 screens, visual style, colors, fonts, bucket names (Keep, Park, Grow, Learn) and compliance rules exactly as they are. Where a change conflicts with the original prompt, this add-on wins.
+
+### Updated persona (use these numbers everywhere)
+
+Riya, 22, monthly salary ₹40,000. Monthly expenses ₹25,000 (rent ₹12,000 + living ₹13,000). Monthly surplus ₹15,000. No emergency cushion yet. Short-term goal: a laptop for ₹60,000 in 20 months (₹3,000/month). Her risk category: Balanced.
+
+The plan now splits her monthly SURPLUS (₹15,000), not the whole salary.
+
+Bucket meanings (updated):
+- Keep: her emergency cushion, building toward 3 months of expenses (₹75,000). Stays in the bank.
+- Park: money for short-term goals within 3 years (the laptop). Low ups-and-downs options.
+- Grow: money for 3+ years.
+- Learn: a small, capped amount to try picking stocks.
+
+### Change 1 — Screen 2 becomes "Your money basics"
+- Monthly take-home salary: input, prefilled ₹40,000
+- Monthly expenses: input, prefilled ₹25,000. Below it: "That leaves ₹15,000 a month to plan."
+- Any goal in the next 3 years? Goal name + amount + months: prefilled "Laptop · ₹60,000 · 20 months"
+- Capacity questions (chips): "Savings for emergencies?" Yes / Partly / Not yet (Not yet). "Does anyone depend on your income?" Yes / No (No). "Is your income steady?" Yes / Not always (Yes)
+- Appetite question: "If ₹10,000 you invested became ₹8,000, you would…" Hold calmly / Worry but hold / Sell (Worry but hold)
+- CTA: "See plans"
+
+### Change 2 — NEW screen 2b "Pick a starting plan"
+- Note: "Your answers on safety and on comfort with risk both count. When they differ, we start from the more careful one."
+- Line: "People with answers like yours often start with Balanced."
+- Three selectable cards with the monthly ₹15,000 split as a stacked bar plus four amounts: Careful (Keep ₹7,500 · Park ₹3,000 · Grow ₹4,500 · Learn ₹0), Balanced (preselected, "Common for answers like yours"; Keep ₹6,000 · Park ₹3,000 · Grow ₹5,500 · Learn ₹500), Growth (Keep ₹5,000 · Park ₹3,000 · Grow ₹6,000 · Learn ₹1,000)
+- Line: "Once Keep reaches 3 months of expenses (₹75,000), its share moves into Grow."
+- Disclaimer: "General model plans for education, not a personal recommendation. You choose and can change any number. [PENDING COMPLIANCE REVIEW]"
+- CTA: "Start with Balanced" (label follows the selected card)
+
+### Change 3 — Screen 3 becomes the monthly plan editor
+- Title "Your monthly plan: ₹15,000"; same four buckets with updated meanings (Park shows "Laptop · ₹60,000 in 20 months"); start values from the chosen template; sliders keep ₹15,000; keep the "You set these numbers" label.
+- Toggle above the CTA, on by default: "Apply this plan automatically every time my salary comes in"
+- CTA: "Save my monthly plan"
+
+### Change 4 — NEW screen "Salary day" (after Screen 5, before the check-in)
+- Card "₹15,000 split as planned"; rows: Keep ₹6,000 → stays in your bank · Park ₹3,000 → liquid fund for your laptop · Grow ₹5,500 → your index fund SIP · Learn ₹500 → Learn balance
+- "No action needed." Link "This month is different" opens a sheet: Bonus or extra money / Less money this month / My income stopped
+- CTA: "View my money"
+
+### Change 5 — NEW screen "Is your money doing its job?" (portfolio, last)
+- Total value across all holdings with a Mutual funds / Stocks / Liquid bar
+- Plan vs actual: Keep "₹18,000 of ₹75,000 · about 0.7 of 3 months built" (progress); Park "Laptop · ₹9,000 of ₹60,000 · on track for month 20" (progress); Grow "₹5,000 of your Grow money is in one stock. Your plan was a spread across funds." (amber); Learn "You've put ₹2,500 into Learn. Your plan was ₹1,500." (amber)
+- Your fund vs its index: "+3.1% since you started. Its index: +3.3%. The small gap is normal for index funds (costs)."
+- Patterns in your Learn trades: "Trades based on a tip: −₹600 after ₹140 in charges. Trades based on your own research: +₹200." plus "A few months is too short to judge a method. Treat this as something to notice, not proof."
+- Link "Ask GR 1 about your portfolio". No score, grade, healthy/unhealthy label or recommendations.
+
+### Navigation
+1 → 2 → 2b → 3 → 4 → 5 → Salary day → 6 → 7 → Portfolio. Screen 7 keeps "draw from Keep, then Park, before Grow" with Keep ₹18,000 and Park ₹9,000, and keeps "Sell from Grow".
+
+### Decisions made while building the add-on
+- Delivered as a Vite + React + TypeScript app at the repo root (replacing the earlier Lens prototype and the single HTML file) so it deploys on Vercel.
+- Screen 1 shows "₹15,000 added", the surplus the plan splits.
+- Timeline: Screens 1–5 and Salary day are month 1. "View my money" jumps to month 3, where the check-in, Screen 7 and the portfolio sit, so Keep ₹18,000 / Park ₹9,000 hold.
+- The first purchase is a ₹5,500 monthly SIP (the Grow amount). In month 3, ₹5,000 of Grow went into one stock, so the index fund holds ₹11,500; the check-in reads "Your ₹11,500 is now ₹10,500" (−₹1,000, −9%).
+- Portfolio total is rebuilt from the plan: ₹27,950 (Mutual funds ₹11,850 · Stocks ₹7,100 · Liquid ₹9,000), instead of ₹54,300, which didn't reconcile with month 3.
+- Screen 5 states the bad-year range per ₹10,000 put in (₹7,000–8,000) and repeats the appetite answer instead of the removed unease slider.
+- "Update my plan" on Screen 7 takes the money from bucket balances; the monthly ₹15,000 split stays as it is.
