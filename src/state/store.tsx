@@ -7,7 +7,7 @@ import type { PayMode } from '../lib/pay'
 import { PRODUCTS, type Placeable, type ProductId, type Purchase, type Toward } from '../lib/products'
 
 export type ScreenId =
-  | 'start' | 'explore' | 'basics' | 'risk' | 'plan' | 'categories' | 'order'
+  | 'start' | 'explore' | 'basics' | 'plan' | 'categories' | 'order'
   | 'commit' | 'payMode' | 'salary' | 'checkin' | 'noted' | 'need' | 'portfolio' | 'goalNear' | 'myPlan'
 
 /** Screen order: drives the switcher and the slide direction of jumps. */
@@ -15,7 +15,6 @@ export const SCREENS: { id: ScreenId; label: string; n?: string; main: boolean }
   { id: 'start', label: 'Before adding money', n: '1', main: true },
   { id: 'explore', label: 'Explore', main: false },
   { id: 'basics', label: 'Your money', n: '2', main: true },
-  { id: 'risk', label: 'Risk', n: '3', main: true },
   { id: 'plan', label: 'Monthly plan', n: '5', main: true },
   { id: 'categories', label: 'Categories', n: '7', main: true },
   { id: 'order', label: 'Order', main: false },
@@ -31,7 +30,7 @@ export const SCREENS: { id: ScreenId; label: string; n?: string; main: boolean }
 ]
 const ORDER = SCREENS.map(s => s.id)
 const PARENT: Partial<Record<ScreenId, ScreenId>> = {
-  explore: 'start', basics: 'start', risk: 'basics', plan: 'risk',
+  explore: 'start', basics: 'start', plan: 'basics',
   categories: 'plan', order: 'categories',
   commit: 'order', payMode: 'categories', salary: 'payMode', checkin: 'salary', noted: 'checkin',
   need: 'checkin', portfolio: 'checkin', goalNear: 'portfolio', myPlan: 'categories',

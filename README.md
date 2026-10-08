@@ -24,16 +24,16 @@ Riya, 22. Salary ₹40,000 a month, expenses ₹25,000 (rent ₹12,000 + living 
 Money gets a plan before it is added. The app never asks "what's this for?" after the money is already in.
 
 1. **Before you add money.** Tapping Add money for the first time opens this: "Let's work out how much you can invest."
-2. **Your money.** Salary, expenses and goals. ₹40,000 − ₹25,000 leaves ₹15,000 a month to plan. Each goal has its own time: Short (under 1 year), Medium (1–3 years), Long (3+ years) or an exact number of months or years. Short and medium goals are kept steady in Park; long ones sit in Grow. Up to three goals.
-3. **Risk.** Safety questions (capacity) and one comfort question (appetite).
-4. **What you could invest.** One screen: ₹15,000 free each month, a model plan to start from (Careful, Balanced or Growth, rules-based and chosen by the user; when safety and comfort disagree it starts from the more careful one), and four sliders that always add up to ₹15,000. Keep's ₹6,000 stays in the bank as the emergency fund. It ends with **Add ₹9,000 to Groww**.
-5. **Place your money.** Unranked categories per bucket. Liquid funds opens a ₹3,000 Park SIP; Large-cap index funds opens a ₹5,500 Grow SIP. The other categories and stocks open sample products too. Tabs tick once their money is placed.
-6. **Commit card.** Before the first Grow purchase: how bad years have looked, and what you'll do if it falls. Confirming returns straight to placing money, on the next bucket with money left.
-7. **Each month.** Asked once, after the money is placed: **I'll confirm each month** (the default: nothing leaves the account until a tap, and any month can be skipped) or **Autopay on a fixed day**, with the day and time picked and a reminder the day before and 3 hours before.
-8. **Next month.** By default: "Ready to invest ₹9,000 as planned?" with Confirm and pay, or Skip this month. With autopay: the two reminders, then "₹9,000 invested as planned". Keep's ₹6,000 stays in the bank either way.
-9. **First-fall check-in, month 3.** Your ₹11,500 is now ₹10,500, read against your own plan. Selling stays one tap away.
-10. **My need changed.** Draw from Keep, then Park, before Grow.
-11. **Is your money doing its job? (Portfolio).** Plan vs actual, each goal's progress by what's been put in, fund vs its index, patterns in stock trades. No scores or grades.
+2. **About your money.** One page of quick taps, prefilled, with "Takes about 30 seconds": salary and expenses (₹40,000 − ₹25,000 leaves ₹15,000 a month to plan), the safety net (emergency savings, dependents, steady income), comfort with ups and downs, then goals. Each goal has its own time: Short (under 1 year), Medium (1–3 years), Long (3+ years) or an exact number of months or years. Short and medium goals are kept steady in Park; long ones sit in Grow. Up to three goals. Selected answers show solid green with a tick.
+3. **What you could invest.** One screen: ₹15,000 free each month, a model plan to start from (Careful, Balanced or Growth, rules-based and chosen by the user; when safety and comfort disagree it starts from the more careful one), and four sliders that always add up to ₹15,000. Keep's ₹6,000 stays in the bank as the emergency fund. It ends with **Add ₹9,000 to Groww**.
+4. **Place your money.** Unranked categories per bucket. Liquid funds opens a ₹3,000 Park SIP; Large-cap index funds opens a ₹5,500 Grow SIP. The other categories and stocks open sample products too. Tabs tick once their money is placed.
+5. **Commit card.** Before the first Grow purchase: how bad years have looked, and what you'll do if it falls. Confirming returns straight to placing money, on the next bucket with money left.
+6. **Each month.** Asked once, after the money is placed: **I'll confirm each month** (the default: nothing leaves the account until a tap, and any month can be skipped) or **Autopay on a fixed day**, with the day and time picked and a reminder the day before and 3 hours before.
+7. **Next month.** By default: "Ready to invest ₹9,000 as planned?" with Confirm and pay, or Skip this month. With autopay: the two reminders, then "₹9,000 invested as planned". Keep's ₹6,000 stays in the bank either way.
+8. **First-fall check-in, month 3.** Your ₹11,500 is now ₹10,500, read against your own plan. Selling stays one tap away.
+9. **My need changed.** Draw from Keep, then Park, before Grow.
+10. **Is your money doing its job? (Portfolio).** Plan vs actual, each goal's progress by what's been put in, fund vs its index, patterns in stock trades. No scores or grades.
+
 ### Buying other funds or stocks
 
 Every order shows what it **counts toward**, set by type (funds that hold shares → Grow, liquid and short-duration funds → Park, single stocks → Invest in stocks) and changeable in one tap, including **Outside my plan**. Going over what's left in a bucket never blocks a buy: a neutral line says by how much, and Portfolio shows it next to the plan. Outside-plan buys leave the plan untouched and are listed separately.

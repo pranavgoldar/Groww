@@ -1,7 +1,7 @@
 import type { FC } from 'react'
 import type { ScreenId } from '../state/store'
 import { Explore, Start } from './Start'
-import { Basics, Risk } from './Basics'
+import { Basics } from './Basics'
 import { MonthlyPlan } from './MonthlyPlan'
 import { Categories, Order } from './Categories'
 import { Commit } from './Commit'
@@ -17,7 +17,6 @@ export const SCREEN_VIEWS: Record<ScreenId, FC> = {
   start: Start,
   explore: Explore,
   basics: Basics,
-  risk: Risk,
   plan: MonthlyPlan,
   categories: Categories,
   order: Order,

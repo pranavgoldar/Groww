@@ -89,7 +89,7 @@ export function MonthlyPlan() {
           </span>
         </div>
       )}
-      {first && <p className="eyebrow">Step 3 of 3</p>}
+      {first && <p className="eyebrow">Step 2 of 2</p>}
       <h1 className="h1">{first ? "Here's what you could invest" : `Your monthly plan: ${inr(total)}`}</h1>
       <p className="lead"><b id="freeAmt">{inr(total)}</b> free each month: {inr(s.salary)} salary − {inr(s.expenses)} expenses.</p>
 
