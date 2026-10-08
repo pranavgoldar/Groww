@@ -1,12 +1,10 @@
 import { useStore } from '../state/store'
-import type { BucketKey } from '../lib/plan'
-import { BUCKET_NAME, BucketIcon, Icon, Shell } from '../components/ui'
+import { Icon, Shell } from '../components/ui'
 
-const JOBS: [BucketKey, string][] = [
-  ['keep', 'Your emergency cushion'],
-  ['park', 'Kept safe for goals in the next 3 years'],
-  ['grow', 'For 3+ years from now'],
-  ['learn', 'A small amount to pick stocks yourself'],
+const STEPS: [string, string][] = [
+  ['Your salary and expenses', 'What comes in, what goes out, and any goal coming up.'],
+  ['Your safety net and comfort with risk', 'A few quick taps. No right or wrong answers.'],
+  ['What you could invest', 'Worked out for you, with plans to pick from. Then you add money.'],
 ]
 
 /* Screen 1: shown when someone taps Add money for the first time. Plan first, then add money. */
@@ -14,23 +12,21 @@ export function Start() {
   const { go } = useStore()
   return (
     <Shell brand footer={<>
-      <button className="btn-primary" onClick={() => go('basics')}>Get started</button>
-      <button className="link block" onClick={() => go('explore')}>Skip, I'll explore on my own</button>
+      <button className="btn-primary" onClick={() => go('basics')}>Work out my amount</button>
+      <button className="link block" onClick={() => go('explore')}>Skip, I'll add money on my own</button>
     </>}>
-      <p className="eyebrow" style={{ marginTop: 18 }}>Before you add money</p>
-      <h1 className="h1">Let's work out how much to invest</h1>
-      <p className="lead">2 minutes. Tell us your salary and your plans. We'll show what you could put in each month, and where it could go.</p>
-      <p className="label-sm" style={{ marginTop: 24 }}>WHERE IT COULD GO</p>
-      <div className="jobs" style={{ marginTop: 8 }}>
-        {JOBS.map(([k, t]) => (
-          <div className="job" key={k}>
-            <BucketIcon k={k} className="job-ic" />
-            <b>{BUCKET_NAME[k]}</b>
-            <span className="job-desc">{t}</span>
-          </div>
+      <p className="eyebrow" style={{ marginTop: 8 }}>Before you add money</p>
+      <h1 className="h1">Let's work out how much you can invest</h1>
+      <p className="lead">2 minutes. We'll look at your salary and expenses, then show what you could put in each month.</p>
+      <ol className="steps">
+        {STEPS.map(([t, sub], i) => (
+          <li className="step" key={t}>
+            <span className="step-n">{i + 1}</span>
+            <div><b>{t}</b><span className="job-desc">{sub}</span></div>
+          </li>
         ))}
-      </div>
-      <p className="note"><Icon.info /><span>We'll ask what your money is for, not what kind of investor you are.</span></p>
+      </ol>
+      <p className="note"><Icon.info /><span>We ask about your money, not what kind of investor you are.</span></p>
     </Shell>
   )
 }

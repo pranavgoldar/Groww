@@ -110,6 +110,10 @@ button:disabled { cursor: not-allowed; }
 .job-ic { margin-bottom: 10px; }
 .job b { display: block; font-size: 15px; font-weight: 600; }
 .job-desc { display: block; font-size: 13px; line-height: 18px; color: var(--ink-2); margin-top: 2px; }
+.steps { list-style: none; margin: 24px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.step { display: flex; gap: 14px; align-items: flex-start; border: 1px solid var(--line); border-radius: 14px; padding: 14px; }
+.step b { display: block; font-size: 15px; font-weight: 600; line-height: 21px; }
+.step-n { flex: none; width: 28px; height: 28px; border-radius: 14px; background: var(--accent-soft); color: var(--accent-ink); font-size: 14px; font-weight: 700; display: grid; place-items: center; }
 .note { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 20px; color: var(--ink-2); margin: 20px 0 0; }
 .note svg { flex: none; margin-top: 1px; color: var(--ink-3); }
 
