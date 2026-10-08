@@ -22,11 +22,12 @@ export const Icon = {
   history: () => <Svg size={18}><path d="M3.5 12a8.5 8.5 0 1 0 2.6-6.1" /><path d="M3.5 4.5v4h4" /><path d="M12 8v4l2.8 1.7" /></Svg>,
   chevDown: () => <Svg size={14} sw={2.4}><path d="M6 9l6 6 6-6" /></Svg>,
   search: () => <Svg size={18}><circle cx="11" cy="11" r="6.5" /><path d="M20 20l-4.2-4.2" /></Svg>,
+  close: () => <Svg size={18} sw={2.2}><path d="M6 6l12 12M18 6L6 18" /></Svg>,
   scale: () => <Svg size={18}><path d="M12 4v16M5 20h14" /><path d="M5 8h14" /><path d="M5 8l-2.5 6a2.5 2.5 0 0 0 5 0z" /><path d="M19 8l-2.5 6a2.5 2.5 0 0 0 5 0z" /></Svg>,
 }
 
 const BUCKET_ICON: Record<BucketKey, () => ReactNode> = { keep: Icon.bank, park: () => <Icon.clock />, grow: Icon.sprout, learn: Icon.book }
-export const BUCKET_NAME: Record<BucketKey, string> = { keep: 'Keep', park: 'Park', grow: 'Grow', learn: 'Learn' }
+export const BUCKET_NAME: Record<BucketKey, string> = { keep: 'Keep', park: 'Park', grow: 'Grow', learn: 'Invest in stocks' }
 
 export function BucketIcon({ k, neutral = false, className = 'b-ic' }: { k: BucketKey; neutral?: boolean; className?: string }) {
   const I = BUCKET_ICON[k]
@@ -117,7 +118,7 @@ export function Legend({ split }: { split: Split }) {
   return (
     <div className="legend">
       {KEYS.map(k => (
-        <div key={k}><i style={{ background: `var(--${k})` }} />{BUCKET_NAME[k]}<b>{inr(split[k])}</b></div>
+        <div key={k}><span><i style={{ background: `var(--${k})` }} />{BUCKET_NAME[k]}</span><b>{inr(split[k])}</b></div>
       ))}
     </div>
   )

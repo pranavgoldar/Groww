@@ -1,7 +1,8 @@
 import { useStore } from '../state/store'
 import { inr, oneDecimal } from '../lib/format'
 import {
-  CUSHION_MONTHS, FUND_RETURN, INDEX_RETURN, LEARN_RESEARCH, LEARN_TIP, LEARN_TIP_CHARGES, type BucketKey,
+  CUSHION_MONTHS, FUND_RETURN, INDEX_RETURN, LEARN_RESEARCH, LEARN_TIP, LEARN_TIP_CHARGES, MONTHS_IN, MOVE_BEFORE_MONTHS,
+  bucketOf, monthlyFor, type BucketKey,
 } from '../lib/plan'
 import { BucketIcon, BUCKET_NAME, Meter, Shell } from '../components/ui'
 
@@ -18,8 +19,16 @@ const signed = (n: number) => (n >= 0 ? `+${inr(n)}` : inr(n))
 export function Portfolio() {
   const { s, d, go, openSheet } = useStore()
   const m = d.m3
-  const goal = s.goalName.trim() || 'Goal'
   const parkOnTrack = m.park >= m.parkExpected
+  const parkGoalTotal = d.parkGoals.reduce((a, g) => a + g.amount, 0)
+  const onlyPark = d.parkGoals.length === 1 ? d.parkGoals[0] : null
+  // Goal progress counts what has been put in, never market value. Park money taken out on Screen 7 is shared across its goals.
+  const parkShare = m.parkExpected ? m.park / m.parkExpected : 1
+  const goals = [...d.parkGoals, ...d.growGoals].map(g => {
+    const park = bucketOf(g) === 'park'
+    const put = Math.min(g.amount, Math.round(MONTHS_IN * monthlyFor(g) * (park ? parkShare : 1)))
+    return { g, park, put }
+  })
 
   const rows: { k: BucketKey; line: string; amber?: boolean; meter?: number }[] = [
     {
@@ -29,10 +38,12 @@ export function Portfolio() {
     },
     {
       k: 'park',
-      line: d.goalMonthly
-        ? `${goal} · ${inr(m.park)} of ${inr(s.goalAmt)} · ${parkOnTrack ? `on track for month ${s.goalMonths}` : `${inr(m.parkExpected - m.park)} behind for month ${s.goalMonths}`}`
-        : `${inr(m.park)} parked for goals within 3 years`,
-      meter: s.goalAmt ? (m.park / s.goalAmt) * 100 : 0,
+      line: onlyPark
+        ? `${onlyPark.name.trim() || 'Goal'} · ${inr(m.park)} of ${inr(onlyPark.amount)} put aside · ${parkOnTrack ? `on schedule for month ${onlyPark.months}` : `${inr(m.parkExpected - m.park)} behind schedule`}`
+        : d.parkGoals.length
+          ? `${inr(m.park)} put aside for ${d.parkGoals.length} goals · ${parkOnTrack ? 'on schedule' : `${inr(m.parkExpected - m.park)} behind schedule`}`
+          : `${inr(m.park)} kept steady for goals within 3 years`,
+      meter: parkGoalTotal ? (m.park / parkGoalTotal) * 100 : 0,
     },
     {
       k: 'grow',
@@ -43,7 +54,7 @@ export function Portfolio() {
     },
     {
       k: 'learn',
-      line: `You've put ${inr(m.learnPut)} into Learn. Your plan was ${inr(m.learnPlan)}.`,
+      line: `You've put ${inr(m.learnPut)} into picking stocks. Your plan was ${inr(m.learnPlan)}.`,
       amber: m.learnPut > m.learnPlan,
     },
   ]
@@ -64,7 +75,7 @@ export function Portfolio() {
           ))}
         </div>
         <div className="legend three">
-          {ASSETS.map(a => <div key={a.key}><i style={{ background: a.color }} />{a.label}<b>{inr(m[a.key])}</b></div>)}
+          {ASSETS.map(a => <div key={a.key}><span><i style={{ background: a.color }} />{a.label}</span><b>{inr(m[a.key])}</b></div>)}
         </div>
       </div>
 
@@ -84,6 +95,31 @@ export function Portfolio() {
         </div>
       </section>
 
+      {goals.length > 0 && (
+        <section className="sec">
+          <h2 className="sec-title">Your goals</h2>
+          <p className="hint" style={{ marginTop: 4 }}>Progress counts what you've put in, not market value.</p>
+          <div className="status-list">
+            {goals.map(({ g, park, put }) => (
+              <div key={g.id} className="status-row" data-goal={g.id}>
+                <BucketIcon k={park ? 'park' : 'grow'} neutral />
+                <div className="status-main">
+                  <b>{g.name.trim() || 'Goal'}</b>
+                  <p>{inr(put)} of {inr(g.amount)} put aside · month {MONTHS_IN} of {g.months}</p>
+                  <Meter pct={g.amount ? (put / g.amount) * 100 : 0} color="var(--ink-2)" />
+                  <p className="goal-where">
+                    {park
+                      ? 'In Park, kept steady until you need it.'
+                      : `In Grow until month ${g.months - MOVE_BEFORE_MONTHS}, then we'll remind you to move it to Park.`}
+                  </p>
+                  {!park && <button className="link-inline" onClick={() => go('goalNear')}>See that reminder →</button>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       <section className="card sec">
         <h2 className="sec-title">Your fund vs its index</h2>
         <div className="facts">
@@ -94,7 +130,7 @@ export function Portfolio() {
       </section>
 
       <section className="card">
-        <h2 className="sec-title">Patterns in your Learn trades</h2>
+        <h2 className="sec-title">Patterns in your stock trades</h2>
         <div className="facts">
           <div><span>Trades based on a tip</span><b>{signed(LEARN_TIP)} after {inr(LEARN_TIP_CHARGES)} in charges</b></div>
           <div><span>Trades based on your own research</span><b>{signed(LEARN_RESEARCH)}</b></div>

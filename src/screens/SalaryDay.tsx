@@ -6,27 +6,30 @@ import { BUCKET_NAME, Icon, Mark, Shell } from '../components/ui'
 /* Salary day: the plan runs with zero effort. Sits between Screen 5 and the check-in. */
 export function SalaryDay() {
   const { s, d, openSheet, setLock } = useStore()
-  const goal = (s.goalName.trim() || 'goal').toLowerCase()
   const grow = s.split.grow
   const where: Record<BucketKey, string> = {
     keep: 'stays in your bank',
-    park: d.goalMonthly ? `liquid fund for your ${goal}` : 'liquid fund',
+    park: s.parkInvested >= s.split.park && s.split.park > 0
+      ? `liquid fund SIP${d.parkLabel ? ` for ${d.parkLabel}` : ''}`
+      : s.parkInvested > 0
+        ? `${inr(s.parkInvested)} to your liquid fund SIP, the rest waits in Park`
+        : 'waits in Park until you place it',
     grow: s.invested >= grow
       ? 'your index fund SIP'
       : s.invested > 0
         ? `${inr(s.invested)} to your index fund SIP, the rest waits in Grow`
         : 'waits in Grow until you place it',
-    learn: 'Learn balance',
+    learn: 'your stocks balance',
   }
   return (
     <Shell title="Salary day" footer={<button className="btn-primary" onClick={() => setLock(true)}>View my money</button>}>
-      <p className="eyebrow">Month 1 · your salary is in</p>
+      <p className="eyebrow">Next month · your salary is in</p>
       <div className="notif-card" role="status">
         <span className="notif-ic"><Mark size={26} /></span>
         <span className="notif-txt">
           <span className="notif-top"><span>groww</span><span>now</span></span>
           <b>{s.auto ? `${inr(d.surplus)} split as planned` : `${inr(d.surplus)} ready to split`}</b>
-          <span>{s.auto ? 'Your monthly plan ran on its own.' : 'Auto-apply is off for this plan.'}</span>
+          <span>{s.auto ? `${inr(d.investable)} moved into Groww. ${inr(s.split.keep)} stayed in your bank.` : 'Auto-apply is off for this plan.'}</span>
         </span>
       </div>
       <ul className="split-rows card" aria-label="Where this month's money went">
