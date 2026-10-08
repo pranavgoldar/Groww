@@ -59,10 +59,10 @@ export function Categories() {
     panel = (
       <div className="card cat" style={{ marginTop: 16 }}>
         <div className="cat-name">Stocks</div>
-        <p className="cat-what">Shares of single companies. Use only your Learn money here.</p>
+        <p className="cat-what">Shares of single companies, picked by you. Use only the money you set aside for stocks.</p>
         <Meter pct={l ? 100 : 0} color="var(--learn)" />
         <p className="hint" style={{ margin: '8px 0 12px' }}>
-          {l ? `${inr(l)} of ${inr(l)} Learn money left this month` : 'Your plan has no Learn money. You can add some on the plan screen.'}
+          {l ? `${inr(l)} of ${inr(l)} left this month for stocks` : 'Your plan has nothing set aside for stocks. You can add some on the plan screen.'}
         </p>
         <button className="link-inline" data-cat="stocks" onClick={() => explore('stocks')}>Explore stocks →</button>
       </div>

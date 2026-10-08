@@ -46,7 +46,7 @@ export function PickPlan() {
           <span className="is-label">Invest through Groww</span>
           <b id="investAmt">{inr(invest)} a month</b>
           <span className="is-note">
-            Park {inr(sp.park)}{d.goalMonthly ? ` for your ${goal}` : ''} · Grow {inr(sp.grow)} · Learn {inr(sp.learn)}
+            Park {inr(sp.park)}{d.goalMonthly ? ` for your ${goal}` : ''} · Grow {inr(sp.grow)} · Stocks {inr(sp.learn)}
           </span>
         </div>
       </div>
@@ -73,7 +73,7 @@ export function PickPlan() {
               <StackBar split={split} />
               <div className="plan-amts">
                 {KEYS.map(k => (
-                  <span key={k}><i style={{ background: `var(--${k})` }} />{BUCKET_NAME[k]}<b>{inr(split[k])}</b></span>
+                  <span key={k}><span><i style={{ background: `var(--${k})` }} />{BUCKET_NAME[k]}</span><b>{inr(split[k])}</b></span>
                 ))}
               </div>
               <p className="plan-invest">Invest {inr(investableOf(split))} a month · keep {inr(split.keep)} in the bank</p>

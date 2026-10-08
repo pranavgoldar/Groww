@@ -184,7 +184,7 @@ button:disabled { cursor: not-allowed; }
 .plan-opt-top { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
 .plan-opt-top b { font-size: 16px; font-weight: 600; }
 .plan-amts { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 10px; }
-.plan-amts span { font-size: 12px; color: var(--ink-2); line-height: 16px; }
+.plan-amts > span { font-size: 12px; color: var(--ink-2); line-height: 16px; display: flex; flex-direction: column; }
 .plan-amts i { display: inline-block; width: 7px; height: 7px; border-radius: 2px; margin-right: 4px; }
 .plan-amts b { display: block; font-size: 14px; font-weight: 600; color: var(--ink); margin-top: 2px; }
 .tag { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 16px; background: var(--accent-soft); color: var(--accent-ink); font-size: 13px; font-weight: 600; }
@@ -219,7 +219,8 @@ button:disabled { cursor: not-allowed; }
 .stack span { display: block; min-width: 2px; }
 .legend { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-top: 12px; }
 .legend.three { grid-template-columns: repeat(3, 1fr); }
-.legend div { font-size: 12px; color: var(--ink-2); line-height: 16px; }
+.legend div { font-size: 12px; color: var(--ink-2); line-height: 16px; display: flex; flex-direction: column; }
+.legend > div > b, .plan-amts > span > b { margin-top: auto; padding-top: 2px; }
 .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 5px; vertical-align: 0; }
 .legend b { display: block; font-size: 14px; color: var(--ink); font-weight: 600; margin-top: 2px; }
 .bucket { margin-top: 12px; }
@@ -249,7 +250,7 @@ button:disabled { cursor: not-allowed; }
 /* ---------- screen 4 + order ---------- */
 .keep-note { display: flex; gap: 12px; align-items: flex-start; background: var(--soft); border-radius: 14px; padding: 12px 14px; margin: 18px 0 16px; font-size: 14px; line-height: 20px; color: var(--ink-2); }
 .keep-note b { color: var(--ink); font-weight: 600; }
-.tabs { display: grid; grid-template-columns: repeat(3, 1fr); background: var(--soft); border-radius: 12px; padding: 4px; gap: 4px; }
+.tabs { display: grid; grid-template-columns: 1fr 1fr 1.7fr; background: var(--soft); border-radius: 12px; padding: 4px; gap: 4px; }
 .tab { height: 38px; border: 0; border-radius: 9px; background: transparent; font-weight: 600; font-size: 14px; color: var(--ink-2); display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
 .tab[aria-selected='true'] { background: #fff; color: var(--ink); box-shadow: 0 1px 3px rgba(16, 24, 32, 0.12); }
 .tab i, .b-dot { display: inline-block; width: 8px; height: 8px; border-radius: 2px; flex: none; }

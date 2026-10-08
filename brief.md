@@ -204,3 +204,8 @@ Asking "what is this money for?" after it has already been added is too late. Th
 7. Categories onward, as before. Salary day is now next month's.
 
 Copy says what she "could" invest rather than "should": the amount is calculated from her own numbers, and compliance requires model plans to be chosen, not assigned.
+
+## Revision: bucket names
+
+- "Learn" is renamed **Invest in stocks** (the small, capped amount for picking stocks yourself). The internal key stays `learn`.
+- Park's description now says what it is: "Kept safe for goals in the next 3 years", in low ups-and-downs options.

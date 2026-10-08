@@ -4,9 +4,9 @@ import { BUCKET_NAME, BucketIcon, Icon, Shell } from '../components/ui'
 
 const JOBS: [BucketKey, string][] = [
   ['keep', 'Your emergency cushion'],
-  ['park', 'Goals within 3 years'],
+  ['park', 'Kept safe for goals in the next 3 years'],
   ['grow', 'For 3+ years from now'],
-  ['learn', 'To try picking stocks'],
+  ['learn', 'A small amount to pick stocks yourself'],
 ]
 
 /* Screen 1: shown when someone taps Add money for the first time. Plan first, then add money. */
