@@ -93,7 +93,7 @@ function Account() {
           onClick={() => open('portfolio')} />
         <AcctRow icon={<Icon.sliders />} label="Your money plan"
           sub={s.added ? `${inr(d.surplus)} a month` : 'Not set up yet'}
-          onClick={() => open(s.added ? 'plan' : 'start')} />
+          onClick={() => open(s.added ? 'myPlan' : 'start')} />
         <AcctRow icon={<Icon.receipt />} label="All orders" onClick={() => elsewhere('All orders')} />
         <AcctRow icon={<Icon.bank />} label="Bank details" onClick={() => elsewhere('Bank details')} />
         <AcctRow icon={<Icon.headset />} label="24 x 7 Customer Support" onClick={() => elsewhere('Customer support')} />

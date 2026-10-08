@@ -1,24 +1,33 @@
-import { useStore } from '../state/store'
+import { extraIn, useStore } from '../state/store'
 import { inr } from '../lib/format'
 import { KEYS, type BucketKey } from '../lib/plan'
+import { PRODUCTS, type Placeable } from '../lib/products'
 import { BUCKET_NAME, Icon, Mark, Shell } from '../components/ui'
 
 /* Salary day: the plan runs with zero effort. Sits between Screen 5 and the check-in. */
 export function SalaryDay() {
   const { s, d, openSheet, setLock } = useStore()
-  const grow = s.split.grow
+  // SIPs repeat every month; one-time buys don't.
+  const sips = (b: Placeable) => {
+    const names = [
+      ...(b === 'grow' && s.invested ? ['index fund'] : []),
+      ...(b === 'park' && s.parkInvested ? ['liquid fund'] : []),
+      ...s.extra.filter(x => x.toward === b && PRODUCTS[x.product].sip).map(x => PRODUCTS[x.product].short),
+    ]
+    const amt = (b === 'grow' ? s.invested : b === 'park' ? s.parkInvested : 0) + extraIn(s, b, true)
+    const list = [...new Set(names)]
+    return { amt, label: `${list.length > 1 ? `${list.slice(0, -1).join(', ')} and ${list[list.length - 1]}` : list[0] ?? ''} SIP${list.length > 1 ? 's' : ''}` }
+  }
+  const sipLine = (b: 'grow' | 'park', full: string) => {
+    const x = sips(b)
+    return x.amt >= s.split[b] && s.split[b] > 0 ? full.replace('{sips}', x.label)
+      : x.amt > 0 ? `${inr(x.amt)} to your ${x.label}, the rest waits in ${b === 'grow' ? 'Grow' : 'Park'}`
+        : `waits in ${b === 'grow' ? 'Grow' : 'Park'} until you place it`
+  }
   const where: Record<BucketKey, string> = {
     keep: 'stays in your bank',
-    park: s.parkInvested >= s.split.park && s.split.park > 0
-      ? `liquid fund SIP${d.parkLabel ? ` for ${d.parkLabel}` : ''}`
-      : s.parkInvested > 0
-        ? `${inr(s.parkInvested)} to your liquid fund SIP, the rest waits in Park`
-        : 'waits in Park until you place it',
-    grow: s.invested >= grow
-      ? 'your index fund SIP'
-      : s.invested > 0
-        ? `${inr(s.invested)} to your index fund SIP, the rest waits in Grow`
-        : 'waits in Grow until you place it',
+    park: sipLine('park', `{sips}${d.parkLabel ? ` for ${d.parkLabel}` : ''}`),
+    grow: sipLine('grow', 'your {sips}'),
     learn: 'your stocks balance',
   }
   return (
@@ -29,7 +38,7 @@ export function SalaryDay() {
         <span className="notif-txt">
           <span className="notif-top"><span>groww</span><span>now</span></span>
           <b>{s.auto ? `${inr(d.surplus)} split as planned` : `${inr(d.surplus)} ready to split`}</b>
-          <span>{s.auto ? `${inr(d.investable)} moved into Groww. ${inr(s.split.keep)} stayed in your bank.` : 'Auto-apply is off for this plan.'}</span>
+          <span>{s.auto ? `${inr(d.investable)} moved into Groww. ${inr(s.split.keep)} stayed in your bank.` : 'Automatic split is off. You can turn it on in Your money plan.'}</span>
         </span>
       </div>
       <ul className="split-rows card" aria-label="Where this month's money went">

@@ -87,6 +87,28 @@ export function Shell({ title, brand, right, footer, summary, children }: {
   )
 }
 
+const SIDE_LABEL: Record<BucketKey, [string, string]> = {
+  keep: ['Keep in bank', 'Emergency fund'],
+  park: ['Park', 'Goals within 3 years'],
+  grow: ['Grow', 'Money for 3+ years'],
+  learn: [BUCKET_NAME.learn, 'Picking stocks yourself'],
+}
+
+/* The four buckets, one per row, with what each is for. */
+export function PlanRows({ split }: { split: Split }) {
+  return (
+    <div className="side-legend">
+      {KEYS.map(k => (
+        <div key={k} data-k={k}>
+          <i style={{ background: `var(--${k})` }} />
+          <span className="sl-name"><b>{SIDE_LABEL[k][0]}</b><small>{SIDE_LABEL[k][1]}</small></span>
+          <b className="sl-amt">{inr(split[k])}</b>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 /* Laptop-only side card: the plan as it stands, updating live while the user answers. */
 function PlanSummary() {
   const { s, d } = useStore()
@@ -96,12 +118,8 @@ function PlanSummary() {
       <p className="label-sm">YOUR MONEY PLAN</p>
       <div className="row-between"><span className="muted">Free each month</span><b className="side-total">{inr(d.surplus)}</b></div>
       <StackBar split={s.split} />
-      <div className="side-legend">
-        {KEYS.map(k => (
-          <div key={k}><span><i style={{ background: `var(--${k})` }} />{BUCKET_NAME[k]}</span><b>{inr(s.split[k])}</b></div>
-        ))}
-      </div>
-      <p className="tiny">Invest through Groww: {inr(d.investable)} a month. Keep stays in your bank.</p>
+      <PlanRows split={s.split} />
+      <p className="tiny">Invest through Groww: {inr(d.investable)} a month. Keep stays in your bank as your emergency fund.</p>
     </div>
   )
 }
