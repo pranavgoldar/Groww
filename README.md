@@ -33,6 +33,7 @@ Money gets a plan before it is added. The app never asks "what's this for?" afte
 8. **First-fall check-in, month 3.** Your ₹11,500 is now ₹10,500, read against your own plan. Selling stays one tap away.
 9. **My need changed.** Draw from Keep, then Park, before Grow.
 10. **Is your money doing its job? (Portfolio).** Plan vs actual, each goal's progress by what's been put in, fund vs its index, patterns in stock trades. No scores or grades.
+
 ### Buying other funds or stocks
 
 Every order shows what it **counts toward**, set by type (funds that hold shares → Grow, liquid and short-duration funds → Park, single stocks → Invest in stocks) and changeable in one tap, including **Outside my plan**. Going over what's left in a bucket never blocks a buy: a neutral line says by how much, and Portfolio shows it next to the plan. Outside-plan buys leave the plan untouched and are listed separately.
