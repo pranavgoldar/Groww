@@ -26,7 +26,7 @@ export const Icon = {
 }
 
 const BUCKET_ICON: Record<BucketKey, () => ReactNode> = { keep: Icon.bank, park: () => <Icon.clock />, grow: Icon.sprout, learn: Icon.book }
-export const BUCKET_NAME: Record<BucketKey, string> = { keep: 'Keep', park: 'Park', grow: 'Grow', learn: 'Learn' }
+export const BUCKET_NAME: Record<BucketKey, string> = { keep: 'Keep', park: 'Park', grow: 'Grow', learn: 'Invest in stocks' }
 
 export function BucketIcon({ k, neutral = false, className = 'b-ic' }: { k: BucketKey; neutral?: boolean; className?: string }) {
   const I = BUCKET_ICON[k]
@@ -117,7 +117,7 @@ export function Legend({ split }: { split: Split }) {
   return (
     <div className="legend">
       {KEYS.map(k => (
-        <div key={k}><i style={{ background: `var(--${k})` }} />{BUCKET_NAME[k]}<b>{inr(split[k])}</b></div>
+        <div key={k}><span><i style={{ background: `var(--${k})` }} />{BUCKET_NAME[k]}</span><b>{inr(split[k])}</b></div>
       ))}
     </div>
   )

@@ -43,7 +43,7 @@ export function Portfolio() {
     },
     {
       k: 'learn',
-      line: `You've put ${inr(m.learnPut)} into Learn. Your plan was ${inr(m.learnPlan)}.`,
+      line: `You've put ${inr(m.learnPut)} into picking stocks. Your plan was ${inr(m.learnPlan)}.`,
       amber: m.learnPut > m.learnPlan,
     },
   ]
@@ -94,7 +94,7 @@ export function Portfolio() {
       </section>
 
       <section className="card">
-        <h2 className="sec-title">Patterns in your Learn trades</h2>
+        <h2 className="sec-title">Patterns in your stock trades</h2>
         <div className="facts">
           <div><span>Trades based on a tip</span><b>{signed(LEARN_TIP)} after {inr(LEARN_TIP_CHARGES)} in charges</b></div>
           <div><span>Trades based on your own research</span><b>{signed(LEARN_RESEARCH)}</b></div>

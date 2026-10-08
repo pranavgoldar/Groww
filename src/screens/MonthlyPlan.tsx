@@ -23,10 +23,10 @@ export function MonthlyPlan() {
   const meaning: Record<BucketKey, string> = {
     keep: `Your emergency cushion, building toward 3 months of expenses (${inr(d.keepTarget)}). Stays in your bank.`,
     park: d.goalMonthly
-      ? `${goal} · ${inr(s.goalAmt)} in ${s.goalMonths} months. Low ups-and-downs options.`
-      : 'Money for goals within 3 years. Low ups-and-downs options.',
+      ? `${goal} · ${inr(s.goalAmt)} in ${s.goalMonths} months. Kept in low ups-and-downs options, so it's there when you need it.`
+      : "Money for goals within 3 years. Kept in low ups-and-downs options, so it's there when you need it.",
     grow: 'Money for 3+ years. Will rise and fall along the way.',
-    learn: "A small, capped amount to try picking stocks. Mistakes here won't hurt your plan.",
+    learn: "A small, capped amount for picking stocks yourself. Mistakes here won't hurt your plan.",
   }
   const why: Record<BucketKey, string> = {
     keep: {

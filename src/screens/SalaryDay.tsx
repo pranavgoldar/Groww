@@ -16,7 +16,7 @@ export function SalaryDay() {
       : s.invested > 0
         ? `${inr(s.invested)} to your index fund SIP, the rest waits in Grow`
         : 'waits in Grow until you place it',
-    learn: 'Learn balance',
+    learn: 'your stocks balance',
   }
   return (
     <Shell title="Salary day" footer={<button className="btn-primary" onClick={() => setLock(true)}>View my money</button>}>
