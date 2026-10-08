@@ -49,7 +49,7 @@ export function MonthlyPlan() {
     set(prev => ({ split: rebalance(dragBase.current ?? prev.split, k, v, total) }))
 
   const u = s.update
-  const save = () => go(u ? 'portfolio' : 'categories')
+  const save = () => go(!s.added ? 'addMoney' : u ? 'portfolio' : 'categories')
   const setAuto = (auto: boolean) => set({ auto })
 
   return (
