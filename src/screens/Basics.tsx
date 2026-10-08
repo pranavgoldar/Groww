@@ -33,9 +33,9 @@ export function Basics() {
   const needTotal = d.goalMonthly + d.growGoalNeed
   return (
     <Shell summary title="Money Plan" footer={
-      <button className="btn-primary" disabled={!ok} onClick={() => go('risk')}>Next</button>
+      <button className="btn-primary" disabled={!ok} onClick={() => go(s.added ? 'plan' : 'risk')}>{s.added ? 'Review my plan' : 'Next'}</button>
     }>
-      <p className="eyebrow">Step 1 of 3</p>
+      {!s.added && <p className="eyebrow">Step 1 of 3</p>}
       <h1 className="h1">Your money</h1>
       <p className="lead">Start with what comes in and what goes out. We'll work out what's free to invest.</p>
 
@@ -69,7 +69,7 @@ export function Basics() {
   )
 }
 
-function GoalCard({ g, n, onChange, onRemove }: { g: Goal; n: number; onChange: (p: Partial<Goal>) => void; onRemove: () => void }) {
+export function GoalCard({ g, n, onChange, onRemove }: { g: Goal; n: number; onChange: (p: Partial<Goal>) => void; onRemove: () => void }) {
   const band = HORIZONS.find(h => h.id === horizonOf(g.months))!
   const toPark = bucketOf(g) === 'park'
   const monthly = monthlyFor(g)
@@ -127,7 +127,7 @@ export function Risk() {
   const { s, go } = useStore()
   const update = useAnswer()
   return (
-    <Shell summary title="Money Plan" footer={<button className="btn-primary" onClick={() => go('pick')}>See what I could invest</button>}>
+    <Shell summary title="Money Plan" footer={<button className="btn-primary" onClick={() => go('plan')}>See what I could invest</button>}>
       <p className="eyebrow">Step 2 of 3</p>
       <h1 className="h1">How much risk your money can take</h1>
       <p className="lead">About your money, not about you. Your answers shape how much of it can take ups and downs.</p>

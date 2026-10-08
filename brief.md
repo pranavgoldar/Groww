@@ -260,3 +260,13 @@ Autopay suits people who are sure of their plan. Students who are still explorin
 - Next month follows the choice. Default: "Ready to invest ₹9,000 as planned?" with **Confirm and pay ₹9,000** or **Skip this month** (nothing taken, plan unchanged). Autopay: the two reminders, then "₹9,000 invested as planned", with Skip next month's autopay.
 - The choice lives in **Your money plan → Each month** and can be changed any time. It replaces the earlier "Split my salary automatically" toggle.
 - SIP orders say "Paying each month: You confirm it (autopay is optional)", or the autopay day and time once chosen.
+
+## Revision: a shorter flow, and goals edited in place
+
+The path to the first month went from 15 steps to 12, with three fewer screens, and the same information stopped repeating.
+
+- **What you could invest, Monthly plan and Add money are one screen.** It shows ₹15,000 free each month (₹40,000 − ₹25,000), Careful / Balanced / Growth as chips (Balanced preselected for Riya, with the careful-first note), the four sliders, and ends with **Add ₹9,000 to Groww**. The side summary card isn't repeated next to it on laptops.
+- **No Invested screen.** Confirming the index fund on the commit card returns straight to placing money, on the next bucket with money left, with a toast: "Index fund SIP set up: ₹5,500 a month. If it falls, we'll show you what you decided here." Done for now leads to Each month.
+- **The Keep note isn't repeated** on the categories screen; the plan screen says once that Keep stays in the bank as the emergency fund.
+- **Goals are edited in Your money plan.** Each goal has Edit; Add a goal (up to three) and Remove this goal sit in the same editor. A "What changes" preview shows the effect before saving: Park follows what its goals need (plus anything extra Riya chose to keep there), Grow gives or takes the difference first, then stocks, then Keep; nothing else is reset. She chooses **Save and update my plan** or **Save, keep my split**.
+- **Changing salary or expenses later** opens Your money and goes straight back to the plan ("Review my plan"), without the risk questions again.
