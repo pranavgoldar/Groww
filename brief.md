@@ -279,3 +279,10 @@ Modelled on account-opening declaration forms (one page, tap-to-select pills, pr
 - **Setup is two steps**: About your money, then What you could invest. The path to the first month is now 11 steps, down from 15.
 - **Selected answers are solid green with a white tick** everywhere (chips and goal-time options), so it's obvious what's chosen.
 - Changing salary or expenses later opens the same page, which then leads to "Review my plan".
+
+## Revision: what you do
+
+- About your money now starts with **What do you do?**: Full-time job, Part-time job, Student, Own business, Freelance or gig, Other. Riya: Full-time job.
+- It changes the wording, not the maths. The income question becomes "Monthly take-home salary" (full-time), "Monthly take-home from your job" (part-time), "Money coming in each month" with the hint "Allowance, stipend or part-time pay. Count only what comes in regularly." (student), "Average monthly income" with "use a typical month, or a little less" (own business, freelance), or "Monthly income" (other).
+- It prefills **Is your income steady?**: Yes for a full-time job, Not always for part-time, student, own business and freelance; Other leaves the answer as it was. She can change it, and that answer (not the occupation) feeds the suggested plan, so a student usually starts from Careful.
+- Outside a full-time job the app says "income" instead of "salary": the plan's free-each-month line, Your money plan, the Each month reminder and next month.

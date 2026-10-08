@@ -1,5 +1,6 @@
 import { useStore } from '../state/store'
 import { inr } from '../lib/format'
+import { incomeWord } from '../lib/plan'
 import { PAY_HOURS, REMIND_HOURS_BEFORE, hourText, ordinal, type PayMode } from '../lib/pay'
 import { Icon } from './ui'
 
@@ -10,7 +11,7 @@ export function PaySettings() {
   const { s, d, set } = useStore()
   const amt = inr(d.investable)
   const options: [PayMode, string, string][] = [
-    ['manual', "I'll confirm each month", `When your salary comes in, we'll remind you. Nothing leaves your account until you tap Confirm, and you can skip any month. Good while you're exploring.`],
+    ['manual', "I'll confirm each month", `When your ${incomeWord(s.occupation)} comes in, we'll remind you. Nothing leaves your account until you tap Confirm, and you can skip any month. Good while you're exploring.`],
     ['autopay', 'Autopay on a fixed day', `${amt} goes in on the day and time you pick. We'll notify you a day before and ${REMIND_HOURS_BEFORE} hours before, so you can skip that month.`],
   ]
   const auto = s.pay === 'autopay'

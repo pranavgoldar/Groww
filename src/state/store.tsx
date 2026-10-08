@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import {
   PERSONA, goalMonthlyOf, goalsIn, goalsLabel, investableOf, keepTargetOf, month3, needFor, planSplit, suggestPlan, surplusOf,
-  type Answers, type BucketKey, type Goal, type Month3, type PlanId, type Split,
+  type Answers, type BucketKey, type Goal, type Occupation, type Month3, type PlanId, type Split,
 } from '../lib/plan'
 import type { PayMode } from '../lib/pay'
 import { PRODUCTS, type Placeable, type ProductId, type Purchase, type Toward } from '../lib/products'
@@ -41,6 +41,7 @@ export type NeedWhen = 'week' | 'month' | 'few'
 export type SheetKind = 'sell' | 'gr1' | 'gr1Portfolio' | 'gr1Ask' | 'month' | 'account' | 'goal'
 
 export interface State extends Answers {
+  occupation: Occupation
   salary: number
   expenses: number
   goals: Goal[]
@@ -74,6 +75,7 @@ const DEFAULT_PLAN = suggestPlan(DEFAULT_ANSWERS)
 const DEFAULT_SPLIT = planSplit(DEFAULT_PLAN, surplusOf(PERSONA.salary, PERSONA.expenses), goalMonthlyOf(PERSONA.goal.amount, PERSONA.goal.months))
 
 export const DEFAULTS: State = {
+  occupation: 'salaried',
   salary: PERSONA.salary,
   expenses: PERSONA.expenses,
   editing: null,

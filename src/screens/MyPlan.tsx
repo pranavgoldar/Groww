@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useStore } from '../state/store'
 import { inr } from '../lib/format'
-import { KEYS, PLAN_NAMES, bucketOf, durationText, monthlyFor, needFor, shiftPark, type Goal } from '../lib/plan'
+import { KEYS, PLAN_NAMES, bucketOf, incomeWord, durationText, monthlyFor, needFor, shiftPark, type Goal } from '../lib/plan'
 import { BucketIcon, BUCKET_NAME, Icon, PlanRows, Shell, StackBar } from '../components/ui'
 import { PaySettings } from '../components/PaySettings'
 import { GoalCard } from './Basics'
@@ -15,11 +15,11 @@ export function MyPlan() {
   return (
     <Shell title="Your money plan" footer={<>
       <button className="btn-primary" onClick={() => go('plan')}>Edit my split</button>
-      <button className="link block" onClick={() => go('basics')}>Change salary or expenses</button>
+      <button className="link block" onClick={() => go('basics')}>Change income or expenses</button>
     </>}>
       <p className="eyebrow">Started from {PLAN_NAMES[s.plan]} · you set every number</p>
       <h1 className="h2">{inr(d.surplus)} a month</h1>
-      <p className="lead">{inr(s.salary)} salary − {inr(s.expenses)} expenses.</p>
+      <p className="lead">{inr(s.salary)} {incomeWord(s.occupation)} − {inr(s.expenses)} expenses.</p>
 
       {unplaced && (
         <div className="banner" role="status">

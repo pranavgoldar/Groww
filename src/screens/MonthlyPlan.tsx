@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { useStore } from '../state/store'
 import { inr, inrRange } from '../lib/format'
-import { KEYS, PLAN_NAMES, PLAN_ORDER, commonRanges, goalLine, goalsLabel, planSplit, rebalance, sumSplit, type BucketKey, type PlanId, type Split } from '../lib/plan'
+import { KEYS, PLAN_NAMES, PLAN_ORDER, incomeWord, commonRanges, goalLine, goalsLabel, planSplit, rebalance, sumSplit, type BucketKey, type PlanId, type Split } from '../lib/plan'
 import { BUCKET_NAME, BucketIcon, Chips, Icon, Shell, StackBar } from '../components/ui'
 
 const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1)
@@ -91,7 +91,7 @@ export function MonthlyPlan() {
       )}
       {first && <p className="eyebrow">Step 2 of 2</p>}
       <h1 className="h1">{first ? "Here's what you could invest" : `Your monthly plan: ${inr(total)}`}</h1>
-      <p className="lead"><b id="freeAmt">{inr(total)}</b> free each month: {inr(s.salary)} salary − {inr(s.expenses)} expenses.</p>
+      <p className="lead"><b id="freeAmt">{inr(total)}</b> free each month: {inr(s.salary)} {incomeWord(s.occupation)} − {inr(s.expenses)} expenses.</p>
 
       <section className="q" style={{ marginTop: 16 }}>
         <p className="q-label sm" id="planQ">Start from a model plan</p>

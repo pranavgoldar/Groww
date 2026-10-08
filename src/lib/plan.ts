@@ -124,6 +124,32 @@ export function planSplit(plan: PlanId, surplus: number, goalMonthly: number): S
 
 export type Emergency = 'yes' | 'partly' | 'notyet'
 export type Appetite = 'hold' | 'worry' | 'sell'
+/* ---------- what you do ---------- */
+// Occupation only changes wording and a prefilled answer; the plan itself still comes from the answers below.
+export type Occupation = 'salaried' | 'parttime' | 'student' | 'business' | 'freelance' | 'other'
+export const OCCUPATIONS: [Occupation, string][] = [
+  ['salaried', 'Full-time job'], ['parttime', 'Part-time job'], ['student', 'Student'],
+  ['business', 'Own business'], ['freelance', 'Freelance or gig'], ['other', 'Other'],
+]
+export const INCOME_LABEL: Record<Occupation, string> = {
+  salaried: 'Monthly take-home salary',
+  parttime: 'Monthly take-home from your job',
+  student: 'Money coming in each month',
+  business: 'Average monthly income',
+  freelance: 'Average monthly income',
+  other: 'Monthly income',
+}
+export const INCOME_HINT: Partial<Record<Occupation, string>> = {
+  parttime: 'If your hours change, use a typical month.',
+  student: 'Allowance, stipend or part-time pay. Count only what comes in regularly.',
+  business: 'If it changes month to month, use a typical month, or a little less.',
+  freelance: 'If it changes month to month, use a typical month, or a little less.',
+}
+/** "salary" for a full-time job, otherwise "income". */
+export const incomeWord = (o: Occupation) => (o === 'salaried' ? 'salary' : 'income')
+/** A sensible prefill for "Is your income steady?" (she can change it). */
+export const steadyFor = (o: Occupation): Answers['steady'] | null => (o === 'salaried' ? 'yes' : o === 'other' ? null : 'notalways')
+
 export interface Answers {
   emergency: Emergency
   dependents: 'yes' | 'no'

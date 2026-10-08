@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { extraIn, useStore } from '../state/store'
 import { inr } from '../lib/format'
-import { KEYS, type BucketKey } from '../lib/plan'
+import { KEYS, incomeWord, type BucketKey } from '../lib/plan'
 import { PRODUCTS, type Placeable } from '../lib/products'
 import { REMIND_HOURS_BEFORE, hourText, ordinal } from '../lib/pay'
 import { BUCKET_NAME, Icon, Mark, Shell } from '../components/ui'
@@ -69,7 +69,7 @@ export function SalaryDay() {
         </>
       ) : (
         <>
-          <p className="eyebrow">Next month · your salary is in</p>
+          <p className="eyebrow">Next month · your {incomeWord(s.occupation)} is in</p>
           <Notif when="now" title={`Ready to invest ${amt} as planned?`} body="Nothing leaves your account until you confirm. You can skip this month." />
         </>
       )}
