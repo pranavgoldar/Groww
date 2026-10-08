@@ -270,3 +270,12 @@ The path to the first month went from 15 steps to 12, with three fewer screens, 
 - **The Keep note isn't repeated** on the categories screen; the plan screen says once that Keep stays in the bank as the emergency fund.
 - **Goals are edited in Your money plan.** Each goal has Edit; Add a goal (up to three) and Remove this goal sit in the same editor. A "What changes" preview shows the effect before saving: Park follows what its goals need (plus anything extra Riya chose to keep there), Grow gives or takes the difference first, then stocks, then Keep; nothing else is reset. She chooses **Save and update my plan** or **Save, keep my split**.
 - **Changing salary or expenses later** opens Your money and goes straight back to the plan ("Review my plan"), without the risk questions again.
+
+## Revision: one page of quick taps
+
+Modelled on account-opening declaration forms (one page, tap-to-select pills, prefilled answers, a time estimate, one button):
+
+- **Your money and Risk are one page, "About your money"**, with "Takes about 30 seconds": salary and expenses, then the safety net (emergency savings, dependents, steady income), comfort with ups and downs, and goals. Everything is prefilled, so most people only change what's different. The button goes straight to What you could invest.
+- **Setup is two steps**: About your money, then What you could invest. The path to the first month is now 11 steps, down from 15.
+- **Selected answers are solid green with a white tick** everywhere (chips and goal-time options), so it's obvious what's chosen.
+- Changing salary or expenses later opens the same page, which then leads to "Review my plan".
