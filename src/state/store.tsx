@@ -1,0 +1,236 @@
+import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from 'react'
+import {
+  PERSONA, goalMonthlyOf, keepTargetOf, month3, planSplit, suggestPlan, surplusOf,
+  type Answers, type BucketKey, type Month3, type PlanId, type Split,
+} from '../lib/plan'
+
+export type ScreenId =
+  | 'start' | 'explore' | 'basics' | 'pick' | 'plan' | 'categories' | 'order' | 'commit'
+  | 'invested' | 'salary' | 'checkin' | 'noted' | 'need' | 'portfolio'
+
+/** Screen order: drives the switcher and the slide direction of jumps. */
+export const SCREENS: { id: ScreenId; label: string; n?: string; main: boolean }[] = [
+  { id: 'start', label: "What's this for", n: '1', main: true },
+  { id: 'explore', label: 'Explore', main: false },
+  { id: 'basics', label: 'Money basics', n: '2', main: true },
+  { id: 'pick', label: 'Pick a plan', n: '2b', main: true },
+  { id: 'plan', label: 'Monthly plan', n: '3', main: true },
+  { id: 'categories', label: 'Categories', n: '4', main: true },
+  { id: 'order', label: 'Order', main: false },
+  { id: 'commit', label: 'Commit', n: '5', main: true },
+  { id: 'invested', label: 'Invested', main: false },
+  { id: 'salary', label: 'Salary day', main: true },
+  { id: 'checkin', label: 'Check-in', n: '6', main: true },
+  { id: 'noted', label: 'Plan noted', main: false },
+  { id: 'need', label: 'Need changed', n: '7', main: true },
+  { id: 'portfolio', label: 'Portfolio', main: true },
+]
+const ORDER = SCREENS.map(s => s.id)
+const PARENT: Partial<Record<ScreenId, ScreenId>> = {
+  explore: 'start', basics: 'start', pick: 'basics', plan: 'pick', categories: 'plan', order: 'categories',
+  commit: 'order', invested: 'categories', salary: 'invested', checkin: 'salary', noted: 'checkin',
+  need: 'checkin', portfolio: 'checkin',
+}
+
+export type Commit = 'wait' | 'recheck' | 'revisit'
+export type NeedWhen = 'week' | 'month' | 'few'
+export type SheetKind = 'sell' | 'gr1' | 'gr1Portfolio' | 'month'
+
+export interface State extends Answers {
+  salary: number
+  expenses: number
+  goalName: string
+  goalAmt: number
+  goalMonths: number
+  plan: PlanId
+  split: Split
+  auto: boolean
+  tab: 'grow' | 'park' | 'learn'
+  orderAmt: number
+  invested: number // monthly SIP set up from Grow (0 = none yet)
+  commit: Commit | null
+  ff: boolean // jumped ahead to month 3
+  reflect: number[]
+  needAmt: number
+  needWhen: NeedWhen | null
+  drawn: Split // taken out on Screen 7, by bucket
+  update: { amt: number; when: NeedWhen | null; from: BucketKey[] } | null
+}
+
+const ZERO: Split = { keep: 0, park: 0, grow: 0, learn: 0 }
+const DEFAULT_ANSWERS: Answers = { emergency: 'notyet', dependents: 'no', steady: 'yes', appetite: 'worry' }
+const DEFAULT_PLAN = suggestPlan(DEFAULT_ANSWERS)
+
+const DEFAULT_SPLIT = planSplit(DEFAULT_PLAN, surplusOf(PERSONA.salary, PERSONA.expenses), goalMonthlyOf(PERSONA.goal.amount, PERSONA.goal.months))
+
+export const DEFAULTS: State = {
+  salary: PERSONA.salary,
+  expenses: PERSONA.expenses,
+  goalName: PERSONA.goal.name,
+  goalAmt: PERSONA.goal.amount,
+  goalMonths: PERSONA.goal.months,
+  ...DEFAULT_ANSWERS,
+  plan: DEFAULT_PLAN,
+  split: DEFAULT_SPLIT,
+  auto: true,
+  tab: 'grow',
+  orderAmt: DEFAULT_SPLIT.grow,
+  invested: 0,
+  commit: null,
+  ff: false,
+  reflect: [],
+  needAmt: 0,
+  needWhen: null,
+  drawn: ZERO,
+  update: null,
+}
+
+export interface Derived {
+  surplus: number
+  goalMonthly: number
+  keepTarget: number
+  suggested: PlanId
+  /** Grow money a month not yet in the SIP. */
+  available: number
+  /** SIP used for the month-3 story (falls back to the Grow amount when jumping ahead). */
+  sip: number
+  m3: Month3
+}
+
+export function derive(s: State): Derived {
+  const sip = s.invested || s.orderAmt || s.split.grow
+  return {
+    surplus: surplusOf(s.salary, s.expenses),
+    goalMonthly: goalMonthlyOf(s.goalAmt, s.goalMonths),
+    keepTarget: keepTargetOf(s.expenses),
+    suggested: suggestPlan(s),
+    available: Math.max(0, s.split.grow - s.invested),
+    sip,
+    m3: month3(s.split, sip, s.drawn),
+  }
+}
+
+type Patch = Partial<State> | ((s: State) => Partial<State>)
+type Dir = 'fwd' | 'back'
+
+interface Store {
+  s: State
+  d: Derived
+  set: (p: Patch) => void
+  nav: { current: ScreenId; dir: Dir; seq: number; instant: boolean }
+  go: (id: ScreenId) => void
+  back: () => void
+  jump: (id: ScreenId) => void
+  replaceTail: (drop: ScreenId[], push: ScreenId[], opts?: { instant?: boolean }) => void
+  reset: () => void
+  toast: { msg: string; id: number } | null
+  say: (msg: string) => void
+  sheet: SheetKind | null
+  openSheet: (k: SheetKind) => void
+  closeSheet: () => void
+  lock: boolean
+  setLock: (on: boolean) => void
+  history: () => ScreenId[]
+}
+
+const Ctx = createContext<Store | null>(null)
+
+const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+export function StoreProvider({ children }: { children: ReactNode }) {
+  const [s, setS] = useState<State>(DEFAULTS)
+  const [nav, setNav] = useState({ current: 'start' as ScreenId, dir: 'fwd' as Dir, seq: 0, instant: true })
+  const [toast, setToast] = useState<{ msg: string; id: number } | null>(null)
+  const [sheet, setSheet] = useState<SheetKind | null>(null)
+  const [lock, setLockState] = useState(false)
+  const hist = useRef<ScreenId[]>(['start'])
+  const toastTimer = useRef<number | undefined>(undefined)
+
+  const set = useCallback((p: Patch) => setS(prev => ({ ...prev, ...(typeof p === 'function' ? p(prev) : p) })), [])
+
+  const show = useCallback((id: ScreenId, dir: Dir, instant = false) => {
+    setNav(n => (n.current === id ? n : { current: id, dir, seq: n.seq + 1, instant: instant || reducedMotion() }))
+  }, [])
+
+  const setLock = useCallback((on: boolean) => {
+    if (on) { window.clearTimeout(toastTimer.current); setToast(null) }
+    setLockState(on)
+  }, [])
+
+  const say = useCallback((msg: string) => {
+    window.clearTimeout(toastTimer.current)
+    setToast({ msg, id: Date.now() })
+    toastTimer.current = window.setTimeout(() => setToast(null), 3200)
+  }, [])
+
+  const current = nav.current
+  const go = useCallback((id: ScreenId) => {
+    if (id === current) return
+    hist.current.push(id)
+    show(id, 'fwd')
+  }, [current, show])
+
+  const back = useCallback(() => {
+    if (current === 'start') {
+      say("This would return to Add money. That screen isn't part of this prototype.")
+      return
+    }
+    const h = hist.current
+    if (h.length > 1 && h[h.length - 1] === current) {
+      h.pop()
+      show(h[h.length - 1], 'back')
+    } else {
+      const p = PARENT[current] ?? 'start'
+      hist.current = [p]
+      show(p, 'back')
+    }
+  }, [current, say, show])
+
+  const jump = useCallback((id: ScreenId) => {
+    setSheet(null)
+    setLock(false)
+    // Later screens assume the SIP exists, and month-3 screens assume time has passed.
+    set(prev => {
+      const patch: Partial<State> = {}
+      if (['invested', 'salary', 'checkin', 'noted', 'need', 'portfolio'].includes(id) && !prev.invested) {
+        patch.invested = prev.orderAmt || prev.split.grow
+        patch.orderAmt = patch.invested
+      }
+      if (['checkin', 'noted', 'need', 'portfolio'].includes(id)) patch.ff = true
+      return patch
+    })
+    if (id === current) return
+    hist.current.push(id)
+    show(id, ORDER.indexOf(id) < ORDER.indexOf(current) ? 'back' : 'fwd')
+  }, [current, set, show, setLock])
+
+  const replaceTail = useCallback((drop: ScreenId[], push: ScreenId[], opts?: { instant?: boolean }) => {
+    const h = hist.current
+    while (h.length && drop.includes(h[h.length - 1])) h.pop()
+    h.push(...push)
+    show(push[push.length - 1], 'fwd', opts?.instant)
+  }, [show])
+
+  const reset = useCallback(() => {
+    setS(DEFAULTS)
+    setSheet(null)
+    setLock(false)
+    hist.current = ['start']
+    show('start', 'back')
+    say('Prototype reset to Riya’s starting numbers.')
+  }, [say, show, setLock])
+
+  const value = useMemo<Store>(() => ({
+    s, d: derive(s), set, nav, go, back, jump, replaceTail, reset, toast, say,
+    sheet, openSheet: setSheet, closeSheet: () => setSheet(null), lock, setLock,
+    history: () => hist.current.slice(),
+  }), [s, set, nav, go, back, jump, replaceTail, reset, toast, say, sheet, lock, setLock])
+
+  return <Ctx.Provider value={value}>{children}</Ctx.Provider>
+}
+
+export function useStore(): Store {
+  const v = useContext(Ctx)
+  if (!v) throw new Error('useStore outside StoreProvider')
+  return v
+}
