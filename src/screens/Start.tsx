@@ -1,10 +1,11 @@
 import { useStore } from '../state/store'
 import { Icon, Shell } from '../components/ui'
 
-const STEPS: [string, string][] = [
-  ['Your salary and expenses', 'What comes in, what goes out, and any goal coming up.'],
-  ['Your safety net and comfort with risk', 'A few quick taps. No right or wrong answers.'],
-  ['What you could invest', 'Worked out for you, with plans to pick from. Then you add money.'],
+const JOBS: [BucketKey, string][] = [
+  ['keep', 'Your emergency cushion'],
+  ['park', 'Kept safe for goals in the next 3 years'],
+  ['grow', 'For 3+ years from now'],
+  ['learn', 'A small amount to pick stocks yourself'],
 ]
 
 /* Screen 1: shown when someone taps Add money for the first time. Plan first, then add money. */

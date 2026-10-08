@@ -1,9 +1,10 @@
 import { useRef } from 'react'
 import { useStore } from '../state/store'
 import { inr, inrRange } from '../lib/format'
-import { KEYS, PLAN_NAMES, commonRanges, rebalance, sumSplit, type BucketKey, type Split } from '../lib/plan'
+import { KEYS, PLAN_NAMES, commonRanges, goalLine, goalsLabel, rebalance, sumSplit, type BucketKey, type Split } from '../lib/plan'
 import { BUCKET_NAME, BucketIcon, Icon, Legend, Shell, StackBar, Toggle } from '../components/ui'
 
+const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1)
 const WHEN_TXT = { week: ' for this week', month: ' for this month', few: ' for the next few months' } as const
 
 function listNames(keys: BucketKey[]) {
@@ -18,15 +19,18 @@ export function MonthlyPlan() {
   const ranges = commonRanges(d.surplus, d.goalMonthly)
   const dragBase = useRef<Split | null>(null)
   const sum = sumSplit(s.split)
-  const goal = s.goalName.trim() || 'Goal'
+  const parkFor = d.parkLabel || 'your goals'
+  const parkGoalText = d.parkGoals.map(g => goalLine(g, inr)).join('; ')
 
   const meaning: Record<BucketKey, string> = {
     keep: `Your emergency cushion, building toward 3 months of expenses (${inr(d.keepTarget)}). Stays in your bank.`,
     park: d.goalMonthly
-      ? `${goal} · ${inr(s.goalAmt)} in ${s.goalMonths} months. Low ups-and-downs options.`
-      : 'Money for goals within 3 years. Low ups-and-downs options.',
-    grow: 'Money for 3+ years. Will rise and fall along the way.',
-    learn: "A small, capped amount to try picking stocks. Mistakes here won't hurt your plan.",
+      ? `${parkGoalText}. Kept in low ups-and-downs options, so it's there when you need it.`
+      : "Money for goals within 3 years. Kept in low ups-and-downs options, so it's there when you need it.",
+    grow: d.growGoalNeed
+      ? `Money for 3+ years. Will rise and fall along the way. ${inr(d.growGoalNeed)} a month of it is put aside for ${goalsLabel(d.growGoals)}.`
+      : 'Money for 3+ years. Will rise and fall along the way.',
+    learn: "A small, capped amount for picking stocks yourself. Mistakes here won't hurt your plan.",
   }
   const why: Record<BucketKey, string> = {
     keep: {
@@ -35,8 +39,8 @@ export function MonthlyPlan() {
       yes: 'Many people build 3–6 months of expenses before investing much. You have this already, so Keep can be smaller.',
     }[s.emergency],
     park: d.goalMonthly
-      ? `Your ${goal.toLowerCase()} needs ${inr(s.goalAmt)} in ${s.goalMonths} months, which is ${inr(d.goalMonthly)} a month. Money needed within 3 years usually goes where prices move less.`
-      : 'Money needed within 3 years usually goes where prices move less. You have no goal set, so Park can stay empty.',
+      ? `${cap(parkFor)} need${d.parkGoals.length > 1 ? '' : 's'} ${inr(d.goalMonthly)} a month put aside. That counts only what you put in; we don't count on returns. Money needed within 3 years usually goes where prices move less.`
+      : 'Money needed within 3 years usually goes where prices move less. You have no short or medium goal, so Park can stay empty.',
     grow: {
       hold: "You said you'd hold calmly if ₹10,000 became ₹8,000. Grow is for money you can leave alone for 3+ years, through falls like that.",
       worry: "You said a fall from ₹10,000 to ₹8,000 would worry you, but you'd hold. A middle-sized Grow share leaves room to see how a fall feels.",
@@ -63,7 +67,7 @@ export function MonthlyPlan() {
           <span>
             Updated: {inr(u.amt)} set aside{u.when ? WHEN_TXT[u.when] : ''}, taken from {listNames(u.from)}.
             {' '}Keep now has {inr(d.m3.keep)} of {inr(d.keepTarget)}.
-            {u.from.includes('park') ? ` Park now has ${inr(d.m3.park)} for your ${goal.toLowerCase()}.` : ''}
+            {u.from.includes('park') ? ` Park now has ${inr(d.m3.park)} for ${parkFor}.` : ''}
             {' '}Your monthly plan stays {inr(total)}.
           </span>
         </div>
@@ -106,7 +110,7 @@ export function MonthlyPlan() {
             </div>
             <p className="band-label">
               {k === 'park' && fixed && d.goalMonthly
-                ? `Your ${goal.toLowerCase()} needs ${inr(lo)} a month`
+                ? `${cap(parkFor)} need${d.parkGoals.length > 1 ? '' : 's'} ${inr(lo)} a month put aside`
                 : `Common starting range ${inrRange(lo, hi)}`}
             </p>
             <details className="why">

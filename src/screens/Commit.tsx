@@ -68,10 +68,14 @@ export function Commit() {
 
 /* Success state after confirming on Screen 5. */
 export function Invested() {
-  const { s, d, go } = useStore()
+  const { s, d, set, go } = useStore()
   const c = commitLabel(s.commit)
+  const parkOpen = s.split.park > 0 && d.parkAvailable > 0
   return (
-    <Shell title="" footer={<button className="btn-primary" onClick={() => go('salary')}>Fast-forward to next salary day →</button>}>
+    <Shell title="" footer={<>
+      <button className="btn-primary" onClick={() => go('salary')}>Fast-forward to next salary day →</button>
+      {parkOpen && <button className="link block" onClick={() => { set({ tab: 'park' }); go('categories') }}>Set up your Park SIP too</button>}
+    </>}>
       <div className="done">
         <span className="done-ic"><Icon.check size={30} /></span>
         <h1 className="h2">Invested.</h1>
