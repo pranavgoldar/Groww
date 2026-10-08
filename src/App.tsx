@@ -1,43 +1,69 @@
-import { HashRouter, Route, Routes } from 'react-router-dom'
-import { AppShell } from './components/layout/AppShell'
-import { AskLensPage } from './pages/AskLens'
-import { ExplorePage } from './pages/Explore'
-import { HomePage } from './pages/Home'
-import { IndexDetailPage } from './pages/IndexDetail'
-import { LensPage } from './pages/Lens'
-import { LensTimelinePage } from './pages/LensTimeline'
-import { NotFound } from './pages/NotFound'
-import { OnboardingPage } from './pages/Onboarding'
-import { PortfolioPage } from './pages/Portfolio'
-import { ProfilePage } from './pages/Profile'
-import { StockDetailPage } from './pages/StockDetail'
-import { AppStateProvider } from './state/AppState'
-import { GlossaryProvider } from './state/Glossary'
+import { useLayoutEffect } from 'react'
+import { StoreProvider, SCREENS, useStore } from './state/store'
+import { Device } from './components/Device'
 
+const DEVICE_W = 414
+const DEVICE_H = 868
+
+/* Scale the device down when the window is too small to show it with the switcher. */
+function useFitDevice() {
+  useLayoutEffect(() => {
+    const fit = () => {
+      const device = document.getElementById('device')
+      const wrap = document.getElementById('deviceWrap')
+      const below = document.getElementById('below')
+      if (!device || !wrap || !below) return
+      const availH = window.innerHeight - below.offsetHeight - 48
+      const availW = window.innerWidth - 24
+      const s = Math.max(0.5, Math.min(1, availH / DEVICE_H, availW / DEVICE_W))
+      device.style.transform = s < 1 ? `scale(${s})` : ''
+      wrap.style.width = `${DEVICE_W * s}px`
+      wrap.style.height = `${DEVICE_H * s}px`
+    }
+    fit()
+    window.addEventListener('resize', fit)
+    document.fonts?.ready.then(fit)
+    return () => window.removeEventListener('resize', fit)
+  }, [])
+}
+
+function Switcher() {
+  const { nav, jump, reset } = useStore()
+  const chip = (s: (typeof SCREENS)[number]) => (
+    <button key={s.id} className={'sw' + (s.main ? '' : ' support')} data-screen={s.id}
+      aria-current={nav.current === s.id} onClick={() => jump(s.id)}>
+      {s.main && <span className={'n' + (s.n ? '' : ' dot')}>{s.n ?? ''}</span>}
+      {s.label}
+    </button>
+  )
+  return (
+    <div id="below">
+      <nav className="switcher" aria-label="Jump to a screen">
+        <div className="sw-group" id="swMain"><span className="sw-label">Main screens</span>{SCREENS.filter(s => s.main).map(chip)}</div>
+        <div className="sw-group" id="swSupport"><span className="sw-label">Supporting</span>{SCREENS.filter(s => !s.main).map(chip)}</div>
+      </nav>
+      <div className="below-foot">
+        <span>Money Plan prototype · Riya, 22, plans ₹15,000 a month</span>
+        <button className="reset" onClick={reset}>Reset prototype</button>
+      </div>
+    </div>
+  )
+}
+
+function Stage() {
+  useFitDevice()
+  return (
+    <div className="stage">
+      <div id="deviceWrap"><Device /></div>
+      <Switcher />
+    </div>
+  )
+}
 
 export default function App() {
   return (
-    <AppStateProvider>
-      <GlossaryProvider>
-        {/* Hash routing keeps the static build portable (any host, any sub-path). */}
-        <HashRouter>
-          <Routes>
-            <Route path="/welcome" element={<OnboardingPage />} />
-            <Route element={<AppShell />}>
-              <Route index element={<HomePage />} />
-              <Route path="explore" element={<ExplorePage />} />
-              <Route path="portfolio" element={<PortfolioPage />} />
-              <Route path="profile" element={<ProfilePage />} />
-              <Route path="stock/:id" element={<StockDetailPage />} />
-              <Route path="stock/:id/lens" element={<LensPage />} />
-              <Route path="stock/:id/lens/timeline" element={<LensTimelinePage />} />
-              <Route path="stock/:id/ask" element={<AskLensPage />} />
-              <Route path="index/:id" element={<IndexDetailPage />} />
-              <Route path="*" element={<NotFound />} />
-            </Route>
-          </Routes>
-        </HashRouter>
-      </GlossaryProvider>
-    </AppStateProvider>
+    <StoreProvider>
+      <Stage />
+    </StoreProvider>
   )
 }
