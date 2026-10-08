@@ -103,9 +103,6 @@ export function Categories() {
       )}
       <h1 className="h2">Match money to when you'll need it</h1>
       <p className="lead">These are categories, not picks, in no particular order.</p>
-      <div className="keep-note">
-        <div><b><Dot k="keep" /> Keep · {inr(s.split.keep)} a month</b><br />Keep stays in your bank. Nothing to buy here.</div>
-      </div>
       <div className="tabs" role="tablist" aria-label="Bucket">
         {(['grow', 'park', 'learn'] as Tab[]).map(k => (
           <button key={k} className="tab" role="tab" aria-selected={tab === k} data-tab={k} onClick={() => set({ tab: k })}>

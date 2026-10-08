@@ -1,8 +1,8 @@
 import { useRef } from 'react'
 import { useStore } from '../state/store'
 import { inr, inrRange } from '../lib/format'
-import { KEYS, PLAN_NAMES, commonRanges, goalLine, goalsLabel, rebalance, sumSplit, type BucketKey, type Split } from '../lib/plan'
-import { BUCKET_NAME, BucketIcon, Icon, Legend, Shell, StackBar } from '../components/ui'
+import { KEYS, PLAN_NAMES, PLAN_ORDER, commonRanges, goalLine, goalsLabel, planSplit, rebalance, sumSplit, type BucketKey, type PlanId, type Split } from '../lib/plan'
+import { BUCKET_NAME, BucketIcon, Chips, Icon, Shell, StackBar } from '../components/ui'
 
 const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1)
 const WHEN_TXT = { week: ' for this week', month: ' for this month', few: ' for the next few months' } as const
@@ -12,7 +12,10 @@ function listNames(keys: BucketKey[]) {
   return names.length > 1 ? `${names.slice(0, -1).join(', ')} and ${names[names.length - 1]}` : names[0]
 }
 
-/* Screen 3: the monthly plan editor. Sliders always add up to the monthly surplus. */
+const PLAN_OPTIONS: [PlanId, string][] = PLAN_ORDER.map(p => [p, PLAN_NAMES[p]])
+
+/* Step 3, and the plan editor afterwards: what she could invest, from a model plan she picks, fine-tuned with sliders
+   that always add up to the monthly surplus. The first time through, it ends by adding the money. */
 export function MonthlyPlan() {
   const { s, d, set, go, back, history } = useStore()
   const total = d.surplus
@@ -53,9 +56,17 @@ export function MonthlyPlan() {
     set(prev => ({ split: rebalance(dragBase.current ?? prev.split, k, v, total) }))
 
   const u = s.update
-  // First time: on to Add money. After that, back to the page the plan was opened from.
+  const first = !s.added
+  const choose = (p: PlanId) => set(prev => {
+    const split = planSplit(p, d.surplus, d.goalMonthly)
+    return { plan: p, split, orderAmt: prev.invested ? prev.orderAmt : split.grow }
+  })
+  const addMoney = () => {
+    set({ added: d.investable })
+    go('categories')
+  }
+  // After the first time: back to the page the plan was opened from.
   const save = () => {
-    if (!s.added) return go('addMoney')
     if (u) return go('portfolio')
     const h = history()
     if (['myPlan', 'portfolio'].includes(h[h.length - 2])) back()
@@ -63,9 +74,10 @@ export function MonthlyPlan() {
   }
 
   return (
-    <Shell summary title="Monthly plan" footer={<>
-      <button className="btn-primary" onClick={save}>Save my monthly plan</button>
-    </>}>
+    <Shell title={first ? 'Money Plan' : 'Monthly plan'} footer={first ? <>
+      <p className="ftr-hint">Paid from your bank via UPI. Keep's {inr(s.split.keep)} stays in your bank.</p>
+      <button className="btn-primary" onClick={addMoney}>Add {inr(d.investable)} to Groww</button>
+    </> : <button className="btn-primary" onClick={save}>Save my monthly plan</button>}>
       {u && (
         <div className="banner" role="status" id="updateBanner">
           <Icon.check />
@@ -77,19 +89,34 @@ export function MonthlyPlan() {
           </span>
         </div>
       )}
-      <h1 className="h2" style={{ margin: '4px 0 12px' }}>Your monthly plan: {inr(total)}</h1>
-      <div className="owner"><Icon.sliders /><span>You set these numbers. We've shown common starting ranges.</span></div>
+      {first && <p className="eyebrow">Step 3 of 3</p>}
+      <h1 className="h1">{first ? "Here's what you could invest" : `Your monthly plan: ${inr(total)}`}</h1>
+      <p className="lead"><b id="freeAmt">{inr(total)}</b> free each month: {inr(s.salary)} salary − {inr(s.expenses)} expenses.</p>
+
+      <section className="q" style={{ marginTop: 16 }}>
+        <p className="q-label sm" id="planQ">Start from a model plan</p>
+        <Chips options={PLAN_OPTIONS} value={s.plan} labelledBy="planQ" className="chip-row seg3" onChange={choose} />
+        <p className="hint" style={{ marginTop: 8 }}>
+          People with answers like yours often start with <b>{PLAN_NAMES[d.suggested]}</b>. When your safety and comfort answers differ, we start from the more careful one.
+        </p>
+      </section>
+
       <div className="card plan-card">
         <div className="plan-top">
-          <span className="plan-sub">Started from {PLAN_NAMES[s.plan]}</span>
+          <span className="plan-sub">Invest through Groww: <b id="investAmt">{inr(d.investable)} a month</b></span>
           <span className={'sum-ok' + (sum === total ? '' : ' off')} id="sumOk">
             {sum === total ? <><Icon.check />Adds up to {inr(sum)}</> : <>Adds up to {inr(sum)} of {inr(total)}</>}
           </span>
         </div>
         <StackBar split={s.split} />
-        <Legend split={s.split} />
+        <p className="hint" style={{ marginTop: 10 }}>
+          Keep's <b id="keepAmt">{inr(s.split.keep)}</b> stays in your bank as your emergency fund. Goal amounts count only what you put in; we don't count on returns.
+        </p>
       </div>
-
+      {d.growGoalNeed > s.split.grow && (
+        <p className="amt-msg"><span>Your long-term goals need {inr(d.growGoalNeed)} a month put aside; Grow is {inr(s.split.grow)}. You could move more into Grow, or give a goal more time.</span></p>
+      )}
+      <div className="owner"><Icon.sliders /><span>You set these numbers. We've shown common starting ranges.</span></div>
       {KEYS.map(k => {
         const v = s.split[k]
         const [lo, hi] = ranges[k]
@@ -125,6 +152,9 @@ export function MonthlyPlan() {
           </div>
         )
       })}
+      <p className="tiny" style={{ marginTop: 14 }}>
+        General model plans for education, not a personal recommendation. You choose and can change any number. [PENDING COMPLIANCE REVIEW]
+      </p>
     </Shell>
   )
 }

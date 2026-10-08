@@ -52,6 +52,28 @@ export const monthlyFor = (g: Pick<Goal, 'amount' | 'months'>) => goalMonthlyOf(
 export const goalsIn = (goals: Goal[], bucket: 'park' | 'grow') => goals.filter(g => g.amount > 0 && g.months > 0 && bucketOf(g) === bucket)
 export const needFor = (goals: Goal[], bucket: 'park' | 'grow') => goalsIn(goals, bucket).reduce((a, g) => a + monthlyFor(g), 0)
 
+/**
+ * When a goal changes, move only what Park needs: more for the goal comes from Grow, then stocks, then Keep;
+ * less goes back to Grow. Every other number stays as the user set it. `short` is what couldn't be found.
+ */
+export function shiftPark(split: Split, delta: number): { split: Split; short: number } {
+  const next = { ...split }
+  if (delta <= 0) {
+    const freed = Math.min(-delta, next.park)
+    next.park -= freed
+    next.grow += freed
+    return { split: next, short: 0 }
+  }
+  let need = delta
+  for (const k of ['grow', 'learn', 'keep'] as const) {
+    const take = Math.min(next[k], need)
+    next[k] -= take
+    need -= take
+  }
+  next.park += delta - need
+  return { split: next, short: need }
+}
+
 export const durationText = (months: number) =>
   months % 12 === 0 ? `${months / 12} year${months === 12 ? '' : 's'}` : `${months} month${months === 1 ? '' : 's'}`
 

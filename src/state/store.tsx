@@ -7,8 +7,8 @@ import type { PayMode } from '../lib/pay'
 import { PRODUCTS, type Placeable, type ProductId, type Purchase, type Toward } from '../lib/products'
 
 export type ScreenId =
-  | 'start' | 'explore' | 'basics' | 'risk' | 'pick' | 'plan' | 'addMoney' | 'categories' | 'order'
-  | 'commit' | 'invested' | 'payMode' | 'salary' | 'checkin' | 'noted' | 'need' | 'portfolio' | 'goalNear' | 'myPlan'
+  | 'start' | 'explore' | 'basics' | 'risk' | 'plan' | 'categories' | 'order'
+  | 'commit' | 'payMode' | 'salary' | 'checkin' | 'noted' | 'need' | 'portfolio' | 'goalNear' | 'myPlan'
 
 /** Screen order: drives the switcher and the slide direction of jumps. */
 export const SCREENS: { id: ScreenId; label: string; n?: string; main: boolean }[] = [
@@ -16,13 +16,10 @@ export const SCREENS: { id: ScreenId; label: string; n?: string; main: boolean }
   { id: 'explore', label: 'Explore', main: false },
   { id: 'basics', label: 'Your money', n: '2', main: true },
   { id: 'risk', label: 'Risk', n: '3', main: true },
-  { id: 'pick', label: 'What to invest', n: '4', main: true },
   { id: 'plan', label: 'Monthly plan', n: '5', main: true },
-  { id: 'addMoney', label: 'Add money', n: '6', main: true },
   { id: 'categories', label: 'Categories', n: '7', main: true },
   { id: 'order', label: 'Order', main: false },
   { id: 'commit', label: 'Commit', n: '8', main: true },
-  { id: 'invested', label: 'Invested', main: false },
   { id: 'payMode', label: 'Each month', main: false },
   { id: 'salary', label: 'Salary day', n: '9', main: true },
   { id: 'checkin', label: 'Check-in', n: '10', main: true },
@@ -34,20 +31,21 @@ export const SCREENS: { id: ScreenId; label: string; n?: string; main: boolean }
 ]
 const ORDER = SCREENS.map(s => s.id)
 const PARENT: Partial<Record<ScreenId, ScreenId>> = {
-  explore: 'start', basics: 'start', risk: 'basics', pick: 'risk', plan: 'pick', addMoney: 'plan',
-  categories: 'addMoney', order: 'categories',
-  commit: 'order', invested: 'categories', payMode: 'categories', salary: 'payMode', checkin: 'salary', noted: 'checkin',
+  explore: 'start', basics: 'start', risk: 'basics', plan: 'risk',
+  categories: 'plan', order: 'categories',
+  commit: 'order', payMode: 'categories', salary: 'payMode', checkin: 'salary', noted: 'checkin',
   need: 'checkin', portfolio: 'checkin', goalNear: 'portfolio', myPlan: 'categories',
 }
 
 export type Commit = 'wait' | 'recheck' | 'revisit'
 export type NeedWhen = 'week' | 'month' | 'few'
-export type SheetKind = 'sell' | 'gr1' | 'gr1Portfolio' | 'gr1Ask' | 'month' | 'account'
+export type SheetKind = 'sell' | 'gr1' | 'gr1Portfolio' | 'gr1Ask' | 'month' | 'account' | 'goal'
 
 export interface State extends Answers {
   salary: number
   expenses: number
   goals: Goal[]
+  editing: string | null // goal open in the goal editor ('new' for a new one)
   plan: PlanId
   split: Split
   pay: PayMode // confirm each month (default), or autopay on a fixed day
@@ -79,6 +77,7 @@ const DEFAULT_SPLIT = planSplit(DEFAULT_PLAN, surplusOf(PERSONA.salary, PERSONA.
 export const DEFAULTS: State = {
   salary: PERSONA.salary,
   expenses: PERSONA.expenses,
+  editing: null,
   goals: [{ id: 'g1', name: PERSONA.goal.name, amount: PERSONA.goal.amount, months: PERSONA.goal.months, mode: 'exact', unit: 'months' }],
   ...DEFAULT_ANSWERS,
   plan: DEFAULT_PLAN,
@@ -243,7 +242,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
       const patch: Partial<State> = {}
       if (ORDER.indexOf(id) >= ORDER.indexOf('categories') && !prev.added) patch.added = investableOf(prev.split)
       if (ORDER.indexOf(id) >= ORDER.indexOf('salary') && !prev.parkInvested) patch.parkInvested = prev.split.park
-      if (['invested', 'salary', 'checkin', 'noted', 'need', 'portfolio'].includes(id) && !prev.invested) {
+      if (['salary', 'checkin', 'noted', 'need', 'portfolio'].includes(id) && !prev.invested) {
         patch.invested = (prev.orderId === 'largecap' && prev.orderAmt) || prev.split.grow
         patch.orderAmt = patch.invested
         patch.orderId = 'largecap'

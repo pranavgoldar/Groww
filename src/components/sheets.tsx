@@ -3,6 +3,7 @@ import { useStore, type ScreenId, type SheetKind } from '../state/store'
 import { inr } from '../lib/format'
 import { fallPct } from '../lib/plan'
 import { Icon } from './ui'
+import { GoalSheet } from '../screens/MyPlan'
 
 function Sell() {
   const { s, d, closeSheet, say } = useStore()
@@ -108,6 +109,7 @@ function Account() {
 
 export const SHEETS: Record<SheetKind, FC> = {
   account: Account,
+  goal: GoalSheet,
   sell: Sell,
   gr1: function GR1Fall() {
     const { d } = useStore()

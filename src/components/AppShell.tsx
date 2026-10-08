@@ -88,9 +88,11 @@ function SheetHost() {
   const { sheet, closeSheet } = useStore()
   const [kind, setKind] = useState<SheetKind | null>(null)
   const [open, setOpen] = useState(false)
+  const [seq, setSeq] = useState(0) // each opening gets a fresh sheet, even mid-close
   useEffect(() => {
     if (sheet) {
       setKind(sheet)
+      setSeq(n => n + 1)
       const r = requestAnimationFrame(() => requestAnimationFrame(() => setOpen(true)))
       return () => cancelAnimationFrame(r)
     }
@@ -110,7 +112,7 @@ function SheetHost() {
       <div className="scrim" onClick={closeSheet} />
       <div className="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
         <div className="grabber" />
-        <Body />
+        <Body key={seq} />
       </div>
     </div>
   )
