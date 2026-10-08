@@ -29,7 +29,7 @@ export function SalaryDay() {
         <span className="notif-txt">
           <span className="notif-top"><span>groww</span><span>now</span></span>
           <b>{s.auto ? `${inr(d.surplus)} split as planned` : `${inr(d.surplus)} ready to split`}</b>
-          <span>{s.auto ? `${inr(d.investable)} moved into Groww. ${inr(s.split.keep)} stayed in your bank.` : 'Auto-apply is off for this plan.'}</span>
+          <span>{s.auto ? `${inr(d.investable)} moved into Groww. ${inr(s.split.keep)} stayed in your bank.` : 'Automatic split is off. You can turn it on in Your money plan.'}</span>
         </span>
       </div>
       <ul className="split-rows card" aria-label="Where this month's money went">

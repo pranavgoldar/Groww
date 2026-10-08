@@ -27,7 +27,7 @@ Money gets a plan before it is added. The app never asks "what's this for?" afte
 2. **Your money.** Salary, expenses and goals. ₹40,000 − ₹25,000 leaves ₹15,000 a month to plan. Each goal has its own time: Short (under 1 year), Medium (1–3 years), Long (3+ years) or an exact number of months or years. Short and medium goals are kept steady in Park; long ones sit in Grow. Up to three goals.
 3. **Risk.** Safety questions (capacity) and one comfort question (appetite).
 4. **What you could invest.** ₹15,000 free each month: keep ₹6,000 in the bank as the cushion, invest ₹9,000 a month through Groww. Careful, Balanced or Growth are rules-based model plans the user chooses; when safety and comfort disagree, it starts from the more careful one.
-5. **Monthly plan.** Four sliders that always add up to ₹15,000, with common starting ranges and an auto-apply toggle.
+5. **Monthly plan.** Four sliders that always add up to ₹15,000, with common starting ranges.
 6. **Add money.** Prefilled with the plan's ₹9,000 (Park ₹3,000 + Grow ₹5,500 + Invest in stocks ₹500). Keep stays in the bank.
 7. **Categories.** Unranked categories per bucket. Liquid funds opens a ₹3,000 Park SIP; Large-cap index funds opens a ₹5,500 Grow SIP. Tabs tick once their money is placed.
 8. **Commit card.** Before the first purchase: how bad years have looked, and what you'll do if it falls.
@@ -40,7 +40,9 @@ Money gets a plan before it is added. The app never asks "what's this for?" afte
 
 Goal maths counts only what is put in (₹60,000 ÷ 20 months = ₹3,000 a month), and the app says so: "We don't count on returns; anything extra is a bonus." Time decides where goal money waits, and 12 months before a long-term goal the app suggests moving it from Grow to Park (see the **Goal reminder** screen).
 
-Supporting screens: Explore, Order, Invested, Plan noted, Goal reminder.
+Supporting screens: Explore, Order, Invested, Plan noted, Goal reminder, Your money plan.
+
+**Your money plan** lives under the profile (avatar menu, or Money Plan in the top bar once set up). It shows the split, each goal, and the salary-day setting (split automatically, or confirm with one tap), with Edit my split and Change salary, expenses or goals. Saving an edit returns to the page it was opened from.
 
 ## Layout
 

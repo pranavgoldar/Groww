@@ -9,7 +9,7 @@ import { Icon, Mark } from './ui'
    Money Plan sits where Groww shows the current section; Explore and Holdings open here, the rest belong to the real app. */
 function TopNav() {
   const { s, nav, go, say, sheet, openSheet } = useStore()
-  const planHome: ScreenId = s.ff ? 'plan' : s.added ? 'categories' : 'start'
+  const planHome: ScreenId = s.ff ? 'myPlan' : s.added ? 'categories' : 'start'
   const active = nav.current === 'explore' ? 'explore' : nav.current === 'portfolio' ? 'holdings' : 'plan'
   const elsewhere = (what: string) => say(`${what} would open here. It isn't part of this prototype.`)
   const links: [string, string, () => void][] = [

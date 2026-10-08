@@ -6,7 +6,7 @@ import {
 
 export type ScreenId =
   | 'start' | 'explore' | 'basics' | 'risk' | 'pick' | 'plan' | 'addMoney' | 'categories' | 'order'
-  | 'commit' | 'invested' | 'salary' | 'checkin' | 'noted' | 'need' | 'portfolio' | 'goalNear'
+  | 'commit' | 'invested' | 'salary' | 'checkin' | 'noted' | 'need' | 'portfolio' | 'goalNear' | 'myPlan'
 
 /** Screen order: drives the switcher and the slide direction of jumps. */
 export const SCREENS: { id: ScreenId; label: string; n?: string; main: boolean }[] = [
@@ -27,13 +27,14 @@ export const SCREENS: { id: ScreenId; label: string; n?: string; main: boolean }
   { id: 'need', label: 'Need changed', n: '11', main: true },
   { id: 'portfolio', label: 'Portfolio', n: '12', main: true },
   { id: 'goalNear', label: 'Goal reminder', main: false },
+  { id: 'myPlan', label: 'Your money plan', main: false },
 ]
 const ORDER = SCREENS.map(s => s.id)
 const PARENT: Partial<Record<ScreenId, ScreenId>> = {
   explore: 'start', basics: 'start', risk: 'basics', pick: 'risk', plan: 'pick', addMoney: 'plan',
   categories: 'addMoney', order: 'categories',
   commit: 'order', invested: 'categories', salary: 'invested', checkin: 'salary', noted: 'checkin',
-  need: 'checkin', portfolio: 'checkin', goalNear: 'portfolio',
+  need: 'checkin', portfolio: 'checkin', goalNear: 'portfolio', myPlan: 'categories',
 }
 
 export type Commit = 'wait' | 'recheck' | 'revisit'

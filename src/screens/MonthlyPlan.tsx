@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { useStore } from '../state/store'
 import { inr, inrRange } from '../lib/format'
 import { KEYS, PLAN_NAMES, commonRanges, goalLine, goalsLabel, rebalance, sumSplit, type BucketKey, type Split } from '../lib/plan'
-import { BUCKET_NAME, BucketIcon, Icon, Legend, Shell, StackBar, Toggle } from '../components/ui'
+import { BUCKET_NAME, BucketIcon, Icon, Legend, Shell, StackBar } from '../components/ui'
 
 const cap = (t: string) => t.charAt(0).toUpperCase() + t.slice(1)
 const WHEN_TXT = { week: ' for this week', month: ' for this month', few: ' for the next few months' } as const
@@ -14,7 +14,7 @@ function listNames(keys: BucketKey[]) {
 
 /* Screen 3: the monthly plan editor. Sliders always add up to the monthly surplus. */
 export function MonthlyPlan() {
-  const { s, d, set, go } = useStore()
+  const { s, d, set, go, back, history } = useStore()
   const total = d.surplus
   const ranges = commonRanges(d.surplus, d.goalMonthly)
   const dragBase = useRef<Split | null>(null)
@@ -53,13 +53,17 @@ export function MonthlyPlan() {
     set(prev => ({ split: rebalance(dragBase.current ?? prev.split, k, v, total) }))
 
   const u = s.update
-  // At month 3 the plan is edited from the portfolio, so saving goes back there.
-  const save = () => go(!s.added ? 'addMoney' : u || s.ff ? 'portfolio' : 'categories')
-  const setAuto = (auto: boolean) => set({ auto })
+  // First time: on to Add money. After that, back to the page the plan was opened from.
+  const save = () => {
+    if (!s.added) return go('addMoney')
+    if (u) return go('portfolio')
+    const h = history()
+    if (['myPlan', 'portfolio'].includes(h[h.length - 2])) back()
+    else go('myPlan')
+  }
 
   return (
     <Shell summary title="Monthly plan" footer={<>
-      <Toggle on={s.auto} onChange={setAuto} label="Apply this plan automatically every time my salary comes in" />
       <button className="btn-primary" onClick={save}>Save my monthly plan</button>
     </>}>
       {u && (

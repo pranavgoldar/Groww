@@ -236,3 +236,9 @@ Copy says what she "could" invest rather than "should": the amount is calculated
 - Laptops get Groww's top bar: logo, Money Plan (the current section, in bold), Stocks, Explore, Holdings, Positions, Orders, Watchlist, then "Search Groww..." with Ctrl+K, the GR 1 icon, notifications and the avatar.
 - Holdings opens the portfolio and is highlighted there; Explore opens Explore; Money Plan returns to the plan (the monthly plan editor from month 3, where saving goes back to the portfolio). The GR 1 icon opens GR 1. Stocks, Positions, Orders, Watchlist, search, Ctrl+K and notifications show a short note.
 - The page widens to 1240px to line up with the bar. Below 1240px search shrinks to an icon; below 960px Positions and Watchlist are hidden so the bar never overflows.
+
+## Revision: Your money plan, under the profile
+
+- The "Apply this plan automatically every time my salary comes in" toggle is gone from the monthly plan screen. It's a standing setting, not part of deciding the split, so first-time users no longer meet it during setup. It stays on by default, since the SIPs they start already run on salary day.
+- Once a plan exists, **Your money plan** (avatar menu, or Money Plan in the top bar) shows the monthly split with Keep labelled as the emergency fund, each goal and where it waits, and a **Salary day** card: "Split my salary automatically", or turn it off to confirm each month's split with one tap. Edit my split opens the sliders; Change salary, expenses or goals reopens the first steps.
+- Salary day reflects the setting, and points to Your money plan when it's off.
