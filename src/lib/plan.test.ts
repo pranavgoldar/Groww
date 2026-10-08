@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
-  KEYS, PERSONA, badRange, commonRanges, computeDraw, fallPct, goalMonthlyOf, keepTargetOf, month3, planSplit,
+  KEYS, PERSONA, badRange, investableOf, commonRanges, computeDraw, fallPct, goalMonthlyOf, keepTargetOf, month3, planSplit,
   rebalance, suggestPlan, sumSplit, surplusOf, type Split,
 } from './plan'
 
@@ -21,6 +21,11 @@ describe('model plans', () => {
     expect(planSplit('careful', surplus, goalMonthly)).toEqual({ keep: 7500, park: 3000, grow: 4500, learn: 0 })
     expect(planSplit('balanced', surplus, goalMonthly)).toEqual({ keep: 6000, park: 3000, grow: 5500, learn: 500 })
     expect(planSplit('growth', surplus, goalMonthly)).toEqual({ keep: 5000, park: 3000, grow: 6000, learn: 1000 })
+  })
+  it('invest through Groww everything except Keep: ₹7,500 / ₹9,000 / ₹10,000', () => {
+    expect(investableOf(planSplit('careful', surplus, goalMonthly))).toBe(7500)
+    expect(investableOf(planSplit('balanced', surplus, goalMonthly))).toBe(9000)
+    expect(investableOf(planSplit('growth', surplus, goalMonthly))).toBe(10000)
   })
   it('always add up to the surplus', () => {
     for (let i = 0; i < 2000; i++) {

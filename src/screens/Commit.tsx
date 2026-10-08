@@ -71,7 +71,7 @@ export function Invested() {
   const { s, d, go } = useStore()
   const c = commitLabel(s.commit)
   return (
-    <Shell title="" footer={<button className="btn-primary" onClick={() => go('salary')}>Fast-forward to salary day →</button>}>
+    <Shell title="" footer={<button className="btn-primary" onClick={() => go('salary')}>Fast-forward to next salary day →</button>}>
       <div className="done">
         <span className="done-ic"><Icon.check size={30} /></span>
         <h1 className="h2">Invested.</h1>
@@ -80,14 +80,14 @@ export function Invested() {
       <div className="card">
         <div className="kv"><span>Fund</span><b>Large-cap index fund (sample)</b></div>
         <div className="kv"><span>Every salary day</span><b>{inr(s.invested || d.sip)} from Grow</b></div>
-        <div className="kv"><span>Starts</span><b>Your next salary day</b></div>
+        <div className="kv"><span>Starts</span><b>{s.added ? 'Today, from the money you added' : 'Your next salary day'}</b></div>
         <div className="kv"><span>Still in Grow to place</span><b>{inr(d.available)} a month</b></div>
       </div>
       <div className="card soft">
         <p className="label-sm">YOUR PLAN IF IT FALLS</p>
         <p className="said">{c ?? "You didn't pick an answer."}</p>
       </div>
-      <p className="tiny center" style={{ marginTop: 18 }}>This prototype can jump ahead to your next salary day.</p>
+      <p className="tiny center" style={{ marginTop: 18 }}>This prototype can jump ahead to next month's salary day.</p>
     </Shell>
   )
 }

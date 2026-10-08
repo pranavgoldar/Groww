@@ -21,16 +21,20 @@ Riya, 22. Salary ₹40,000 a month, expenses ₹25,000 (rent ₹12,000 + living 
 
 ## The flow
 
-1. **What's this money for?** ₹15,000 added; give it a job.
-2. **Your money basics.** Salary, expenses, a goal, safety questions (capacity) and one comfort question (appetite).
-3. **Pick a starting plan (2b).** Careful, Balanced or Growth, as rules-based templates the user chooses. When safety and comfort disagree, it starts from the more careful one.
-4. **Your monthly plan (3).** Four sliders that always add up to ₹15,000, with common starting ranges and an auto-apply toggle.
-5. **Categories (4).** Unranked categories per bucket. Large-cap index funds opens a mock SIP order.
-6. **Commit card (5).** Before the first purchase: how bad years have looked, and what you'll do if it falls.
-7. **Salary day.** ₹15,000 split as planned. No action needed.
-8. **First-fall check-in (6), month 3.** Your ₹11,500 is now ₹10,500, read against your own plan. Selling stays one tap away.
-9. **My need changed (7).** Draw from Keep, then Park, before Grow.
-10. **Is your money doing its job? (Portfolio).** Plan vs actual, fund vs its index, patterns in Learn trades. No scores or grades.
+Money gets a plan before it is added. The app never asks "what's this for?" after the money is already in.
+
+1. **Before you add money.** Tapping Add money for the first time opens this: "Let's work out how much to invest."
+2. **Your money.** Salary, expenses and a goal. ₹40,000 − ₹25,000 leaves ₹15,000 a month to plan.
+3. **Risk.** Safety questions (capacity) and one comfort question (appetite).
+4. **What you could invest.** ₹15,000 free each month: keep ₹6,000 in the bank as the cushion, invest ₹9,000 a month through Groww. Careful, Balanced or Growth are rules-based model plans the user chooses; when safety and comfort disagree, it starts from the more careful one.
+5. **Monthly plan.** Four sliders that always add up to ₹15,000, with common starting ranges and an auto-apply toggle.
+6. **Add money.** Prefilled with the plan's ₹9,000 (Park ₹3,000 + Grow ₹5,500 + Learn ₹500). Keep stays in the bank.
+7. **Categories.** Unranked categories per bucket. Large-cap index funds opens a mock SIP order.
+8. **Commit card.** Before the first purchase: how bad years have looked, and what you'll do if it falls.
+9. **Salary day.** Next month, ₹15,000 split as planned: ₹9,000 into Groww, ₹6,000 stays in the bank.
+10. **First-fall check-in, month 3.** Your ₹11,500 is now ₹10,500, read against your own plan. Selling stays one tap away.
+11. **My need changed.** Draw from Keep, then Park, before Grow.
+12. **Is your money doing its job? (Portfolio).** Plan vs actual, fund vs its index, patterns in Learn trades. No scores or grades.
 
 Supporting screens: Explore, Order, Invested, Plan noted. A switcher under the phone jumps to any screen; **Reset prototype** restores Riya's numbers.
 
