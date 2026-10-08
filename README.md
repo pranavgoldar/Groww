@@ -2,7 +2,7 @@
 
 **Give every rupee a job.**
 
-A clickable, high-fidelity mobile prototype for a product case study. Money Plan helps first-time investors (roughly 20–26) split their monthly surplus into four buckets, commit to a plan before their first purchase, and see that plan replayed back to them when their money first falls.
+A clickable, high-fidelity prototype for a product case study. It's a responsive web app: phones get the app layout, laptops get Groww's web layout. Money Plan helps first-time investors (roughly 20–26) split their monthly surplus into four buckets, commit to a plan before their first purchase, and see that plan replayed back to them when their money first falls.
 
 Core idea: risk capacity belongs to the money, not the person. The app asks *"What is this money for?"*, never *"What kind of investor are you?"*
 
@@ -23,24 +23,41 @@ Riya, 22. Salary ₹40,000 a month, expenses ₹25,000 (rent ₹12,000 + living 
 
 Money gets a plan before it is added. The app never asks "what's this for?" after the money is already in.
 
-1. **Before you add money.** Tapping Add money for the first time opens this: "Let's work out how much to invest."
-2. **Your money.** Salary, expenses and goals. ₹40,000 − ₹25,000 leaves ₹15,000 a month to plan. Each goal has its own time: Short (under 1 year), Medium (1–3 years), Long (3+ years) or an exact number of months or years. Short and medium goals are kept steady in Park; long ones sit in Grow. Up to three goals.
-3. **Risk.** Safety questions (capacity) and one comfort question (appetite).
-4. **What you could invest.** ₹15,000 free each month: keep ₹6,000 in the bank as the cushion, invest ₹9,000 a month through Groww. Careful, Balanced or Growth are rules-based model plans the user chooses; when safety and comfort disagree, it starts from the more careful one.
-5. **Monthly plan.** Four sliders that always add up to ₹15,000, with common starting ranges and an auto-apply toggle.
-6. **Add money.** Prefilled with the plan's ₹9,000 (Park ₹3,000 + Grow ₹5,500 + Invest in stocks ₹500). Keep stays in the bank.
-7. **Categories.** Unranked categories per bucket. Liquid funds opens a ₹3,000 Park SIP; Large-cap index funds opens a ₹5,500 Grow SIP. Tabs tick once their money is placed.
-8. **Commit card.** Before the first purchase: how bad years have looked, and what you'll do if it falls.
-9. **Salary day.** Next month, ₹15,000 split as planned: ₹9,000 into Groww, ₹6,000 stays in the bank.
-10. **First-fall check-in, month 3.** Your ₹11,500 is now ₹10,500, read against your own plan. Selling stays one tap away.
-11. **My need changed.** Draw from Keep, then Park, before Grow.
-12. **Is your money doing its job? (Portfolio).** Plan vs actual, each goal's progress by what's been put in, fund vs its index, patterns in stock trades. No scores or grades.
+1. **Before you add money.** Tapping Add money for the first time opens this: "Let's work out how much you can invest."
+2. **About your money.** One page of quick taps, prefilled, with "Takes about 30 seconds": what you do (Full-time job, Part-time job, Student, Own business, Freelance or gig, Other), income and expenses (₹40,000 − ₹25,000 leaves ₹15,000 a month to plan), the safety net (emergency savings, dependents, steady income), comfort with ups and downs, then goals. Each goal has its own time: Short (under 1 year), Medium (1–3 years), Long (3+ years) or an exact number of months or years. Short and medium goals are kept steady in Park; long ones sit in Grow. Up to three goals. Selected answers show solid green with a tick. What you do sets the wording (a student is asked for "Money coming in each month", with allowance, stipend or part-time pay as the hint; own business and freelance for an average month) and prefills "Is your income steady?" (Yes for a full-time job, Not always for part-time, student, own business and freelance), which she can change. Elsewhere the app says "income" rather than "salary" unless she has a full-time job.
+3. **What you could invest.** One screen: ₹15,000 free each month, a model plan to start from (Careful, Balanced or Growth, rules-based and chosen by the user; when safety and comfort disagree it starts from the more careful one), and four sliders that always add up to ₹15,000. Keep's ₹6,000 stays in the bank as the emergency fund. It ends with **Add ₹9,000 to Groww**.
+4. **Place your money.** Unranked categories per bucket. Liquid funds opens a ₹3,000 Park SIP; Large-cap index funds opens a ₹5,500 Grow SIP. The other categories and stocks open sample products too. Tabs tick once their money is placed.
+5. **Commit card.** Before the first Grow purchase: how bad years have looked, and what you'll do if it falls. Confirming returns straight to placing money, on the next bucket with money left.
+6. **Each month.** Asked once, after the money is placed: **I'll confirm each month** (the default: nothing leaves the account until a tap, and any month can be skipped) or **Autopay on a fixed day**, with the day and time picked and a reminder the day before and 3 hours before.
+7. **Next month.** By default: "Ready to invest ₹9,000 as planned?" with Confirm and pay, or Skip this month. With autopay: the two reminders, then "₹9,000 invested as planned". Keep's ₹6,000 stays in the bank either way.
+8. **First-fall check-in, month 3.** A notification, "Your index fund is down 9%. Here's what you decided when you invested.", arrives on a phone lock screen (on laptops: a "Two months later…" page with the notification at the top right). It opens the check-in: your ₹11,500 is now ₹10,500, read against your own plan. Selling stays one tap away.
+9. **My need changed.** Draw from Keep, then Park, before Grow.
+10. **Is your money doing its job? (Portfolio).** Plan vs actual, each goal's progress by what's been put in, fund vs its index, patterns in stock trades. No scores or grades.
+
+### Buying other funds or stocks
+
+Every order shows what it **counts toward**, set by type (funds that hold shares → Grow, liquid and short-duration funds → Park, single stocks → Invest in stocks) and changeable in one tap, including **Outside my plan**. Going over what's left in a bucket never blocks a buy: a neutral line says by how much, and Portfolio shows it next to the plan. Outside-plan buys leave the plan untouched and are listed separately.
 
 ### Goals never promise returns
 
 Goal maths counts only what is put in (₹60,000 ÷ 20 months = ₹3,000 a month), and the app says so: "We don't count on returns; anything extra is a bonus." Time decides where goal money waits, and 12 months before a long-term goal the app suggests moving it from Grow to Park (see the **Goal reminder** screen).
 
-Supporting screens: Explore, Order, Invested, Plan noted, Goal reminder. A switcher under the phone jumps to any screen; **Reset prototype** restores Riya's numbers.
+Supporting screens: Explore, Order, Plan noted, Goal reminder, Your money plan.
+
+**Your money plan** lives under the profile (avatar menu, or Money Plan in the top bar once set up). It shows the split, each goal, and how money goes in each month (confirm each month, or autopay with its day, time and reminders), with Edit my split and Change income or expenses. Saving an edit returns to the page it was opened from.
+
+**Goals are edited right there.** Each goal has Edit, and there's Add a goal (up to three). Before saving, the editor shows what changes: Park follows what its goals need, and Grow gives or takes the difference first; nothing else is reset. Riya can **Save and update my plan** or **Save, keep my split**. Changing income or expenses later goes straight back to the plan, without the risk questions.
+
+## Layout
+
+- **Phone:** an app bar with back at the top; the main buttons stay pinned to the bottom.
+- **Laptop (900px and wider):** Groww's web top bar (Money Plan, Stocks, Explore, Holdings, Positions, Orders, Watchlist, then search with Ctrl+K, GR 1, notifications and the avatar), the page on the left, and a sticky card on the right with the plan summary and the screen's buttons. Sheets open as centred dialogs.
+
+In the top bar, Holdings opens the portfolio, Explore opens Explore, Money Plan returns to the plan, and the GR 1 icon opens GR 1; the other links, search and notifications say they belong to the real app. On windows narrower than 1240px search shrinks to an icon, and below 960px Positions and Watchlist step back.
+
+The **R** avatar (top right) opens Riya's account menu, like Groww's: Your portfolio and Your money plan open here; All orders, Bank details, Customer Support, Reports and Log out explain that they belong to the real app. Before month 3, Portfolio shows nothing yet, or what's been added and placed so far.
+
+There's no phone frame or screen switcher: you move through it as a customer would. Each screen also has its own link, such as `/#/plan` or `/#/portfolio`; opening one fills in what the screen needs. Reloading without a link starts over with Riya's numbers.
 
 ## Running it
 
@@ -61,8 +78,8 @@ Import the repository in Vercel. It detects Vite; `vercel.json` pins the build (
 src/
   lib/format.ts      Indian rupee formatting (₹1,20,000), done by hand
   lib/plan.ts        Persona, model plans, slider rebalancing, the month-3 snapshot
-  state/store.tsx    One state object, history-stack navigation, toast, sheets, lock screen
-  components/        Phone frame + slide transitions, sheets, shared UI
+  state/store.tsx    One state object, history-stack navigation, #/screen links, toast, sheets, lock screen
+  components/        App shell (top bar, toast, sheets, lock screen), shared UI
   screens/           One file per screen (or pair of screens)
   styles.css         All styles
 ```

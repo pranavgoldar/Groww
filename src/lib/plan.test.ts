@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
+  shiftPark,
   KEYS, PERSONA, badRange, bucketOf, horizonOf, investableOf, needFor, type Goal, commonRanges, computeDraw, fallPct, goalMonthlyOf, keepTargetOf, month3, planSplit,
   rebalance, suggestPlan, sumSplit, surplusOf, type Split,
 } from './plan'
@@ -117,5 +118,25 @@ describe('goals and horizons', () => {
     const goals = [g('Laptop', 60000, 20), g('Trip', 24000, 8), g('Studies', 240000, 48)]
     expect(needFor(goals, 'park')).toBe(3000 + 3000)
     expect(needFor(goals, 'grow')).toBe(5000)
+  })
+})
+
+describe('shiftPark', () => {
+  const base = { keep: 6000, park: 3000, grow: 5500, learn: 500 }
+  it('takes a bigger goal from Grow first, leaving the rest alone', () => {
+    expect(shiftPark(base, 500)).toEqual({ split: { keep: 6000, park: 3500, grow: 5000, learn: 500 }, short: 0 })
+  })
+  it('gives freed-up Park money to Grow', () => {
+    expect(shiftPark(base, -3000)).toEqual({ split: { keep: 6000, park: 0, grow: 8500, learn: 500 }, short: 0 })
+  })
+  it('then stocks, then Keep, and reports what it could not find', () => {
+    expect(shiftPark(base, 6500)).toEqual({ split: { keep: 5500, park: 9500, grow: 0, learn: 0 }, short: 0 })
+    expect(shiftPark(base, 13000)).toEqual({ split: { keep: 0, park: 15000, grow: 0, learn: 0 }, short: 1000 })
+  })
+  it('always keeps the total', () => {
+    for (const dlt of [-5000, -100, 0, 700, 9000, 20000]) {
+      const { split } = shiftPark(base, dlt)
+      expect(split.keep + split.park + split.grow + split.learn).toBe(15000)
+    }
   })
 })

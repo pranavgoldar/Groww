@@ -1,7 +1,10 @@
+import { useState } from 'react'
 import { useStore, type State } from '../state/store'
 import { inr } from '../lib/format'
-import { Dot, Icon, Meter, Msg, Shell, AmountField, BUCKET_NAME } from '../components/ui'
+import { Chips, Dot, Icon, Meter, Msg, Shell, AmountField, BUCKET_NAME } from '../components/ui'
 import { MOVE_BEFORE_MONTHS, goalLine, monthlyFor } from '../lib/plan'
+import { autopayShort } from '../lib/pay'
+import { AUTO_WHY, PRODUCTS, type ProductId, type Toward } from '../lib/products'
 
 type Tab = State['tab']
 const CATS: Record<'grow' | 'park', { id: string; name: string; what: string; cta?: string }[]> = {
@@ -23,23 +26,27 @@ export function Categories() {
   const { s, d, set, go, say } = useStore()
   const tab = s.tab
 
+  // Each category opens a sample product, counted toward its bucket by default.
   const explore = (id: string) => {
-    if (id === 'largecap') {
-      set(prev => ({ orderFor: 'grow', orderAmt: Math.max(0, prev.split.grow - prev.invested) || prev.orderAmt }))
-      go('order')
-    } else if (id === 'liquid') {
-      set(prev => ({ orderFor: 'park', orderAmt: Math.max(0, prev.split.park - prev.parkInvested) || prev.split.park }))
-      go('order')
-    } else {
-      say('In this prototype, Large-cap index funds and Liquid funds open.')
+    if (id === 'fd') {
+      say("Fixed deposits open in Groww's FD section. It isn't part of this prototype.")
+      return
     }
+    const pid = id as ProductId
+    const b = PRODUCTS[pid].bucket
+    set(prev => ({
+      orderId: pid,
+      orderToward: b,
+      orderAmt: d.left[b] || (pid === 'largecap' ? prev.orderAmt : pid === 'liquid' ? prev.split.park : 500),
+    }))
+    go('order')
   }
-  const placed = { grow: s.split.grow > 0 && d.available === 0, park: s.split.park > 0 && d.parkAvailable === 0, learn: false }
+  const placed = { grow: s.split.grow > 0 && d.left.grow === 0, park: s.split.park > 0 && d.left.park === 0, learn: s.split.learn > 0 && d.left.learn === 0 }
 
   let panel
   if (tab === 'grow' || tab === 'park') {
     const total = s.split[tab]
-    const toPlace = tab === 'grow' ? d.available : d.parkAvailable
+    const toPlace = d.left[tab]
     const inSip = total - toPlace
     panel = (
       <>
@@ -48,7 +55,7 @@ export function Categories() {
           <Meter pct={total ? (inSip / total) * 100 : 0} color={`var(--${tab})`} />
           {inSip > 0 && (
             <p className="tiny" style={{ marginTop: 6 }}>
-              {inr(inSip)} a month already goes into your {tab === 'grow' ? 'index fund' : 'liquid fund'} SIP
+              {inr(inSip)} a month already placed
             </p>
           )}
           {tab === 'park' && d.parkGoals.map(g => (
@@ -72,21 +79,22 @@ export function Categories() {
     )
   } else {
     const l = s.split.learn
+    const leftL = d.left.learn
     panel = (
       <div className="card cat" style={{ marginTop: 16 }}>
         <div className="cat-name">Stocks</div>
         <p className="cat-what">Shares of single companies, picked by you. Use only the money you set aside for stocks.</p>
-        <Meter pct={l ? 100 : 0} color="var(--learn)" />
+        <Meter pct={l ? ((l - leftL) / l) * 100 : 0} color="var(--learn)" />
         <p className="hint" style={{ margin: '8px 0 12px' }}>
-          {l ? `${inr(l)} of ${inr(l)} left this month for stocks` : 'Your plan has nothing set aside for stocks. You can add some on the plan screen.'}
+          {l ? `${inr(leftL)} of ${inr(l)} left this month for stocks` : 'Your plan has nothing set aside for stocks. You can add some on the plan screen.'}
         </p>
-        <button className="link-inline" data-cat="stocks" onClick={() => explore('stocks')}>Explore stocks →</button>
+        <button className="link-inline" data-cat="stocks" onClick={() => explore('stock')}>Explore stocks →</button>
       </div>
     )
   }
 
   return (
-    <Shell title="Place your money" footer={<button className="btn-primary" onClick={() => go('salary')}>Done for now</button>}>
+    <Shell summary title="Place your money" footer={<button className="btn-primary" onClick={() => go('payMode')}>Done for now</button>}>
       {s.added > 0 && (
         <div className="success" role="status" style={{ margin: '4px 0 18px' }}>
           <span className="success-ic"><Icon.check /></span>
@@ -95,9 +103,6 @@ export function Categories() {
       )}
       <h1 className="h2">Match money to when you'll need it</h1>
       <p className="lead">These are categories, not picks, in no particular order.</p>
-      <div className="keep-note">
-        <div><b><Dot k="keep" /> Keep · {inr(s.split.keep)} a month</b><br />Keep stays in your bank. Nothing to buy here.</div>
-      </div>
       <div className="tabs" role="tablist" aria-label="Bucket">
         {(['grow', 'park', 'learn'] as Tab[]).map(k => (
           <button key={k} className="tab" role="tab" aria-selected={tab === k} data-tab={k} onClick={() => set({ tab: k })}>
@@ -112,54 +117,89 @@ export function Categories() {
   )
 }
 
-export function orderCheck(n: number, avail: number, bucket = 'Grow'): { ok: boolean; msg: string } {
+/** Checks an amount against what's left in a bucket. Going over the plan never blocks a purchase; it only says so. */
+export function orderCheck(n: number, left: number, bucket = 'Grow', monthly = true): { ok: boolean; msg: string } {
   if (!n) return { ok: false, msg: 'Enter an amount.' }
-  if (n < 100) return { ok: false, msg: 'The minimum for this sample fund is ₹100.' }
-  if (avail <= 0) return { ok: false, msg: `There's no ${bucket} money left to place each month. You can change your plan first.` }
-  if (n > avail) return { ok: false, msg: `That's more than the ${inr(avail)} a month in ${bucket} to place. Invest less, or change your plan first.` }
-  return { ok: true, msg: n < avail ? `${inr(avail - n)} a month will stay in ${bucket} to place.` : `All your ${bucket} money goes into this SIP each month.` }
+  if (n < 100) return { ok: false, msg: 'The minimum for this sample is ₹100.' }
+  const per = monthly ? ' a month' : ''
+  if (left <= 0) return { ok: true, msg: `Your ${bucket} money is already placed. This adds ${inr(n)}${per} on top, and Portfolio will show it next to your plan.` }
+  if (n > left) return { ok: true, msg: `This is ${inr(n - left)}${per} more than the ${inr(left)}${per} left in ${bucket}. It still goes through, and Portfolio will show it next to your plan.` }
+  return { ok: true, msg: n < left ? `${inr(left - n)}${per} will stay in ${bucket} to place.` : `All your ${bucket} money goes into this ${monthly ? 'SIP each month' : 'buy'}.` }
 }
 
-const FUNDS = {
-  grow: { av: 'LC', name: 'Large-cap index fund (sample)', kind: 'Index fund · Large-cap · Sample for this prototype' },
-  park: { av: 'LQ', name: 'Liquid fund (sample)', kind: 'Debt fund · Liquid · Sample for this prototype' },
-}
+const TOWARD_OPTIONS: [Toward, string][] = [['grow', 'Grow'], ['park', 'Park'], ['learn', BUCKET_NAME.learn], ['outside', 'Outside my plan']]
 
-/* Mock order screen. Grow orders go on to the commit card; Park's liquid-fund SIP starts here. */
+/* Mock order screen for any sample fund or stock. Each purchase counts toward a bucket, set by type and changeable in one tap.
+   The plan's own index-fund SIP goes on to the commit card; everything else is placed here. */
 export function Order() {
   const { s, d, set, go, back, say } = useStore()
-  const park = s.orderFor === 'park'
-  const avail = park ? d.parkAvailable : d.available
-  const v = orderCheck(s.orderAmt, avail, park ? 'Park' : 'Grow')
-  const fund = FUNDS[s.orderFor]
-  const startPark = () => {
-    set(prev => ({ parkInvested: prev.parkInvested + prev.orderAmt }))
-    say(`Liquid fund SIP set up: ${inr(s.orderAmt)} every salary day${d.parkLabel ? `, for ${d.parkLabel}` : ''}.`)
+  const [changing, setChanging] = useState(false)
+  const p = PRODUCTS[s.orderId]
+  const toward = s.orderToward
+  const n = s.orderAmt
+  const name = toward === 'outside' ? '' : BUCKET_NAME[toward]
+  const left = toward === 'outside' ? 0 : d.left[toward]
+  const v = toward === 'outside'
+    ? { ok: n >= 100, msg: n >= 100 ? "This won't count toward your plan. Your plan stays as it is, and Portfolio lists it separately." : !n ? 'Enter an amount.' : 'The minimum for this sample is ₹100.' }
+    : orderCheck(n, left, name, p.sip)
+  const planGrow = s.orderId === 'largecap' && toward === 'grow'
+  const planPark = s.orderId === 'liquid' && toward === 'park'
+  const where = toward === 'outside' ? 'outside your plan' : `counted toward ${name}`
+
+  const place = () => {
+    if (planPark) {
+      set(prev => ({ parkInvested: prev.parkInvested + prev.orderAmt }))
+      say(`Liquid fund SIP set up: ${inr(n)} a month${d.parkLabel ? `, for ${d.parkLabel}` : ''}.`)
+    } else {
+      set(prev => ({ extra: [...prev.extra, { id: Date.now(), product: prev.orderId, amt: prev.orderAmt, toward: prev.orderToward }] }))
+      say(p.sip
+        ? `${p.short[0].toUpperCase()}${p.short.slice(1)} SIP set up: ${inr(n)} a month, ${where}.`
+        : `Bought ${inr(n)} of ${p.name}, ${where}. This is a prototype, so nothing was bought.`)
+    }
     back()
   }
+  const cta = planGrow ? 'Continue' : p.sip ? `Start SIP ${inr(n)} a month` : `Buy ${inr(n)}`
+
   return (
-    <Shell title="Invest" footer={park
-      ? <button className="btn-primary" id="orderGo" disabled={!v.ok} onClick={startPark}>Start SIP {inr(s.orderAmt)} a month</button>
-      : <button className="btn-primary" id="orderGo" disabled={!v.ok} onClick={() => go('commit')}>Continue</button>}>
+    <Shell title="Invest" footer={
+      <button className="btn-primary" id="orderGo" disabled={!v.ok} onClick={planGrow ? () => go('commit') : place}>{cta}</button>
+    }>
       <div className="fund-head">
-        <span className="fund-av">{fund.av}</span>
+        <span className="fund-av">{p.av}</span>
         <div>
-          <div className="fund-name">{fund.name}</div>
-          <p className="tiny">{fund.kind}</p>
+          <div className="fund-name">{p.name}</div>
+          <p className="tiny">{p.kind}</p>
         </div>
       </div>
-      <span className={'tag' + (park ? ' park' : '')}><i className="b-dot" /><span>From your {park ? 'Park' : 'Grow'} money · {inr(avail)} a month to place</span></span>
-      <label className="amt-label" htmlFor="orderInput">Monthly SIP amount</label>
-      <AmountField id="orderInput" value={s.orderAmt} onChange={n => set({ orderAmt: n })} describedBy="orderMsg" />
+
+      <div className="counts" id="countsToward">
+        <div className="counts-row">
+          <span className="counts-label">Counts toward</span>
+          <b>{toward === 'outside' ? 'Outside my plan' : <><Dot k={toward} /> {name}</>}</b>
+          <button className="link-inline" aria-expanded={changing} onClick={() => setChanging(c => !c)}>{changing ? 'Done' : 'Change'}</button>
+        </div>
+        {changing && (
+          <Chips options={TOWARD_OPTIONS} value={toward} label="Counts toward" onChange={t => set({ orderToward: t })} />
+        )}
+        <p className="tiny">
+          {toward === p.bucket ? AUTO_WHY[p.bucket] : `Set by you. ${AUTO_WHY[p.bucket]}`}
+          {toward !== 'outside' && ` ${inr(left)}${p.sip ? ' a month' : ''} left in ${name}.`}
+        </p>
+      </div>
+
+      <label className="amt-label" htmlFor="orderInput">{p.sip ? 'Monthly SIP amount' : 'Amount to invest'}</label>
+      <AmountField id="orderInput" value={n} onChange={x => set({ orderAmt: x })} describedBy="orderMsg" />
       <Msg id="orderMsg">{v.msg}</Msg>
       <div className="kv-list">
-        <div className="kv"><span>Order type</span><b>Monthly SIP</b></div>
-        <div className="kv"><span>Date</span><b>Every salary day</b></div>
+        <div className="kv"><span>Order type</span><b>{p.sip ? 'Monthly SIP' : 'One-time buy'}</b></div>
+        {p.sip
+          ? <div className="kv"><span>Paying each month</span><b>{s.pay === 'autopay' ? `Autopay, ${autopayShort(s.payDay, s.payHour)}` : 'You confirm it (autopay is optional)'}</b></div>
+          : <div className="kv"><span>Date</span><b>Today</b></div>}
         <div className="kv"><span>Minimum</span><b>₹100</b></div>
       </div>
-      {park && (
+      {p.bucket === 'park' && (
         <p className="hint" style={{ marginTop: 14 }}>
-          Liquid funds lend money for up to 91 days at a time, so prices move little. They can still dip slightly; they're not a bank deposit.
+          {s.orderId === 'liquid' ? 'Liquid funds lend money for up to 91 days at a time' : 'Short-duration funds lend money for a few years at a time'}, so prices move less than shares. They can still dip; they're not a bank deposit.
         </p>
       )}
     </Shell>

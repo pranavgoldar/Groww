@@ -52,6 +52,28 @@ export const monthlyFor = (g: Pick<Goal, 'amount' | 'months'>) => goalMonthlyOf(
 export const goalsIn = (goals: Goal[], bucket: 'park' | 'grow') => goals.filter(g => g.amount > 0 && g.months > 0 && bucketOf(g) === bucket)
 export const needFor = (goals: Goal[], bucket: 'park' | 'grow') => goalsIn(goals, bucket).reduce((a, g) => a + monthlyFor(g), 0)
 
+/**
+ * When a goal changes, move only what Park needs: more for the goal comes from Grow, then stocks, then Keep;
+ * less goes back to Grow. Every other number stays as the user set it. `short` is what couldn't be found.
+ */
+export function shiftPark(split: Split, delta: number): { split: Split; short: number } {
+  const next = { ...split }
+  if (delta <= 0) {
+    const freed = Math.min(-delta, next.park)
+    next.park -= freed
+    next.grow += freed
+    return { split: next, short: 0 }
+  }
+  let need = delta
+  for (const k of ['grow', 'learn', 'keep'] as const) {
+    const take = Math.min(next[k], need)
+    next[k] -= take
+    need -= take
+  }
+  next.park += delta - need
+  return { split: next, short: need }
+}
+
 export const durationText = (months: number) =>
   months % 12 === 0 ? `${months / 12} year${months === 12 ? '' : 's'}` : `${months} month${months === 1 ? '' : 's'}`
 
@@ -102,6 +124,32 @@ export function planSplit(plan: PlanId, surplus: number, goalMonthly: number): S
 
 export type Emergency = 'yes' | 'partly' | 'notyet'
 export type Appetite = 'hold' | 'worry' | 'sell'
+/* ---------- what you do ---------- */
+// Occupation only changes wording and a prefilled answer; the plan itself still comes from the answers below.
+export type Occupation = 'salaried' | 'parttime' | 'student' | 'business' | 'freelance' | 'other'
+export const OCCUPATIONS: [Occupation, string][] = [
+  ['salaried', 'Full-time job'], ['parttime', 'Part-time job'], ['student', 'Student'],
+  ['business', 'Own business'], ['freelance', 'Freelance or gig'], ['other', 'Other'],
+]
+export const INCOME_LABEL: Record<Occupation, string> = {
+  salaried: 'Monthly take-home salary',
+  parttime: 'Monthly take-home from your job',
+  student: 'Money coming in each month',
+  business: 'Average monthly income',
+  freelance: 'Average monthly income',
+  other: 'Monthly income',
+}
+export const INCOME_HINT: Partial<Record<Occupation, string>> = {
+  parttime: 'If your hours change, use a typical month.',
+  student: 'Allowance, stipend or part-time pay. Count only what comes in regularly.',
+  business: 'If it changes month to month, use a typical month, or a little less.',
+  freelance: 'If it changes month to month, use a typical month, or a little less.',
+}
+/** "salary" for a full-time job, otherwise "income". */
+export const incomeWord = (o: Occupation) => (o === 'salaried' ? 'salary' : 'income')
+/** A sensible prefill for "Is your income steady?" (she can change it). */
+export const steadyFor = (o: Occupation): Answers['steady'] | null => (o === 'salaried' ? 'yes' : o === 'other' ? null : 'notalways')
+
 export interface Answers {
   emergency: Emergency
   dependents: 'yes' | 'no'

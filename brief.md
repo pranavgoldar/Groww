@@ -216,3 +216,82 @@ Copy says what she "could" invest rather than "should": the amount is calculated
 - **C. Time decides where money waits.** Each goal picks Short (under 1 year), Medium (1–3 years), Long (3+ years) or an exact time in months or years. Short and medium goals go to Park; long goals to Grow. Up to three goals.
 - **D. Move to safety as the date nears.** 12 months before a long-term goal, a reminder suggests moving its money from Grow to Park. Moving, waiting a month or keeping it in Grow are all one tap.
 - **Park SIP.** Park money stays inside Groww: Liquid funds opens a ₹3,000 monthly SIP, like the Grow order. Salary day shows "liquid fund SIP for your laptop".
+
+## Revision: a real web app, not a phone mock-up
+
+- No phone frame and no reviewer switcher. Someone opening the link moves through it on their own: every screen is reached from the one before it, and Portfolio links to the Goal reminder example.
+- **Phones** get the app layout: a top app bar with back, and the main buttons pinned to the bottom of the screen.
+- **Laptops** (900px and wider) get Groww's web layout: the top bar with the logo, the page on the left, and a sticky card on the right with the plan summary (free each month, the four-part split, what goes through Groww) and the screen's buttons. Sheets open as centred dialogs.
+- Styling follows Groww's web screens: grey text (#44475B), thin grey borders, Groww green (#00B386) for the main button and selected tabs, underlined tabs, grey selected chips, 12px cards.
+- Each screen has its own link (`#/portfolio`, `#/checkin` and so on). Opening one fills in what that screen needs. Reloading the page without a link starts over.
+
+## Revision: account menu
+
+- The avatar opens an account menu modelled on Groww's: name and email, settings, Your portfolio, Your money plan, All orders, Bank details, 24 x 7 Customer Support, Reports, Log out. On laptops it drops down under the avatar; on phones the avatar sits in the app bar and the menu opens as a bottom sheet.
+- Your portfolio opens at any time. Before money is added it says nothing is invested yet, with "Plan my money". After money is added it shows what's been put in so far, what's placed, and the Groww balance, with Keep noted as staying in the bank. From month 3 it's the full "Is your money doing its job?" view.
+- Items that belong to the real app show a short note instead of opening.
+
+## Revision: Groww's web top bar
+
+- Laptops get Groww's top bar: logo, Money Plan (the current section, in bold), Stocks, Explore, Holdings, Positions, Orders, Watchlist, then "Search Groww..." with Ctrl+K, the GR 1 icon, notifications and the avatar.
+- Holdings opens the portfolio and is highlighted there; Explore opens Explore; Money Plan returns to the plan (the monthly plan editor from month 3, where saving goes back to the portfolio). The GR 1 icon opens GR 1. Stocks, Positions, Orders, Watchlist, search, Ctrl+K and notifications show a short note.
+- The page widens to 1240px to line up with the bar. Below 1240px search shrinks to an icon; below 960px Positions and Watchlist are hidden so the bar never overflows.
+
+## Revision: Your money plan, under the profile
+
+- The "Apply this plan automatically every time my salary comes in" toggle is gone from the monthly plan screen. It's a standing setting, not part of deciding the split, so first-time users no longer meet it during setup. It stays on by default, since the SIPs they start already run on salary day.
+- Once a plan exists, **Your money plan** (avatar menu, or Money Plan in the top bar) shows the monthly split with Keep labelled as the emergency fund, each goal and where it waits, and a **Salary day** card: "Split my salary automatically", or turn it off to confirm each month's split with one tap. Edit my split opens the sliders; Change salary, expenses or goals reopens the first steps.
+- Salary day reflects the setting, and points to Your money plan when it's off.
+
+## Revision: other funds, other stocks, and buys outside the plan
+
+- Money Plan never blocks a purchase. The order screen used to stop a SIP above what was left in Grow ("Invest less, or change your plan first"); it now lets it through with a neutral line: "This is ₹500 a month more than the ₹5,500 a month left in Grow. It still goes through, and Portfolio will show it next to your plan."
+- Every order shows **Counts toward**, set automatically by type: funds that hold shares count toward Grow, liquid and short-duration funds toward Park, single stocks toward Invest in stocks. "Change" offers Grow, Park, Invest in stocks or **Outside my plan** in one tap.
+- Flexi-cap, hybrid and short-duration funds now open sample orders like the index and liquid funds, and "Explore stocks" opens a one-time buy of a sample stock. Fixed deposits explain that they live in Groww's FD section.
+- What's left to place in each bucket counts these purchases. Outside-plan buys leave the plan untouched. Portfolio lists every other purchase and what it counts toward, before and after month 3, and salary day names every SIP counted toward a bucket.
+
+## Revision: confirm each month by default; autopay is opt-in
+
+Autopay suits people who are sure of their plan. Students who are still exploring shouldn't find money leaving their account every month by default.
+
+- After placing their money, people are asked once: **How do you want to invest each month?**
+  - **I'll confirm each month** (selected by default): when salary comes in, Groww reminds them; nothing leaves the account until they tap Confirm, and any month can be skipped.
+  - **Autopay on a fixed day**: they pick the day of the month (1st–28th) and time. Groww notifies them **the day before** and **3 hours before**, each with a way to skip that month, and they'd approve the autopay once in their UPI app.
+- Next month follows the choice. Default: "Ready to invest ₹9,000 as planned?" with **Confirm and pay ₹9,000** or **Skip this month** (nothing taken, plan unchanged). Autopay: the two reminders, then "₹9,000 invested as planned", with Skip next month's autopay.
+- The choice lives in **Your money plan → Each month** and can be changed any time. It replaces the earlier "Split my salary automatically" toggle.
+- SIP orders say "Paying each month: You confirm it (autopay is optional)", or the autopay day and time once chosen.
+
+## Revision: a shorter flow, and goals edited in place
+
+The path to the first month went from 15 steps to 12, with three fewer screens, and the same information stopped repeating.
+
+- **What you could invest, Monthly plan and Add money are one screen.** It shows ₹15,000 free each month (₹40,000 − ₹25,000), Careful / Balanced / Growth as chips (Balanced preselected for Riya, with the careful-first note), the four sliders, and ends with **Add ₹9,000 to Groww**. The side summary card isn't repeated next to it on laptops.
+- **No Invested screen.** Confirming the index fund on the commit card returns straight to placing money, on the next bucket with money left, with a toast: "Index fund SIP set up: ₹5,500 a month. If it falls, we'll show you what you decided here." Done for now leads to Each month.
+- **The Keep note isn't repeated** on the categories screen; the plan screen says once that Keep stays in the bank as the emergency fund.
+- **Goals are edited in Your money plan.** Each goal has Edit; Add a goal (up to three) and Remove this goal sit in the same editor. A "What changes" preview shows the effect before saving: Park follows what its goals need (plus anything extra Riya chose to keep there), Grow gives or takes the difference first, then stocks, then Keep; nothing else is reset. She chooses **Save and update my plan** or **Save, keep my split**.
+- **Changing salary or expenses later** opens Your money and goes straight back to the plan ("Review my plan"), without the risk questions again.
+
+## Revision: one page of quick taps
+
+Modelled on account-opening declaration forms (one page, tap-to-select pills, prefilled answers, a time estimate, one button):
+
+- **Your money and Risk are one page, "About your money"**, with "Takes about 30 seconds": salary and expenses, then the safety net (emergency savings, dependents, steady income), comfort with ups and downs, and goals. Everything is prefilled, so most people only change what's different. The button goes straight to What you could invest.
+- **Setup is two steps**: About your money, then What you could invest. The path to the first month is now 11 steps, down from 15.
+- **Selected answers are solid green with a white tick** everywhere (chips and goal-time options), so it's obvious what's chosen.
+- Changing salary or expenses later opens the same page, which then leads to "Review my plan".
+
+## Revision: what you do
+
+- About your money now starts with **What do you do?**: Full-time job, Part-time job, Student, Own business, Freelance or gig, Other. Riya: Full-time job.
+- It changes the wording, not the maths. The income question becomes "Monthly take-home salary" (full-time), "Monthly take-home from your job" (part-time), "Money coming in each month" with the hint "Allowance, stipend or part-time pay. Count only what comes in regularly." (student), "Average monthly income" with "use a typical month, or a little less" (own business, freelance), or "Monthly income" (other).
+- It prefills **Is your income steady?**: Yes for a full-time job, Not always for part-time, student, own business and freelance; Other leaves the answer as it was. She can change it, and that answer (not the occupation) feeds the suggested plan, so a student usually starts from Careful.
+- Outside a full-time job the app says "income" instead of "salary": the plan's free-each-month line, Your money plan, the Each month reminder and next month.
+
+## Revision: no reflection checklist on the check-in
+
+- The "Before you decide" checklist (three tappable questions) is removed from the first-fall check-in. Ticking did nothing, and its main question ("Has your need for this money changed?") is already the **My need for this money changed** button. The calm-decision work is done by "What you decided" and the bad-year range, and the check-in is shorter for it.
+
+## Revision: month 3 on a laptop
+
+- Phones keep the lock screen (Thursday · month 3 of your plan, 10:24, the Groww notification).
+- Laptops no longer show a phone lock screen. The page turns to "Two months later…" ("Your plan has been running. Then the market fell, and Groww sent you this.") and the same notification slides in at the top right, like a web notification. The hint says "Open the notification at the top right to continue"; clicking it opens the check-in.

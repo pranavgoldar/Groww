@@ -23,6 +23,14 @@ export const Icon = {
   chevDown: () => <Svg size={14} sw={2.4}><path d="M6 9l6 6 6-6" /></Svg>,
   search: () => <Svg size={18}><circle cx="11" cy="11" r="6.5" /><path d="M20 20l-4.2-4.2" /></Svg>,
   close: () => <Svg size={18} sw={2.2}><path d="M6 6l12 12M18 6L6 18" /></Svg>,
+  bell: () => <Svg size={22} sw={1.8}><path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 1.8h-15z" /><path d="M10 20.5a2 2 0 0 0 4 0" /></Svg>,
+  aperture: () => <Svg size={22} sw={1.7}><circle cx="12" cy="12" r="9.5" /><path d="M14.3 8l5.4 9.4M9.7 8h10.8M7.4 12l5.4-9.4M9.7 16L4.3 6.6M14.3 16H3.5M16.6 12l-5.4 9.4" /></Svg>,
+  chevRight: () => <Svg size={18} sw={2.2}><path d="M9 6l6 6-6 6" /></Svg>,
+  gear: () => <Svg sw={1.8}><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" /></Svg>,
+  chart: () => <Svg><path d="M4 19.5h16" /><path d="M4 15l5-5 4 3.5L20 6" /><path d="M15.5 6H20v4.5" /></Svg>,
+  receipt: () => <Svg><path d="M6 3h12v18l-2.5-1.6L13 21l-2.5-1.6L8 21l-2-1.4z" /><path d="M9 8h6M9 12h6M9 16h3" /></Svg>,
+  headset: () => <Svg><path d="M4.5 14v-2a7.5 7.5 0 0 1 15 0v2" /><rect x="3.5" y="13.5" width="4" height="6" rx="1.5" /><rect x="16.5" y="13.5" width="4" height="6" rx="1.5" /><path d="M18.5 19.5c0 1.2-1.5 2-4 2" /></Svg>,
+  doc: () => <Svg><path d="M6 3h8.5L19 7.5V21H6z" /><path d="M14 3v5h5" /><path d="M9 12.5h6M9 16h6" /></Svg>,
   scale: () => <Svg size={18}><path d="M12 4v16M5 20h14" /><path d="M5 8h14" /><path d="M5 8l-2.5 6a2.5 2.5 0 0 0 5 0z" /><path d="M19 8l-2.5 6a2.5 2.5 0 0 0 5 0z" /></Svg>,
 }
 
@@ -46,10 +54,13 @@ export function Mark({ size = 26 }: { size?: number }) {
 }
 
 /* ---------- screen shell ---------- */
-export function Shell({ title, brand, right, footer, children }: {
-  title?: string; brand?: boolean; right?: ReactNode; footer?: ReactNode; children: ReactNode
+/* Phones: app bar on top, main button pinned to the bottom.
+   Laptops: page header, then the content beside a sticky card holding the main button (like Groww's order panel). */
+export function Shell({ title, brand, right, footer, summary, children }: {
+  title?: string; brand?: boolean; right?: ReactNode; footer?: ReactNode; summary?: boolean; children: ReactNode
 }) {
-  const { back } = useStore()
+  const { back, sheet, openSheet } = useStore()
+  const side = !!footer || summary
   return (
     <>
       <header className="hdr">
@@ -57,11 +68,59 @@ export function Shell({ title, brand, right, footer, children }: {
         <div className="hdr-title">
           {brand ? <span className="brand"><Mark /><span className="wordmark">groww</span></span> : title}
         </div>
-        <div className="hdr-right">{right}</div>
+        <div className="hdr-right">
+          {right ?? (
+            <button className="hdr-avatar" aria-label="Your account" aria-haspopup="dialog" aria-expanded={sheet === 'account'} onClick={() => openSheet('account')}>R</button>
+          )}
+        </div>
       </header>
-      <div className={'body' + (footer ? '' : ' pad-home')}>{children}</div>
-      {footer && <footer className="ftr">{footer}</footer>}
+      <div className={'page-grid' + (side ? '' : ' no-side')}>
+        <div className="body">{children}</div>
+        {side && (
+          <aside className="page-side">
+            {summary && <PlanSummary />}
+            {footer && <footer className="ftr">{footer}</footer>}
+          </aside>
+        )}
+      </div>
     </>
+  )
+}
+
+const SIDE_LABEL: Record<BucketKey, [string, string]> = {
+  keep: ['Keep in bank', 'Emergency fund'],
+  park: ['Park', 'Goals within 3 years'],
+  grow: ['Grow', 'Money for 3+ years'],
+  learn: [BUCKET_NAME.learn, 'Picking stocks yourself'],
+}
+
+/* The four buckets, one per row, with what each is for. */
+export function PlanRows({ split }: { split: Split }) {
+  return (
+    <div className="side-legend">
+      {KEYS.map(k => (
+        <div key={k} data-k={k}>
+          <i style={{ background: `var(--${k})` }} />
+          <span className="sl-name"><b>{SIDE_LABEL[k][0]}</b><small>{SIDE_LABEL[k][1]}</small></span>
+          <b className="sl-amt">{inr(split[k])}</b>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+/* Laptop-only side card: the plan as it stands, updating live while the user answers. */
+function PlanSummary() {
+  const { s, d } = useStore()
+  if (d.surplus <= 0) return null
+  return (
+    <div className="side-summary" aria-label="Your Money Plan so far">
+      <p className="label-sm">YOUR MONEY PLAN</p>
+      <div className="row-between"><span className="muted">Free each month</span><b className="side-total">{inr(d.surplus)}</b></div>
+      <StackBar split={s.split} />
+      <PlanRows split={s.split} />
+      <p className="tiny">Invest through Groww: {inr(d.investable)} a month. Keep stays in your bank as your emergency fund.</p>
+    </div>
   )
 }
 

@@ -4,7 +4,9 @@ import {
   CUSHION_MONTHS, FUND_RETURN, INDEX_RETURN, LEARN_RESEARCH, LEARN_TIP, LEARN_TIP_CHARGES, MONTHS_IN, MOVE_BEFORE_MONTHS,
   bucketOf, monthlyFor, type BucketKey,
 } from '../lib/plan'
-import { BucketIcon, BUCKET_NAME, Meter, Shell } from '../components/ui'
+import { BucketIcon, BUCKET_NAME, Dot, Icon, Meter, Shell } from '../components/ui'
+import { PRODUCTS } from '../lib/products'
+import type { State } from '../state/store'
 
 // Neutral ramp: asset types are a different dimension from the bucket colours, and nothing here is judged.
 const ASSETS = [
@@ -15,8 +17,66 @@ const ASSETS = [
 
 const signed = (n: number) => (n >= 0 ? `+${inr(n)}` : inr(n))
 
+/* Before month 3: nothing yet, or what has been put in so far. Opened from the account menu. */
+function PortfolioSoFar() {
+  const { s, go } = useStore()
+  if (!s.added) {
+    return (
+      <Shell title="Portfolio" footer={<button className="btn-primary" onClick={() => go('basics')}>Plan my money</button>}>
+        <div className="done">
+          <span className="done-ic neutral"><Icon.chart /></span>
+          <h1 className="h2">Nothing invested yet</h1>
+          <p className="lead">Plan your money first. Once you've added money and placed it, your holdings show up here, checked against your plan.</p>
+        </div>
+      </Shell>
+    )
+  }
+  const balance = Math.max(0, s.added - s.invested - s.parkInvested - s.extra.reduce((a, x) => a + x.amt, 0))
+  const unplaced = !s.invested || (s.split.park > 0 && !s.parkInvested)
+  const rows: { k: BucketKey; what: string; amt: string }[] = [
+    { k: 'grow', what: 'Large-cap index fund (sample)', amt: s.invested ? `${inr(s.invested)} a month SIP` : 'Not placed yet' },
+    { k: 'park', what: 'Liquid fund (sample)', amt: s.parkInvested ? `${inr(s.parkInvested)} a month SIP` : 'Not placed yet' },
+  ]
+  return (
+    <Shell title="Portfolio" footer={<>
+      {unplaced
+        ? <button className="btn-primary" onClick={() => go('categories')}>Place my money</button>
+        : <button className="btn-primary" onClick={() => go('plan')}>Edit my plan</button>}
+    </>}>
+      <p className="eyebrow">Your first month</p>
+      <h1 className="h2">Your portfolio so far</h1>
+      <div className="card" style={{ marginTop: 16 }}>
+        <p className="label-sm">ADDED TO GROWW</p>
+        <div className="total-val" id="totalVal">{inr(s.added)}</div>
+        <p className="hint" style={{ marginTop: 2 }}>You've just started, so this is what you've put in.</p>
+        <div className="kv-list">
+          {rows.map(r => (
+            <div className="kv" key={r.k} data-hold={r.k}><span><Dot k={r.k} /> {BUCKET_NAME[r.k]} · {r.what}</span><b>{r.amt}</b></div>
+          ))}
+          {s.extra.map(x => (
+            <div className="kv" key={x.id} data-hold="extra">
+              <span>{x.toward === 'outside' ? 'Outside your plan' : <><Dot k={x.toward} /> {BUCKET_NAME[x.toward]}</>} · {PRODUCTS[x.product].name}</span>
+              <b>{inr(x.amt)}{PRODUCTS[x.product].sip ? ' a month SIP' : ' bought'}</b>
+            </div>
+          ))}
+          <div className="kv" data-hold="balance"><span>Groww balance{s.split.learn > 0 ? `, incl. ${inr(Math.min(balance, s.split.learn))} for stocks` : ''}</span><b>{inr(balance)}</b></div>
+        </div>
+      </div>
+      <div className="keep-note" style={{ marginTop: 12 }}>
+        <div><b><Dot k="keep" /> Keep · {inr(s.split.keep)} a month</b><br />Stays in your bank as your cushion, so it isn't shown here.</div>
+      </div>
+      <p className="hint" style={{ marginTop: 16 }}>From month 3, this page checks each part of your money against your plan.</p>
+    </Shell>
+  )
+}
+
 /* "Is your money doing its job?": one view across everything, judged only against the user's own plan. */
 export function Portfolio() {
+  const { s } = useStore()
+  return s.ff ? <PortfolioMonth3 /> : <PortfolioSoFar />
+}
+
+function PortfolioMonth3() {
   const { s, d, go, openSheet } = useStore()
   const m = d.m3
   const parkOnTrack = m.park >= m.parkExpected
@@ -117,8 +177,16 @@ export function Portfolio() {
               </div>
             ))}
           </div>
+          {goals.every(x => x.park) && (
+            <p className="hint" style={{ marginTop: 8 }}>
+              Goals 3+ years away sit in Grow, and we remind you to move them to Park a year before.{' '}
+              <button className="link-inline" onClick={() => go('goalNear')}>See an example →</button>
+            </p>
+          )}
         </section>
       )}
+
+      <OtherPurchases extra={s.extra} />
 
       <section className="card sec">
         <h2 className="sec-title">Your fund vs its index</h2>
@@ -141,5 +209,24 @@ export function Portfolio() {
       <button className="link block" style={{ marginTop: 10 }} onClick={() => openSheet('gr1Portfolio')}>Ask GR 1 about your portfolio</button>
       <p className="tiny center">Sample numbers for this prototype.</p>
     </Shell>
+  )
+}
+
+/* Anything bought besides the plan's own SIPs, with what it counts toward. */
+function OtherPurchases({ extra }: { extra: State['extra'] }) {
+  if (!extra.length) return null
+  return (
+    <section className="card sec" id="otherPurchases">
+      <h2 className="sec-title">Other purchases</h2>
+      <div className="facts">
+        {extra.map(x => (
+          <div key={x.id}>
+            <span>{PRODUCTS[x.product].name} · {PRODUCTS[x.product].sip ? 'monthly SIP' : 'one-time buy'}</span>
+            <b>{inr(x.amt)} · {x.toward === 'outside' ? 'outside your plan' : `counts toward ${BUCKET_NAME[x.toward]}`}</b>
+          </div>
+        ))}
+      </div>
+      <p className="sec-note">Each one counts where you chose when you bought it.</p>
+    </section>
   )
 }

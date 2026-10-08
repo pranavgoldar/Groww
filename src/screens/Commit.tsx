@@ -16,15 +16,18 @@ const PER = 10000 // the commit card talks per ₹10,000 put in, like the appeti
 
 /* Screen 5: record calm-state intent before the first purchase. */
 export function Commit() {
-  const { s, d, set, back, replaceTail } = useStore()
+  const { s, d, set, back, replaceTail, say } = useStore()
   const a = s.orderAmt
   const [lo, hi] = badRange(PER)
   const v = orderCheck(a, d.available)
   const ok = v.ok && !!s.commit
+  // Back to placing money, on the next bucket that still has money to place.
   const confirm = () => {
     if (!ok) return
-    set(prev => ({ invested: prev.invested + prev.orderAmt, ff: false }))
-    replaceTail(['commit', 'order'], ['invested'])
+    const next = d.left.park > 0 ? 'park' : d.left.learn > 0 ? 'learn' : 'grow'
+    set(prev => ({ invested: prev.invested + prev.orderAmt, ff: false, tab: next }))
+    say(`Index fund SIP set up: ${inr(a)} a month. If it falls, we'll show you what you decided here.`)
+    replaceTail(['commit', 'order', 'categories'], ['categories'])
   }
   return (
     <Shell title="Before you invest" footer={<>
@@ -62,36 +65,6 @@ export function Commit() {
       {!v.ok && (
         <Msg>{v.msg} <button className="link-inline" onClick={back}>Change amount</button></Msg>
       )}
-    </Shell>
-  )
-}
-
-/* Success state after confirming on Screen 5. */
-export function Invested() {
-  const { s, d, set, go } = useStore()
-  const c = commitLabel(s.commit)
-  const parkOpen = s.split.park > 0 && d.parkAvailable > 0
-  return (
-    <Shell title="" footer={<>
-      <button className="btn-primary" onClick={() => go('salary')}>Fast-forward to next salary day →</button>
-      {parkOpen && <button className="link block" onClick={() => { set({ tab: 'park' }); go('categories') }}>Set up your Park SIP too</button>}
-    </>}>
-      <div className="done">
-        <span className="done-ic"><Icon.check size={30} /></span>
-        <h1 className="h2">Invested.</h1>
-        <p className="lead">We'll remind you of your plan if it ever drops.</p>
-      </div>
-      <div className="card">
-        <div className="kv"><span>Fund</span><b>Large-cap index fund (sample)</b></div>
-        <div className="kv"><span>Every salary day</span><b>{inr(s.invested || d.sip)} from Grow</b></div>
-        <div className="kv"><span>Starts</span><b>{s.added ? 'Today, from the money you added' : 'Your next salary day'}</b></div>
-        <div className="kv"><span>Still in Grow to place</span><b>{inr(d.available)} a month</b></div>
-      </div>
-      <div className="card soft">
-        <p className="label-sm">YOUR PLAN IF IT FALLS</p>
-        <p className="said">{c ?? "You didn't pick an answer."}</p>
-      </div>
-      <p className="tiny center" style={{ marginTop: 18 }}>This prototype can jump ahead to next month's salary day.</p>
     </Shell>
   )
 }

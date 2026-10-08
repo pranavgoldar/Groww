@@ -1,6 +1,6 @@
 import { derive, useStore, type State } from '../state/store'
 import { inr } from '../lib/format'
-import { HORIZONS, bucketOf, durationText, horizonOf, monthlyFor, planSplit, suggestPlan, type Appetite, type Emergency, type Goal } from '../lib/plan'
+import { HORIZONS, INCOME_HINT, INCOME_LABEL, OCCUPATIONS, bucketOf, durationText, horizonOf, incomeWord, monthlyFor, planSplit, steadyFor, suggestPlan, type Appetite, type Emergency, type Goal, type Occupation } from '../lib/plan'
 import { AmountField, Chips, Icon, Shell } from '../components/ui'
 
 const EMERGENCY: [Emergency, string][] = [['yes', 'Yes'], ['partly', 'Partly'], ['notyet', 'Not yet']]
@@ -20,7 +20,8 @@ function useAnswer() {
   })
 }
 
-/* Screen 2: salary first. Expenses and goals set how much is free to plan, and where goal money waits. */
+/* Step 1, one page of quick taps: what she does, income and expenses, the safety net, comfort with ups and downs, then goals.
+   Everything is prefilled, so most people only change what's different. */
 export function Basics() {
   const { s, d, go } = useStore()
   const update = useAnswer()
@@ -30,29 +31,59 @@ export function Basics() {
   const addGoal = () =>
     update({ goals: [...s.goals, { id: `g${Date.now()}`, name: '', amount: 0, months: 12, mode: 'short', unit: 'months' }] })
   const removeGoal = (id: string) => update({ goals: s.goals.filter(g => g.id !== id) })
+  // What she does prefills "Is your income steady?"; she can still change it below.
+  const setOccupation = (occupation: Occupation) => {
+    const steady = steadyFor(occupation)
+    update(steady ? { occupation, steady } : { occupation })
+  }
   const needTotal = d.goalMonthly + d.growGoalNeed
   return (
-    <Shell title="Money Plan" footer={
-      <button className="btn-primary" disabled={!ok} onClick={() => go('risk')}>Next</button>
+    <Shell summary title="Money Plan" footer={
+      <button className="btn-primary" disabled={!ok} onClick={() => go('plan')}>{s.added ? 'Review my plan' : 'See what I could invest'}</button>
     }>
-      <p className="eyebrow">Step 1 of 3</p>
-      <h1 className="h1">Your money</h1>
-      <p className="lead">Start with what comes in and what goes out. We'll work out what's free to invest.</p>
+      <div className="form-head">
+        <div>
+          {!s.added && <p className="eyebrow">Step 1 of 2</p>}
+          <h1 className="h1">About your money</h1>
+        </div>
+        <span className="time-badge"><Icon.clock size={15} />Takes about 30 seconds</span>
+      </div>
+      <p className="lead">Tap what fits and change anything that's different.</p>
 
-      <section className="q">
-        <label className="q-label" htmlFor="salary">Monthly take-home salary</label>
+      <section className="q" id="moneyQ">
+        <h2 className="group-title">What comes in and goes out</h2>
+        <p className="q-label sm" id="qOcc" style={{ marginTop: 8 }}>What do you do?</p>
+        <Chips options={OCCUPATIONS} value={s.occupation} labelledBy="qOcc" className="chip-row seg3 occ" onChange={setOccupation} />
+        <label className="q-label" htmlFor="salary" style={{ marginTop: 18 }}>{INCOME_LABEL[s.occupation]}</label>
+        {INCOME_HINT[s.occupation] && <p className="hint" id="incomeHint" style={{ margin: '-4px 0 10px' }}>{INCOME_HINT[s.occupation]}</p>}
         <AmountField id="salary" size="sm" value={s.salary} onChange={n => update({ salary: n })} />
         <label className="q-label" htmlFor="expenses" style={{ marginTop: 16 }}>Monthly expenses</label>
         <AmountField id="expenses" size="sm" value={s.expenses} onChange={n => update({ expenses: n })} describedBy="surplusLine" />
         <p className="hint" id="surplusLine">
           {ok
             ? <>That leaves <b>{inr(d.surplus)}</b> a month to plan.</>
-            : "Your expenses are more than your salary, so there's nothing left to plan yet."}
+            : `Your expenses are more than your ${incomeWord(s.occupation)}, so there's nothing left to plan yet.`}
         </p>
       </section>
 
+      <section className="q" id="safetyNet">
+        <h2 className="group-title">Your safety net</h2>
+        <p className="q-label sm" id="qEm">Savings for emergencies?</p>
+        <Chips options={EMERGENCY} value={s.emergency} labelledBy="qEm" className="chip-row seg3" onChange={v => update({ emergency: v })} />
+        <p className="q-label sm" id="qDep">Does anyone depend on your income?</p>
+        <Chips options={DEPENDENTS} value={s.dependents} labelledBy="qDep" className="chip-row seg2" onChange={v => update({ dependents: v })} />
+        <p className="q-label sm" id="qSteady">Is your income steady?</p>
+        <Chips options={STEADY} value={s.steady} labelledBy="qSteady" className="chip-row seg2" onChange={v => update({ steady: v })} />
+      </section>
+
+      <section className="q" id="comfort">
+        <h2 className="group-title">Your comfort with ups and downs</h2>
+        <p className="q-label sm" id="qAp">If ₹10,000 you invested became ₹8,000, you would…</p>
+        <Chips options={APPETITE} value={s.appetite} labelledBy="qAp" onChange={v => update({ appetite: v })} />
+      </section>
+
       <section className="q">
-        <h2 className="q-label" id="goalQ">Saving for anything?</h2>
+        <h2 className="group-title" id="goalQ">Saving for anything?</h2>
         <p className="hint" style={{ margin: '-4px 0 12px' }}>Each goal gets its own time. The time decides where its money waits.</p>
         {s.goals.map((g, i) => (
           <GoalCard key={g.id} g={g} n={i + 1} onChange={p => setGoal(g.id, p)} onRemove={() => removeGoal(g.id)} />
@@ -69,7 +100,7 @@ export function Basics() {
   )
 }
 
-function GoalCard({ g, n, onChange, onRemove }: { g: Goal; n: number; onChange: (p: Partial<Goal>) => void; onRemove: () => void }) {
+export function GoalCard({ g, n, onChange, onRemove }: { g: Goal; n: number; onChange: (p: Partial<Goal>) => void; onRemove: () => void }) {
   const band = HORIZONS.find(h => h.id === horizonOf(g.months))!
   const toPark = bucketOf(g) === 'park'
   const monthly = monthlyFor(g)
@@ -119,34 +150,5 @@ function GoalCard({ g, n, onChange, onRemove }: { g: Goal; n: number; onChange: 
         </p>
       )}
     </div>
-  )
-}
-
-/* Screen 3: risk. Capacity (safety) and appetite (comfort) are asked separately. */
-export function Risk() {
-  const { s, go } = useStore()
-  const update = useAnswer()
-  return (
-    <Shell title="Money Plan" footer={<button className="btn-primary" onClick={() => go('pick')}>See what I could invest</button>}>
-      <p className="eyebrow">Step 2 of 3</p>
-      <h1 className="h1">How much risk your money can take</h1>
-      <p className="lead">About your money, not about you. Your answers shape how much of it can take ups and downs.</p>
-
-      <section className="q">
-        <h2 className="group-title">Your safety net</h2>
-        <p className="q-label sm" id="qEm">Savings for emergencies?</p>
-        <Chips options={EMERGENCY} value={s.emergency} labelledBy="qEm" className="chip-row seg3" onChange={v => update({ emergency: v })} />
-        <p className="q-label sm" id="qDep">Does anyone depend on your income?</p>
-        <Chips options={DEPENDENTS} value={s.dependents} labelledBy="qDep" className="chip-row seg2" onChange={v => update({ dependents: v })} />
-        <p className="q-label sm" id="qSteady">Is your income steady?</p>
-        <Chips options={STEADY} value={s.steady} labelledBy="qSteady" className="chip-row seg2" onChange={v => update({ steady: v })} />
-      </section>
-
-      <section className="q">
-        <h2 className="group-title">Your comfort with ups and downs</h2>
-        <p className="q-label sm" id="qAp">If ₹10,000 you invested became ₹8,000, you would…</p>
-        <Chips options={APPETITE} value={s.appetite} labelledBy="qAp" onChange={v => update({ appetite: v })} />
-      </section>
-    </Shell>
   )
 }
