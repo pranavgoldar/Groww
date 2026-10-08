@@ -68,6 +68,12 @@ export function MonthlyPlan() {
           </span>
         </div>
       )}
+      {!u && s.funded > 0 && (
+        <div className="success" role="status" style={{ margin: '0 0 16px' }}>
+          <span className="success-ic"><Icon.check /></span>
+          <div><b>{inr(s.funded)} added to your Groww balance</b><span className="tiny">From your bank account · just now</span></div>
+        </div>
+      )}
       <h1 className="h2" style={{ margin: '4px 0 12px' }}>Your monthly plan: {inr(total)}</h1>
       <div className="owner"><Icon.sliders /><span>You set these numbers. We've shown common starting ranges.</span></div>
       <div className="card plan-card">

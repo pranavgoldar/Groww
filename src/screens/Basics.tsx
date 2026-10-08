@@ -24,11 +24,11 @@ export function Basics() {
   const ok = d.surplus > 0
   return (
     <Shell title="Money Plan" footer={
-      <button className="btn-primary" disabled={!ok} onClick={() => go('pick')}>See plans</button>
+      <button className="btn-primary" disabled={!ok} onClick={() => go('pick')}>See what I can invest</button>
     }>
       <p className="eyebrow">Step 1 of 2</p>
       <h1 className="h1">Your money basics</h1>
-      <p className="lead">About your money, not about you. Your answers shape how much of it can take ups and downs.</p>
+      <p className="lead">About your money, not about you. We'll use this to work out how much you can invest each month.</p>
 
       <section className="q">
         <label className="q-label" htmlFor="salary">Monthly take-home salary</label>

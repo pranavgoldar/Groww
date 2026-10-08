@@ -10,10 +10,10 @@ export type ScreenId =
 
 /** Screen order: drives the switcher and the slide direction of jumps. */
 export const SCREENS: { id: ScreenId; label: string; n?: string; main: boolean }[] = [
-  { id: 'start', label: "What's this for", n: '1', main: true },
+  { id: 'start', label: 'Before adding money', n: '1', main: true },
   { id: 'explore', label: 'Explore', main: false },
   { id: 'basics', label: 'Money basics', n: '2', main: true },
-  { id: 'pick', label: 'Pick a plan', n: '2b', main: true },
+  { id: 'pick', label: 'What you can invest', n: '2b', main: true },
   { id: 'plan', label: 'Monthly plan', n: '3', main: true },
   { id: 'categories', label: 'Categories', n: '4', main: true },
   { id: 'order', label: 'Order', main: false },
@@ -47,6 +47,7 @@ export interface State extends Answers {
   auto: boolean
   tab: 'grow' | 'park' | 'learn'
   orderAmt: number
+  funded: number // added to the Groww balance from Screen 2b (0 = not yet)
   invested: number // monthly SIP set up from Grow (0 = none yet)
   commit: Commit | null
   ff: boolean // jumped ahead to month 3
@@ -75,6 +76,7 @@ export const DEFAULTS: State = {
   auto: true,
   tab: 'grow',
   orderAmt: DEFAULT_SPLIT.grow,
+  funded: 0,
   invested: 0,
   commit: null,
   ff: false,

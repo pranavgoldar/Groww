@@ -12,8 +12,6 @@ export const PERSONA = {
   rent: 12000,
   goal: { name: 'Laptop', amount: 60000, months: 20 },
 }
-/** What Riya moves into Groww on Screen 1: her monthly surplus. */
-export const ADDED = PERSONA.salary - PERSONA.expenses
 export const CUSHION_MONTHS = 3
 
 export const surplusOf = (salary: number, expenses: number) => Math.max(0, salary - expenses)
