@@ -32,7 +32,10 @@ export function CheckIn() {
   const toggle = (i: number) =>
     set(prev => ({ reflect: prev.reflect.includes(i) ? prev.reflect.filter(x => x !== i) : [...prev.reflect, i] }))
   return (
-    <Shell title="Your index fund" right={<button className="hdr-sell" onClick={() => openSheet('sell')}>Sell</button>}>
+    <Shell title="Your index fund" right={<button className="hdr-sell" onClick={() => openSheet('sell')}>Sell</button>} footer={<>
+      <button className="btn-primary" onClick={() => go('noted')}>Stick with my plan</button>
+      <button className="btn-secondary" onClick={() => go('need')}>My need for this money changed</button>
+    </>}>
       <div className="card">
         <div className="hold-top"><span className="fund-av sm">LC</span><span className="tiny">Large-cap index fund (sample) · Grow · month 3</span></div>
         <h1 className="h1 hold-h">Your {inr(a)} is now {inr(v)}</h1>
@@ -77,11 +80,7 @@ export function CheckIn() {
         </div>
       </section>
 
-      <div className="actions">
-        <button className="btn-primary" onClick={() => go('noted')}>Stick with my plan</button>
-        <button className="btn-secondary" onClick={() => go('need')}>My need for this money changed</button>
-        <button className="link block" onClick={() => openSheet('gr1')}>Ask GR 1 why it fell</button>
-      </div>
+      <button className="link block" style={{ marginTop: 16 }} onClick={() => openSheet('gr1')}>Ask GR 1 why it fell</button>
     </Shell>
   )
 }

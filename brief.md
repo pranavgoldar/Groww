@@ -216,3 +216,11 @@ Copy says what she "could" invest rather than "should": the amount is calculated
 - **C. Time decides where money waits.** Each goal picks Short (under 1 year), Medium (1–3 years), Long (3+ years) or an exact time in months or years. Short and medium goals go to Park; long goals to Grow. Up to three goals.
 - **D. Move to safety as the date nears.** 12 months before a long-term goal, a reminder suggests moving its money from Grow to Park. Moving, waiting a month or keeping it in Grow are all one tap.
 - **Park SIP.** Park money stays inside Groww: Liquid funds opens a ₹3,000 monthly SIP, like the Grow order. Salary day shows "liquid fund SIP for your laptop".
+
+## Revision: a real web app, not a phone mock-up
+
+- No phone frame and no reviewer switcher. Someone opening the link moves through it on their own: every screen is reached from the one before it, and Portfolio links to the Goal reminder example.
+- **Phones** get the app layout: a top app bar with back, and the main buttons pinned to the bottom of the screen.
+- **Laptops** (900px and wider) get Groww's web layout: the top bar with the logo, the page on the left, and a sticky card on the right with the plan summary (free each month, the four-part split, what goes through Groww) and the screen's buttons. Sheets open as centred dialogs.
+- Styling follows Groww's web screens: grey text (#44475B), thin grey borders, Groww green (#00B386) for the main button and selected tabs, underlined tabs, grey selected chips, 12px cards.
+- Each screen has its own link (`#/portfolio`, `#/checkin` and so on). Opening one fills in what that screen needs. Reloading the page without a link starts over.

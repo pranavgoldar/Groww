@@ -117,6 +117,12 @@ export function Portfolio() {
               </div>
             ))}
           </div>
+          {goals.every(x => x.park) && (
+            <p className="hint" style={{ marginTop: 8 }}>
+              Goals 3+ years away sit in Grow, and we remind you to move them to Park a year before.{' '}
+              <button className="link-inline" onClick={() => go('goalNear')}>See an example →</button>
+            </p>
+          )}
         </section>
       )}
 
