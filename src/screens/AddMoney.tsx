@@ -7,7 +7,6 @@ import { AmountField, BUCKET_NAME, Dot, Msg, Shell } from '../components/ui'
 export function AddMoney() {
   const { s, d, set, go } = useStore()
   const [amt, setAmt] = useState(s.added || d.investable)
-  const goal = (s.goalName.trim() || 'goal').toLowerCase()
   const inv = d.investable
   const ok = amt >= 100
   const msg = !amt ? 'Enter an amount.'
@@ -30,7 +29,7 @@ export function AddMoney() {
 
       <div className="card" style={{ marginTop: 18 }}>
         <p className="label-sm">WHERE IT GOES THIS MONTH</p>
-        <div className="kv"><span><Dot k="park" /> Park{d.goalMonthly ? `, for your ${goal}` : ''}</span><b>{inr(s.split.park)}</b></div>
+        <div className="kv"><span><Dot k="park" /> Park{d.parkLabel ? `, for ${d.parkLabel}` : ''}</span><b>{inr(s.split.park)}</b></div>
         <div className="kv"><span><Dot k="grow" /> Grow</span><b>{inr(s.split.grow)}</b></div>
         <div className="kv"><span><Dot k="learn" /> {BUCKET_NAME.learn}</span><b>{inr(s.split.learn)}</b></div>
       </div>

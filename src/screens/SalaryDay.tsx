@@ -6,11 +6,14 @@ import { BUCKET_NAME, Icon, Mark, Shell } from '../components/ui'
 /* Salary day: the plan runs with zero effort. Sits between Screen 5 and the check-in. */
 export function SalaryDay() {
   const { s, d, openSheet, setLock } = useStore()
-  const goal = (s.goalName.trim() || 'goal').toLowerCase()
   const grow = s.split.grow
   const where: Record<BucketKey, string> = {
     keep: 'stays in your bank',
-    park: d.goalMonthly ? `liquid fund for your ${goal}` : 'liquid fund',
+    park: s.parkInvested >= s.split.park && s.split.park > 0
+      ? `liquid fund SIP${d.parkLabel ? ` for ${d.parkLabel}` : ''}`
+      : s.parkInvested > 0
+        ? `${inr(s.parkInvested)} to your liquid fund SIP, the rest waits in Park`
+        : 'waits in Park until you place it',
     grow: s.invested >= grow
       ? 'your index fund SIP'
       : s.invested > 0

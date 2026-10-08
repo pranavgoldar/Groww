@@ -1,12 +1,12 @@
 import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from 'react'
 import {
-  PERSONA, goalMonthlyOf, investableOf, keepTargetOf, month3, planSplit, suggestPlan, surplusOf,
-  type Answers, type BucketKey, type Month3, type PlanId, type Split,
+  PERSONA, goalMonthlyOf, goalsIn, goalsLabel, investableOf, keepTargetOf, month3, needFor, planSplit, suggestPlan, surplusOf,
+  type Answers, type BucketKey, type Goal, type Month3, type PlanId, type Split,
 } from '../lib/plan'
 
 export type ScreenId =
   | 'start' | 'explore' | 'basics' | 'risk' | 'pick' | 'plan' | 'addMoney' | 'categories' | 'order'
-  | 'commit' | 'invested' | 'salary' | 'checkin' | 'noted' | 'need' | 'portfolio'
+  | 'commit' | 'invested' | 'salary' | 'checkin' | 'noted' | 'need' | 'portfolio' | 'goalNear'
 
 /** Screen order: drives the switcher and the slide direction of jumps. */
 export const SCREENS: { id: ScreenId; label: string; n?: string; main: boolean }[] = [
@@ -26,13 +26,14 @@ export const SCREENS: { id: ScreenId; label: string; n?: string; main: boolean }
   { id: 'noted', label: 'Plan noted', main: false },
   { id: 'need', label: 'Need changed', n: '11', main: true },
   { id: 'portfolio', label: 'Portfolio', n: '12', main: true },
+  { id: 'goalNear', label: 'Goal reminder', main: false },
 ]
 const ORDER = SCREENS.map(s => s.id)
 const PARENT: Partial<Record<ScreenId, ScreenId>> = {
   explore: 'start', basics: 'start', risk: 'basics', pick: 'risk', plan: 'pick', addMoney: 'plan',
   categories: 'addMoney', order: 'categories',
   commit: 'order', invested: 'categories', salary: 'invested', checkin: 'salary', noted: 'checkin',
-  need: 'checkin', portfolio: 'checkin',
+  need: 'checkin', portfolio: 'checkin', goalNear: 'portfolio',
 }
 
 export type Commit = 'wait' | 'recheck' | 'revisit'
@@ -42,16 +43,16 @@ export type SheetKind = 'sell' | 'gr1' | 'gr1Portfolio' | 'month'
 export interface State extends Answers {
   salary: number
   expenses: number
-  goalName: string
-  goalAmt: number
-  goalMonths: number
+  goals: Goal[]
   plan: PlanId
   split: Split
   auto: boolean
   tab: 'grow' | 'park' | 'learn'
   added: number // first money added to Groww, after the plan exists (0 = not yet)
+  orderFor: 'grow' | 'park' // which bucket the order screen is placing
   orderAmt: number
   invested: number // monthly SIP set up from Grow (0 = none yet)
+  parkInvested: number // monthly liquid-fund SIP set up from Park (0 = none yet)
   commit: Commit | null
   ff: boolean // jumped ahead to month 3
   reflect: number[]
@@ -70,17 +71,17 @@ const DEFAULT_SPLIT = planSplit(DEFAULT_PLAN, surplusOf(PERSONA.salary, PERSONA.
 export const DEFAULTS: State = {
   salary: PERSONA.salary,
   expenses: PERSONA.expenses,
-  goalName: PERSONA.goal.name,
-  goalAmt: PERSONA.goal.amount,
-  goalMonths: PERSONA.goal.months,
+  goals: [{ id: 'g1', name: PERSONA.goal.name, amount: PERSONA.goal.amount, months: PERSONA.goal.months, mode: 'exact', unit: 'months' }],
   ...DEFAULT_ANSWERS,
   plan: DEFAULT_PLAN,
   split: DEFAULT_SPLIT,
   auto: true,
   tab: 'grow',
   added: 0,
+  orderFor: 'grow',
   orderAmt: DEFAULT_SPLIT.grow,
   invested: 0,
+  parkInvested: 0,
   commit: null,
   ff: false,
   reflect: [],
@@ -92,7 +93,16 @@ export const DEFAULTS: State = {
 
 export interface Derived {
   surplus: number
+  /** Park's monthly need: what short and medium goals need put aside (no returns assumed). */
   goalMonthly: number
+  /** What long-term goals need put aside each month, inside Grow. */
+  growGoalNeed: number
+  parkGoals: Goal[]
+  growGoals: Goal[]
+  /** "your laptop", or "" when there are no Park goals. */
+  parkLabel: string
+  /** Park money a month not yet in the liquid-fund SIP. */
+  parkAvailable: number
   keepTarget: number
   /** What goes into Groww each month: everything except Keep, which stays in the bank. */
   investable: number
@@ -108,7 +118,12 @@ export function derive(s: State): Derived {
   const sip = s.invested || s.orderAmt || s.split.grow
   return {
     surplus: surplusOf(s.salary, s.expenses),
-    goalMonthly: goalMonthlyOf(s.goalAmt, s.goalMonths),
+    goalMonthly: needFor(s.goals, 'park'),
+    growGoalNeed: needFor(s.goals, 'grow'),
+    parkGoals: goalsIn(s.goals, 'park'),
+    growGoals: goalsIn(s.goals, 'grow'),
+    parkLabel: goalsLabel(goalsIn(s.goals, 'park')),
+    parkAvailable: Math.max(0, s.split.park - s.parkInvested),
     keepTarget: keepTargetOf(s.expenses),
     investable: investableOf(s.split),
     suggested: suggestPlan(s),
@@ -201,6 +216,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     set(prev => {
       const patch: Partial<State> = {}
       if (ORDER.indexOf(id) >= ORDER.indexOf('categories') && !prev.added) patch.added = investableOf(prev.split)
+      if (ORDER.indexOf(id) >= ORDER.indexOf('salary') && !prev.parkInvested) patch.parkInvested = prev.split.park
       if (['invested', 'salary', 'checkin', 'noted', 'need', 'portfolio'].includes(id) && !prev.invested) {
         patch.invested = prev.orderAmt || prev.split.grow
         patch.orderAmt = patch.invested

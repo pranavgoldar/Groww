@@ -21,7 +21,6 @@ export function PickPlan() {
   }
   const sp = planSplit(s.plan, d.surplus, d.goalMonthly)
   const invest = investableOf(sp)
-  const goal = (s.goalName.trim() || 'goal').toLowerCase()
 
   return (
     <Shell title="Money Plan" footer={
@@ -46,10 +45,16 @@ export function PickPlan() {
           <span className="is-label">Invest through Groww</span>
           <b id="investAmt">{inr(invest)} a month</b>
           <span className="is-note">
-            Park {inr(sp.park)}{d.goalMonthly ? ` for your ${goal}` : ''} · Grow {inr(sp.grow)} · Stocks {inr(sp.learn)}
+            Park {inr(sp.park)}{d.parkLabel ? ` put aside for ${d.parkLabel}` : ''} · Grow {inr(sp.grow)} · Stocks {inr(sp.learn)}
           </span>
         </div>
       </div>
+      <p className="hint" id="noReturns" style={{ marginTop: 10 }}>
+        Goal amounts count only what you put in. We don't count on returns; anything extra is a bonus.
+      </p>
+      {d.growGoalNeed > sp.grow && (
+        <p className="amt-msg"><span>Your long-term goals need {inr(d.growGoalNeed)} a month put aside; this plan's Grow is {inr(sp.grow)}. You can move more into Grow on the next screen, or give a goal more time.</span></p>
+      )}
 
       <div className="callback" style={{ marginTop: 18 }}>
         <Icon.scale />

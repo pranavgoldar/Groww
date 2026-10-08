@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import {
-  KEYS, PERSONA, badRange, investableOf, commonRanges, computeDraw, fallPct, goalMonthlyOf, keepTargetOf, month3, planSplit,
+  KEYS, PERSONA, badRange, bucketOf, horizonOf, investableOf, needFor, type Goal, commonRanges, computeDraw, fallPct, goalMonthlyOf, keepTargetOf, month3, planSplit,
   rebalance, suggestPlan, sumSplit, surplusOf, type Split,
 } from './plan'
 
@@ -102,4 +102,20 @@ describe('month 3 snapshot (Balanced, ₹5,500 SIP)', () => {
 
 it('bad-year range on every ₹10,000 is ₹7,000–8,000', () => {
   expect(badRange(10000)).toEqual([7000, 8000])
+})
+
+describe('goals and horizons', () => {
+  const g = (name: string, amount: number, months: number): Goal => ({ id: name, name, amount, months, mode: 'exact', unit: 'months' })
+  it('sorts time into short, medium and long (3+ years)', () => {
+    expect([1, 12, 13, 20, 36, 37, 60].map(horizonOf)).toEqual(['short', 'short', 'medium', 'medium', 'medium', 'long', 'long'])
+  })
+  it('keeps short and medium goals in Park, long ones in Grow', () => {
+    expect(bucketOf(g('Laptop', 60000, 20))).toBe('park')
+    expect(bucketOf(g('Studies', 240000, 48))).toBe('grow')
+  })
+  it('counts only what is put in, never returns', () => {
+    const goals = [g('Laptop', 60000, 20), g('Trip', 24000, 8), g('Studies', 240000, 48)]
+    expect(needFor(goals, 'park')).toBe(3000 + 3000)
+    expect(needFor(goals, 'grow')).toBe(5000)
+  })
 })
