@@ -286,3 +286,12 @@ Modelled on account-opening declaration forms (one page, tap-to-select pills, pr
 - It changes the wording, not the maths. The income question becomes "Monthly take-home salary" (full-time), "Monthly take-home from your job" (part-time), "Money coming in each month" with the hint "Allowance, stipend or part-time pay. Count only what comes in regularly." (student), "Average monthly income" with "use a typical month, or a little less" (own business, freelance), or "Monthly income" (other).
 - It prefills **Is your income steady?**: Yes for a full-time job, Not always for part-time, student, own business and freelance; Other leaves the answer as it was. She can change it, and that answer (not the occupation) feeds the suggested plan, so a student usually starts from Careful.
 - Outside a full-time job the app says "income" instead of "salary": the plan's free-each-month line, Your money plan, the Each month reminder and next month.
+
+## Revision: no reflection checklist on the check-in
+
+- The "Before you decide" checklist (three tappable questions) is removed from the first-fall check-in. Ticking did nothing, and its main question ("Has your need for this money changed?") is already the **My need for this money changed** button. The calm-decision work is done by "What you decided" and the bad-year range, and the check-in is shorter for it.
+
+## Revision: month 3 on a laptop
+
+- Phones keep the lock screen (Thursday · month 3 of your plan, 10:24, the Groww notification).
+- Laptops no longer show a phone lock screen. The page turns to "Two months later…" ("Your plan has been running. Then the market fell, and Groww sent you this.") and the same notification slides in at the top right, like a web notification. The hint says "Open the notification at the top right to continue"; clicking it opens the check-in.

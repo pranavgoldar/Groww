@@ -5,12 +5,6 @@ import { DISCLAIMER, Dot, Icon, RangeScale, Shell } from '../components/ui'
 import { commitLabel } from './Commit'
 import { ordinal } from '../lib/pay'
 
-const REFLECT = [
-  'Has your need for this money changed?',
-  'Has your reason for buying changed, or just the price?',
-  'Are you deciding while upset?',
-]
-
 function Decided() {
   const { s } = useStore()
   const c = commitLabel(s.commit)
@@ -25,13 +19,11 @@ function Decided() {
 
 /* Screen 6: the first fall, read against the user's own plan. Selling stays one tap away. */
 export function CheckIn() {
-  const { s, d, set, go, openSheet, say } = useStore()
+  const { d, go, openSheet, say } = useStore()
   const a = d.m3.indexPut
   const v = d.m3.indexNow
   const pct = fallPct(a)
   const [lo, hi] = badRange(10000)
-  const toggle = (i: number) =>
-    set(prev => ({ reflect: prev.reflect.includes(i) ? prev.reflect.filter(x => x !== i) : [...prev.reflect, i] }))
   return (
     <Shell title="Your index fund" right={<button className="hdr-sell" onClick={() => openSheet('sell')}>Sell</button>} footer={<>
       <button className="btn-primary" onClick={() => go('noted')}>Stick with my plan</button>
@@ -64,21 +56,6 @@ export function CheckIn() {
         <RangeScale amount={a} value={v} />
         <p className="rs-cap">You are here — inside the range you saw before investing.</p>
         <p className="tiny">{DISCLAIMER}</p>
-      </section>
-
-      <section className="sec">
-        <h2 className="sec-title">Before you decide</h2>
-        <p className="hint" style={{ marginTop: 4 }}>Tap any that apply. There are no right answers.</p>
-        <div className="checks">
-          {REFLECT.map((q, i) => {
-            const on = s.reflect.includes(i)
-            return (
-              <button key={i} className="check" role="checkbox" aria-checked={on} onClick={() => toggle(i)}>
-                <span className="check-box">{on && <Icon.check size={13} />}</span><span>{q}</span>
-              </button>
-            )
-          })}
-        </div>
       </section>
 
       <button className="link block" style={{ marginTop: 16 }} onClick={() => openSheet('gr1')}>Ask GR 1 why it fell</button>

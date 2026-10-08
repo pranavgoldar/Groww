@@ -61,7 +61,6 @@ export interface State extends Answers {
   extra: Purchase[] // anything else bought: other funds, stocks, or buys outside the plan
   commit: Commit | null
   ff: boolean // jumped ahead to month 3
-  reflect: number[]
   needAmt: number
   needWhen: NeedWhen | null
   drawn: Split // taken out on Screen 7, by bucket
@@ -96,7 +95,6 @@ export const DEFAULTS: State = {
   extra: [],
   commit: null,
   ff: false,
-  reflect: [],
   needAmt: 0,
   needWhen: null,
   drawn: ZERO,

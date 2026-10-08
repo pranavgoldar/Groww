@@ -143,9 +143,15 @@ function LockScreen() {
   }
   return (
     <div className={'lock' + (shown ? ' show' : '') + (notifIn ? ' notif-in' : '')} id="lock">
+      {/* Phones: a lock screen. Laptops: a "two months later" page with a web notification at the top right. */}
       <div className="lock-time">
         <div className="lock-date">Thursday · month 3 of your plan</div>
         <div className="lock-clock">10:24</div>
+      </div>
+      <div className="lock-later" aria-hidden={!shown}>
+        <p className="eyebrow">Thursday · month 3 of your plan</p>
+        <h2 className="h1">Two months later…</h2>
+        <p className="lead">Your plan has been running. Then the market fell, and Groww sent you this.</p>
       </div>
       <button className="notif" id="notif" onClick={open}>
         <span className="notif-ic" aria-hidden="true"><Mark size={26} /></span>
@@ -155,7 +161,7 @@ function LockScreen() {
           <span>Here's what you decided when you invested.</span>
         </span>
       </button>
-      <div className="lock-hint">Open the notification to continue</div>
+      <div className="lock-hint">Open the notification<span className="lock-hint-where"> at the top right</span> to continue</div>
     </div>
   )
 }
