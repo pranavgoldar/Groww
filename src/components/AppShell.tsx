@@ -7,7 +7,7 @@ import { Mark } from './ui'
 
 /* Groww-style top bar, shown on laptop-sized windows. Phones get each screen's own app bar instead. */
 function TopNav() {
-  const { s, nav, go } = useStore()
+  const { s, nav, go, sheet, openSheet } = useStore()
   const planHome = s.ff ? 'portfolio' : s.added ? 'categories' : 'start'
   const onExplore = nav.current === 'explore'
   return (
@@ -18,7 +18,7 @@ function TopNav() {
           <button className={onExplore ? '' : 'on'} aria-current={!onExplore} onClick={() => go(planHome)}>Money Plan</button>
           <button className={onExplore ? 'on' : ''} aria-current={onExplore} onClick={() => go('explore')}>Explore</button>
         </div>
-        <span className="topnav-avatar" aria-label="Riya">R</span>
+        <button className="topnav-avatar" aria-label="Your account" aria-haspopup="dialog" aria-expanded={sheet === 'account'} onClick={() => openSheet('account')}>R</button>
       </div>
     </nav>
   )
@@ -75,7 +75,7 @@ function SheetHost() {
   if (!kind) return null
   const Body = SHEETS[kind]
   return (
-    <div className={'sheet-wrap' + (open ? ' open' : '')} id="sheet">
+    <div className={`sheet-wrap k-${kind}` + (open ? ' open' : '')} id="sheet">
       <div className="scrim" onClick={closeSheet} />
       <div className="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
         <div className="grabber" />

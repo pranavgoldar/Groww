@@ -224,3 +224,9 @@ Copy says what she "could" invest rather than "should": the amount is calculated
 - **Laptops** (900px and wider) get Groww's web layout: the top bar with the logo, the page on the left, and a sticky card on the right with the plan summary (free each month, the four-part split, what goes through Groww) and the screen's buttons. Sheets open as centred dialogs.
 - Styling follows Groww's web screens: grey text (#44475B), thin grey borders, Groww green (#00B386) for the main button and selected tabs, underlined tabs, grey selected chips, 12px cards.
 - Each screen has its own link (`#/portfolio`, `#/checkin` and so on). Opening one fills in what that screen needs. Reloading the page without a link starts over.
+
+## Revision: account menu
+
+- The avatar opens an account menu modelled on Groww's: name and email, settings, Your portfolio, Your money plan, All orders, Bank details, 24 x 7 Customer Support, Reports, Log out. On laptops it drops down under the avatar; on phones the avatar sits in the app bar and the menu opens as a bottom sheet.
+- Your portfolio opens at any time. Before money is added it says nothing is invested yet, with "Plan my money". After money is added it shows what's been put in so far, what's placed, and the Groww balance, with Keep noted as staying in the bank. From month 3 it's the full "Is your money doing its job?" view.
+- Items that belong to the real app show a short note instead of opening.

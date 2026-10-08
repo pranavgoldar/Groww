@@ -47,6 +47,8 @@ Supporting screens: Explore, Order, Invested, Plan noted, Goal reminder.
 - **Phone:** an app bar with back at the top; the main buttons stay pinned to the bottom.
 - **Laptop (900px and wider):** Groww's top bar, the page on the left, and a sticky card on the right with the plan summary and the screen's buttons. Sheets open as centred dialogs.
 
+The **R** avatar (top right) opens Riya's account menu, like Groww's: Your portfolio and Your money plan open here; All orders, Bank details, Customer Support, Reports and Log out explain that they belong to the real app. Before month 3, Portfolio shows nothing yet, or what's been added and placed so far.
+
 There's no phone frame or screen switcher: you move through it as a customer would. Each screen also has its own link, such as `/#/plan` or `/#/portfolio`; opening one fills in what the screen needs. Reloading without a link starts over with Riya's numbers.
 
 ## Running it
