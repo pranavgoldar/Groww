@@ -3,6 +3,7 @@ import { useStore, type State } from '../state/store'
 import { inr } from '../lib/format'
 import { Chips, Dot, Icon, Meter, Msg, Shell, AmountField, BUCKET_NAME } from '../components/ui'
 import { MOVE_BEFORE_MONTHS, goalLine, monthlyFor } from '../lib/plan'
+import { autopayShort } from '../lib/pay'
 import { AUTO_WHY, PRODUCTS, type ProductId, type Toward } from '../lib/products'
 
 type Tab = State['tab']
@@ -93,7 +94,7 @@ export function Categories() {
   }
 
   return (
-    <Shell summary title="Place your money" footer={<button className="btn-primary" onClick={() => go('salary')}>Done for now</button>}>
+    <Shell summary title="Place your money" footer={<button className="btn-primary" onClick={() => go('payMode')}>Done for now</button>}>
       {s.added > 0 && (
         <div className="success" role="status" style={{ margin: '4px 0 18px' }}>
           <span className="success-ic"><Icon.check /></span>
@@ -151,11 +152,11 @@ export function Order() {
   const place = () => {
     if (planPark) {
       set(prev => ({ parkInvested: prev.parkInvested + prev.orderAmt }))
-      say(`Liquid fund SIP set up: ${inr(n)} every salary day${d.parkLabel ? `, for ${d.parkLabel}` : ''}.`)
+      say(`Liquid fund SIP set up: ${inr(n)} a month${d.parkLabel ? `, for ${d.parkLabel}` : ''}.`)
     } else {
       set(prev => ({ extra: [...prev.extra, { id: Date.now(), product: prev.orderId, amt: prev.orderAmt, toward: prev.orderToward }] }))
       say(p.sip
-        ? `${p.short[0].toUpperCase()}${p.short.slice(1)} SIP set up: ${inr(n)} every salary day, ${where}.`
+        ? `${p.short[0].toUpperCase()}${p.short.slice(1)} SIP set up: ${inr(n)} a month, ${where}.`
         : `Bought ${inr(n)} of ${p.name}, ${where}. This is a prototype, so nothing was bought.`)
     }
     back()
@@ -194,7 +195,9 @@ export function Order() {
       <Msg id="orderMsg">{v.msg}</Msg>
       <div className="kv-list">
         <div className="kv"><span>Order type</span><b>{p.sip ? 'Monthly SIP' : 'One-time buy'}</b></div>
-        <div className="kv"><span>Date</span><b>{p.sip ? 'Every salary day' : 'Today'}</b></div>
+        {p.sip
+          ? <div className="kv"><span>Paying each month</span><b>{s.pay === 'autopay' ? `Autopay, ${autopayShort(s.payDay, s.payHour)}` : 'You confirm it (autopay is optional)'}</b></div>
+          : <div className="kv"><span>Date</span><b>Today</b></div>}
         <div className="kv"><span>Minimum</span><b>₹100</b></div>
       </div>
       {p.bucket === 'park' && (

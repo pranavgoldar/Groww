@@ -73,7 +73,7 @@ export function Invested() {
   const parkOpen = s.split.park > 0 && d.parkAvailable > 0
   return (
     <Shell title="" footer={<>
-      <button className="btn-primary" onClick={() => go('salary')}>Fast-forward to next salary day →</button>
+      <button className="btn-primary" onClick={() => go('payMode')}>Next: how each month works</button>
       {parkOpen && <button className="link block" onClick={() => { set({ tab: 'park' }); go('categories') }}>Set up your Park SIP too</button>}
     </>}>
       <div className="done">
@@ -83,7 +83,7 @@ export function Invested() {
       </div>
       <div className="card">
         <div className="kv"><span>Fund</span><b>Large-cap index fund (sample)</b></div>
-        <div className="kv"><span>Every salary day</span><b>{inr(s.invested || d.sip)} from Grow</b></div>
+        <div className="kv"><span>Each month</span><b>{inr(s.invested || d.sip)} from Grow</b></div>
         <div className="kv"><span>Starts</span><b>{s.added ? 'Today, from the money you added' : 'Your next salary day'}</b></div>
         <div className="kv"><span>Still in Grow to place</span><b>{inr(d.available)} a month</b></div>
       </div>

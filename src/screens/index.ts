@@ -13,6 +13,7 @@ import { NeedChanged } from './NeedChanged'
 import { Portfolio } from './Portfolio'
 import { GoalNear } from './GoalNear'
 import { MyPlan } from './MyPlan'
+import { PayMode } from './PayMode'
 
 export const SCREEN_VIEWS: Record<ScreenId, FC> = {
   start: Start,
@@ -33,4 +34,5 @@ export const SCREEN_VIEWS: Record<ScreenId, FC> = {
   portfolio: Portfolio,
   goalNear: GoalNear,
   myPlan: MyPlan,
+  payMode: PayMode,
 }

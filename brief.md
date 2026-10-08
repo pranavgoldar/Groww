@@ -249,3 +249,14 @@ Copy says what she "could" invest rather than "should": the amount is calculated
 - Every order shows **Counts toward**, set automatically by type: funds that hold shares count toward Grow, liquid and short-duration funds toward Park, single stocks toward Invest in stocks. "Change" offers Grow, Park, Invest in stocks or **Outside my plan** in one tap.
 - Flexi-cap, hybrid and short-duration funds now open sample orders like the index and liquid funds, and "Explore stocks" opens a one-time buy of a sample stock. Fixed deposits explain that they live in Groww's FD section.
 - What's left to place in each bucket counts these purchases. Outside-plan buys leave the plan untouched. Portfolio lists every other purchase and what it counts toward, before and after month 3, and salary day names every SIP counted toward a bucket.
+
+## Revision: confirm each month by default; autopay is opt-in
+
+Autopay suits people who are sure of their plan. Students who are still exploring shouldn't find money leaving their account every month by default.
+
+- After placing their money, people are asked once: **How do you want to invest each month?**
+  - **I'll confirm each month** (selected by default): when salary comes in, Groww reminds them; nothing leaves the account until they tap Confirm, and any month can be skipped.
+  - **Autopay on a fixed day**: they pick the day of the month (1st–28th) and time. Groww notifies them **the day before** and **3 hours before**, each with a way to skip that month, and they'd approve the autopay once in their UPI app.
+- Next month follows the choice. Default: "Ready to invest ₹9,000 as planned?" with **Confirm and pay ₹9,000** or **Skip this month** (nothing taken, plan unchanged). Autopay: the two reminders, then "₹9,000 invested as planned", with Skip next month's autopay.
+- The choice lives in **Your money plan → Each month** and can be changed any time. It replaces the earlier "Split my salary automatically" toggle.
+- SIP orders say "Paying each month: You confirm it (autopay is optional)", or the autopay day and time once chosen.
