@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Money Plan prototype</title>
+<link rel="icon" href="data:image/svg+xml,<svg viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'><circle cx='20' cy='20' r='20' fill='%235367FF'/><path d='M2.01 28.74L16 20l8 3.5 13.96-12.3A20 20 0 0 1 20 40 20 20 0 0 1 2.01 28.74z' fill='%2300F3BB'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -49,6 +50,8 @@ button:disabled{cursor:not-allowed}
 .icon-btn{width:40px;height:40px;border-radius:20px;border:0;background:transparent;display:grid;place-items:center;position:relative;z-index:1;color:var(--ink)}
 .icon-btn:hover{background:var(--soft)}
 .wordmark{color:var(--accent);font-weight:700;font-size:21px;letter-spacing:-.03em}
+.brand{display:inline-flex;align-items:center;gap:8px;vertical-align:middle}
+.brand svg{flex:none;display:block}
 .hdr-sell{height:34px;padding:0 18px;border-radius:17px;border:1px solid var(--line-2);background:#fff;font-weight:600;font-size:14px}
 .hdr-sell:hover{background:var(--soft)}
 
@@ -319,7 +322,7 @@ button:disabled{cursor:not-allowed}
 .lock-clock{font-size:84px;font-weight:600;letter-spacing:-.03em;line-height:1;margin-top:4px}
 .notif{position:absolute;left:12px;right:12px;top:270px;display:flex;gap:12px;align-items:flex-start;text-align:left;padding:14px;border:0;border-radius:22px;background:rgba(245,247,248,.92);color:var(--ink);box-shadow:0 10px 30px rgba(0,0,0,.25);transform:translateY(-24px);opacity:0;transition:transform .45s cubic-bezier(.22,.8,.24,1),opacity .35s}
 .lock.notif-in .notif{transform:translateY(0);opacity:1}
-.notif-ic{flex:none;width:38px;height:38px;border-radius:10px;background:#fff;display:grid;place-items:center;font-weight:700;color:var(--accent);font-size:20px;letter-spacing:-.03em;box-shadow:inset 0 0 0 1px var(--line)}
+.notif-ic{flex:none;width:38px;height:38px;border-radius:10px;background:#fff;display:grid;place-items:center;box-shadow:inset 0 0 0 1px var(--line)}
 .notif-txt{flex:1;min-width:0;font-size:14px;line-height:19px}
 .notif-top{display:flex;justify-content:space-between;font-size:12px;color:var(--ink-2);margin-bottom:2px}
 .notif-txt b{display:block;font-weight:600}
@@ -370,7 +373,7 @@ button:disabled{cursor:not-allowed}
             <div class="lock-clock">10:24</div>
           </div>
           <button class="notif" id="notif" data-act="openNotif">
-            <span class="notif-ic" aria-hidden="true">g</span>
+            <span class="notif-ic" aria-hidden="true"><svg viewBox="0 0 40 40" width="26" height="26" aria-hidden="true"><circle cx="20" cy="20" r="20" fill="#5367FF"/><path d="M2.01 28.74L16 20l8 3.5 13.96-12.3A20 20 0 0 1 20 40 20 20 0 0 1 2.01 28.74z" fill="#00F3BB"/></svg></span>
             <span class="notif-txt">
               <span class="notif-top"><span>groww</span><span>now</span></span>
               <b id="notifTitle">Your index fund is down 9%</b>
@@ -484,6 +487,7 @@ const ORDER = SCREENS.map(s => s.id);
 const PARENT = {ex:'s1', s2:'s1', s3:'s2', s4:'s3', pf:'s4', or:'s4', s5:'or', inv:'s4', s6:'pf', nt:'s6', s7:'s6'};
 
 /* ================= icons ================= */
+const MARK = size => `<svg viewBox="0 0 40 40" width="${size}" height="${size}" aria-hidden="true"><circle cx="20" cy="20" r="20" fill="#5367FF"/><path d="M2.01 28.74L16 20l8 3.5 13.96-12.3A20 20 0 0 1 20 40 20 20 0 0 1 2.01 28.74z" fill="#00F3BB"/></svg>`;
 const svg = (d, w=20, sw=1.9) => `<svg viewBox="0 0 24 24" width="${w}" height="${w}" fill="none" stroke="currentColor" stroke-width="${sw}" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
 const I = {
   back: svg('<path d="M15 5l-7 7 7 7"/>', 24, 2.2),
@@ -583,7 +587,7 @@ function orderCheck(){
 function shell(o){
   return `<header class="hdr">
       <button class="icon-btn back" data-act="back" aria-label="Back">${I.back}</button>
-      <div class="hdr-title">${o.wordmark ? '<span class="wordmark">groww</span>' : (o.title || '')}</div>
+      <div class="hdr-title">${o.wordmark ? `<span class="brand">${MARK(26)}<span class="wordmark">groww</span></span>` : (o.title || '')}</div>
       <div class="hdr-right">${o.right || ''}</div>
     </header>
     <div class="body${o.footer ? '' : ' pad-home'}">${o.body}</div>

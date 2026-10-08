@@ -125,3 +125,7 @@ Purpose: give a legitimate exit path without panic.
 ## Deliverable
 
 One HTML file. Before writing code, list the 7 screens with one line each to confirm the plan, then build. After building, check that every rupee number matches the persona and that every screen has exactly one primary CTA.
+
+## Revisions after the brief
+
+* Logo: at the user's request, the Groww logo mark (blue #5367FF / mint #00F3BB) now appears in Screen 1's header beside the "groww" wordmark, on the lock-screen notification and as the browser-tab icon. It is drawn as inline SVG so the file stays self-contained. This replaces the "Do NOT use the real Groww logo" rule above.
