@@ -454,6 +454,8 @@ button:disabled { cursor: not-allowed; }
 .lock.notif-in .notif { transform: translate(-50%, 0); opacity: 1; }
 .lock .notif-txt > span:last-child { color: var(--ink); }
 .lock-hint { position: absolute; left: 0; right: 0; bottom: 56px; text-align: center; font-size: 13px; opacity: 0.75; }
+.lock-later { display: none; }
+.lock-hint-where { display: none; }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition-duration: 0s !important; animation-duration: 0s !important; }
@@ -543,4 +545,17 @@ button:disabled { cursor: not-allowed; }
   .topnav-in { gap: 24px; }
   .topnav-links { gap: 20px; }
   .topnav-links [data-nav="positions"], .topnav-links [data-nav="watchlist"] { display: none; }
+}
+
+/* Laptops: no phone lock screen. The page fades to "Two months later…" and a web notification slides in at the top right. */
+@media (min-width: 900px) {
+  .lock { background: #fff; color: var(--ink); }
+  .lock-hint-where { display: inline; }
+  .lock-time { display: none; }
+  .lock-later { display: block; max-width: 560px; margin: 26vh auto 0; padding: 0 24px; text-align: center; }
+  .lock-later .lead { margin-top: 10px; }
+  .lock .notif { left: auto; right: max(24px, calc(50% - 596px)); top: 24px; width: 380px; border-radius: 14px; background: #fff; border: 1px solid var(--line); box-shadow: 0 16px 40px rgba(16, 24, 32, 0.18); transform: translateX(calc(100% + 48px)); cursor: pointer; }
+  .lock.notif-in .notif { transform: none; }
+  .lock .notif:hover { box-shadow: 0 16px 40px rgba(16, 24, 32, 0.26); }
+  .lock-hint { bottom: auto; top: calc(26vh + 190px); color: var(--ink-2); opacity: 1; font-size: 14px; }
 }

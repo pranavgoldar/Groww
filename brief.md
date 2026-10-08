@@ -290,3 +290,8 @@ Modelled on account-opening declaration forms (one page, tap-to-select pills, pr
 ## Revision: no reflection checklist on the check-in
 
 - The "Before you decide" checklist (three tappable questions) is removed from the first-fall check-in. Ticking did nothing, and its main question ("Has your need for this money changed?") is already the **My need for this money changed** button. The calm-decision work is done by "What you decided" and the bad-year range, and the check-in is shorter for it.
+
+## Revision: month 3 on a laptop
+
+- Phones keep the lock screen (Thursday · month 3 of your plan, 10:24, the Groww notification).
+- Laptops no longer show a phone lock screen. The page turns to "Two months later…" ("Your plan has been running. Then the market fell, and Groww sent you this.") and the same notification slides in at the top right, like a web notification. The hint says "Open the notification at the top right to continue"; clicking it opens the check-in.

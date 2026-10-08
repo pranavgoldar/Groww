@@ -30,7 +30,7 @@ Money gets a plan before it is added. The app never asks "what's this for?" afte
 5. **Commit card.** Before the first Grow purchase: how bad years have looked, and what you'll do if it falls. Confirming returns straight to placing money, on the next bucket with money left.
 6. **Each month.** Asked once, after the money is placed: **I'll confirm each month** (the default: nothing leaves the account until a tap, and any month can be skipped) or **Autopay on a fixed day**, with the day and time picked and a reminder the day before and 3 hours before.
 7. **Next month.** By default: "Ready to invest ₹9,000 as planned?" with Confirm and pay, or Skip this month. With autopay: the two reminders, then "₹9,000 invested as planned". Keep's ₹6,000 stays in the bank either way.
-8. **First-fall check-in, month 3.** Your ₹11,500 is now ₹10,500, read against your own plan. Selling stays one tap away.
+8. **First-fall check-in, month 3.** A notification, "Your index fund is down 9%. Here's what you decided when you invested.", arrives on a phone lock screen (on laptops: a "Two months later…" page with the notification at the top right). It opens the check-in: your ₹11,500 is now ₹10,500, read against your own plan. Selling stays one tap away.
 9. **My need changed.** Draw from Keep, then Park, before Grow.
 10. **Is your money doing its job? (Portfolio).** Plan vs actual, each goal's progress by what's been put in, fund vs its index, patterns in stock trades. No scores or grades.
 
