@@ -1,24 +1,55 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
-import { useStore, type SheetKind } from '../state/store'
+import { useStore, type ScreenId, type SheetKind } from '../state/store'
 import { fallPct } from '../lib/plan'
 import { SCREEN_VIEWS } from '../screens'
 import { SHEETS } from './sheets'
-import { Mark } from './ui'
+import { Icon, Mark } from './ui'
 
-/* Groww-style top bar, shown on laptop-sized windows. Phones get each screen's own app bar instead. */
+/* Groww's web top bar, shown on laptop-sized windows. Phones get each screen's own app bar instead.
+   Money Plan sits where Groww shows the current section; Explore and Holdings open here, the rest belong to the real app. */
 function TopNav() {
-  const { s, nav, go, sheet, openSheet } = useStore()
-  const planHome = s.ff ? 'portfolio' : s.added ? 'categories' : 'start'
-  const onExplore = nav.current === 'explore'
+  const { s, nav, go, say, sheet, openSheet } = useStore()
+  const planHome: ScreenId = s.ff ? 'plan' : s.added ? 'categories' : 'start'
+  const active = nav.current === 'explore' ? 'explore' : nav.current === 'portfolio' ? 'holdings' : 'plan'
+  const elsewhere = (what: string) => say(`${what} would open here. It isn't part of this prototype.`)
+  const links: [string, string, () => void][] = [
+    ['plan', 'Money Plan', () => go(planHome)],
+    ['stocks', 'Stocks', () => elsewhere("Groww's stocks home")],
+    ['explore', 'Explore', () => go('explore')],
+    ['holdings', 'Holdings', () => go('portfolio')],
+    ['positions', 'Positions', () => elsewhere('Positions')],
+    ['orders', 'Orders', () => elsewhere('Orders')],
+    ['watchlist', 'Watchlist', () => elsewhere('Your watchlist')],
+  ]
+  const sayRef = useRef(say)
+  sayRef.current = say
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault()
+        sayRef.current("Search would open here. It isn't part of this prototype.")
+      }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
   return (
     <nav className="topnav" aria-label="Groww">
       <div className="topnav-in">
         <button className="topnav-logo" aria-label="Money Plan home" onClick={() => go(planHome)}><Mark size={36} /></button>
         <div className="topnav-links">
-          <button className={onExplore ? '' : 'on'} aria-current={!onExplore} onClick={() => go(planHome)}>Money Plan</button>
-          <button className={onExplore ? 'on' : ''} aria-current={onExplore} onClick={() => go('explore')}>Explore</button>
+          {links.map(([key, label, onClick]) => (
+            <button key={key} data-nav={key} className={active === key ? 'on' : ''} aria-current={active === key ? 'page' : undefined} onClick={onClick}>{label}</button>
+          ))}
         </div>
-        <button className="topnav-avatar" aria-label="Your account" aria-haspopup="dialog" aria-expanded={sheet === 'account'} onClick={() => openSheet('account')}>R</button>
+        <div className="topnav-right">
+          <button className="topnav-search" aria-label="Search Groww" onClick={() => elsewhere('Search')}>
+            <Icon.search /><span className="ts-text">Search Groww...</span><kbd>Ctrl+K</kbd>
+          </button>
+          <button className="topnav-ic" aria-label="Ask GR 1" onClick={() => openSheet('gr1Ask')}><Icon.aperture /></button>
+          <button className="topnav-ic" aria-label="Notifications" onClick={() => elsewhere('Notifications')}><Icon.bell /></button>
+          <button className="topnav-avatar" aria-label="Your account" aria-haspopup="dialog" aria-expanded={sheet === 'account'} onClick={() => openSheet('account')}>R</button>
+        </div>
       </div>
     </nav>
   )

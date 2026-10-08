@@ -45,7 +45,9 @@ Supporting screens: Explore, Order, Invested, Plan noted, Goal reminder.
 ## Layout
 
 - **Phone:** an app bar with back at the top; the main buttons stay pinned to the bottom.
-- **Laptop (900px and wider):** Groww's top bar, the page on the left, and a sticky card on the right with the plan summary and the screen's buttons. Sheets open as centred dialogs.
+- **Laptop (900px and wider):** Groww's web top bar (Money Plan, Stocks, Explore, Holdings, Positions, Orders, Watchlist, then search with Ctrl+K, GR 1, notifications and the avatar), the page on the left, and a sticky card on the right with the plan summary and the screen's buttons. Sheets open as centred dialogs.
+
+In the top bar, Holdings opens the portfolio, Explore opens Explore, Money Plan returns to the plan, and the GR 1 icon opens GR 1; the other links, search and notifications say they belong to the real app. On windows narrower than 1240px search shrinks to an icon, and below 960px Positions and Watchlist step back.
 
 The **R** avatar (top right) opens Riya's account menu, like Groww's: Your portfolio and Your money plan open here; All orders, Bank details, Customer Support, Reports and Log out explain that they belong to the real app. Before month 3, Portfolio shows nothing yet, or what's been added and placed so far.
 

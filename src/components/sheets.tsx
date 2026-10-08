@@ -26,12 +26,12 @@ function Sell() {
   )
 }
 
-function GR1({ question }: { question: string }) {
+function GR1({ question }: { question?: string }) {
   const { closeSheet } = useStore()
   return (
     <>
       <h2 className="sheet-title" id="sheetTitle">GR 1</h2>
-      <div className="bubble">{question}</div>
+      {question && <div className="bubble">{question}</div>}
       <div className="gr1-ph">
         <b>GR 1 would open here</b><br />with your plan and holdings already in context. It isn't part of this prototype.
       </div>
@@ -114,5 +114,6 @@ export const SHEETS: Record<SheetKind, FC> = {
     return <GR1 question={`Why did my index fund fall ${fallPct(d.m3.indexPut)}% in 3 weeks?`} />
   },
   gr1Portfolio: () => <GR1 question="How is my money doing against my plan?" />,
+  gr1Ask: () => <GR1 />,
   month: MonthDifferent,
 }

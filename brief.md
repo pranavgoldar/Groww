@@ -230,3 +230,9 @@ Copy says what she "could" invest rather than "should": the amount is calculated
 - The avatar opens an account menu modelled on Groww's: name and email, settings, Your portfolio, Your money plan, All orders, Bank details, 24 x 7 Customer Support, Reports, Log out. On laptops it drops down under the avatar; on phones the avatar sits in the app bar and the menu opens as a bottom sheet.
 - Your portfolio opens at any time. Before money is added it says nothing is invested yet, with "Plan my money". After money is added it shows what's been put in so far, what's placed, and the Groww balance, with Keep noted as staying in the bank. From month 3 it's the full "Is your money doing its job?" view.
 - Items that belong to the real app show a short note instead of opening.
+
+## Revision: Groww's web top bar
+
+- Laptops get Groww's top bar: logo, Money Plan (the current section, in bold), Stocks, Explore, Holdings, Positions, Orders, Watchlist, then "Search Groww..." with Ctrl+K, the GR 1 icon, notifications and the avatar.
+- Holdings opens the portfolio and is highlighted there; Explore opens Explore; Money Plan returns to the plan (the monthly plan editor from month 3, where saving goes back to the portfolio). The GR 1 icon opens GR 1. Stocks, Positions, Orders, Watchlist, search, Ctrl+K and notifications show a short note.
+- The page widens to 1240px to line up with the bar. Below 1240px search shrinks to an icon; below 960px Positions and Watchlist are hidden so the bar never overflows.

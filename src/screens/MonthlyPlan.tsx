@@ -53,7 +53,8 @@ export function MonthlyPlan() {
     set(prev => ({ split: rebalance(dragBase.current ?? prev.split, k, v, total) }))
 
   const u = s.update
-  const save = () => go(!s.added ? 'addMoney' : u ? 'portfolio' : 'categories')
+  // At month 3 the plan is edited from the portfolio, so saving goes back there.
+  const save = () => go(!s.added ? 'addMoney' : u || s.ff ? 'portfolio' : 'categories')
   const setAuto = (auto: boolean) => set({ auto })
 
   return (
