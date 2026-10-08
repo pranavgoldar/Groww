@@ -20,6 +20,53 @@ export function goalMonthlyOf(amount: number, months: number): number {
   return amount > 0 && months > 0 ? Math.ceil(amount / months / 100) * 100 : 0
 }
 
+/* ---------- goals and time horizons ---------- */
+// Goal maths only ever counts what is put in. Returns are never assumed or promised.
+export type Horizon = 'short' | 'medium' | 'long'
+export type HorizonMode = Horizon | 'exact'
+export interface Goal {
+  id: string
+  name: string
+  amount: number
+  months: number
+  mode: HorizonMode // a band shortcut, or an exact time the user typed
+  unit: 'months' | 'years' // how the exact time is shown
+}
+export const HORIZONS: { id: Horizon; label: string; range: string; months: number }[] = [
+  { id: 'short', label: 'Short', range: 'under 1 year', months: 12 },
+  { id: 'medium', label: 'Medium', range: '1–3 years', months: 24 },
+  { id: 'long', label: 'Long', range: '3+ years', months: 60 },
+]
+export const LONG_AFTER_MONTHS = 36 // 3+ years is long term, which matches Grow
+export const MOVE_BEFORE_MONTHS = 12 // long-term goal money moves to Park this long before the date
+
+export function horizonOf(months: number): Horizon {
+  if (months <= 12) return 'short'
+  if (months <= LONG_AFTER_MONTHS) return 'medium'
+  return 'long'
+}
+/** Short and medium goals are kept steady in Park; long ones ride out bad years in Grow. */
+export const bucketOf = (g: Pick<Goal, 'months'>): 'park' | 'grow' => (horizonOf(g.months) === 'long' ? 'grow' : 'park')
+/** Monthly amount to put aside so what you put in alone reaches the goal. */
+export const monthlyFor = (g: Pick<Goal, 'amount' | 'months'>) => goalMonthlyOf(g.amount, g.months)
+export const goalsIn = (goals: Goal[], bucket: 'park' | 'grow') => goals.filter(g => g.amount > 0 && g.months > 0 && bucketOf(g) === bucket)
+export const needFor = (goals: Goal[], bucket: 'park' | 'grow') => goalsIn(goals, bucket).reduce((a, g) => a + monthlyFor(g), 0)
+
+export const durationText = (months: number) =>
+  months % 12 === 0 ? `${months / 12} year${months === 12 ? '' : 's'}` : `${months} month${months === 1 ? '' : 's'}`
+
+/** "Laptop · ₹60,000 in 20 months" */
+export const goalLine = (g: Goal, inrFn: (n: number) => string) => `${g.name.trim() || 'Goal'} · ${inrFn(g.amount)} in ${durationText(g.months)}`
+
+/** "your laptop", "your laptop and trip", "your goals" */
+export function goalsLabel(goals: Goal[]): string {
+  const names = goals.map(g => (g.name.trim() || 'goal').toLowerCase())
+  if (!names.length) return ''
+  if (names.length === 1) return `your ${names[0]}`
+  if (names.length === 2) return `your ${names[0]} and ${names[1]}`
+  return 'your goals'
+}
+
 /* ---------- model plans (rules-based templates, never assigned) ---------- */
 export type PlanId = 'careful' | 'balanced' | 'growth'
 export const PLAN_ORDER: PlanId[] = ['careful', 'balanced', 'growth']

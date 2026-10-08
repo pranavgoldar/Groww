@@ -209,3 +209,10 @@ Copy says what she "could" invest rather than "should": the amount is calculated
 
 - "Learn" is renamed **Invest in stocks** (the small, capped amount for picking stocks yourself). The internal key stays `learn`.
 - Park's description now says what it is: "Kept safe for goals in the next 3 years", in low ups-and-downs options.
+
+## Revision: goals without return promises (options A + C + D), and the Park SIP
+
+- **A. Put aside, don't promise.** Goal maths counts only contributions (amount ÷ months). Screens say "We don't count on returns; anything extra is a bonus", and goal progress shows what's been put in, not market value.
+- **C. Time decides where money waits.** Each goal picks Short (under 1 year), Medium (1–3 years), Long (3+ years) or an exact time in months or years. Short and medium goals go to Park; long goals to Grow. Up to three goals.
+- **D. Move to safety as the date nears.** 12 months before a long-term goal, a reminder suggests moving its money from Grow to Park. Moving, waiting a month or keeping it in Grow are all one tap.
+- **Park SIP.** Park money stays inside Groww: Liquid funds opens a ₹3,000 monthly SIP, like the Grow order. Salary day shows "liquid fund SIP for your laptop".

@@ -11,6 +11,7 @@ import { SalaryDay } from './SalaryDay'
 import { CheckIn, Noted } from './CheckIn'
 import { NeedChanged } from './NeedChanged'
 import { Portfolio } from './Portfolio'
+import { GoalNear } from './GoalNear'
 
 export const SCREEN_VIEWS: Record<ScreenId, FC> = {
   start: Start,
@@ -29,4 +30,5 @@ export const SCREEN_VIEWS: Record<ScreenId, FC> = {
   noted: Noted,
   need: NeedChanged,
   portfolio: Portfolio,
+  goalNear: GoalNear,
 }

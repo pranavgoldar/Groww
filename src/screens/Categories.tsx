@@ -1,6 +1,7 @@
 import { useStore, type State } from '../state/store'
 import { inr } from '../lib/format'
 import { Dot, Icon, Meter, Msg, Shell, AmountField, BUCKET_NAME } from '../components/ui'
+import { MOVE_BEFORE_MONTHS, goalLine, monthlyFor } from '../lib/plan'
 
 type Tab = State['tab']
 const CATS: Record<'grow' | 'park', { id: string; name: string; what: string; cta?: string }[]> = {
@@ -17,32 +18,47 @@ const CATS: Record<'grow' | 'park', { id: string; name: string; what: string; ct
 }
 const FIT = { grow: "Fits money you won't need for 3+ years", park: 'Fits money you may need within 3 years' }
 
-/* Screen 4: match each bucket's monthly money to categories, before any product. */
+/* Screen 7: match each bucket's monthly money to categories, before any product. */
 export function Categories() {
   const { s, d, set, go, say } = useStore()
   const tab = s.tab
-  const goal = s.goalName.trim() || 'goal'
 
   const explore = (id: string) => {
-    if (id !== 'largecap') { say('Only Large-cap index funds opens in this prototype.'); return }
-    set(prev => ({ orderAmt: Math.max(0, prev.split.grow - prev.invested) || prev.orderAmt }))
-    go('order')
+    if (id === 'largecap') {
+      set(prev => ({ orderFor: 'grow', orderAmt: Math.max(0, prev.split.grow - prev.invested) || prev.orderAmt }))
+      go('order')
+    } else if (id === 'liquid') {
+      set(prev => ({ orderFor: 'park', orderAmt: Math.max(0, prev.split.park - prev.parkInvested) || prev.split.park }))
+      go('order')
+    } else {
+      say('In this prototype, Large-cap index funds and Liquid funds open.')
+    }
   }
+  const placed = { grow: s.split.grow > 0 && d.available === 0, park: s.split.park > 0 && d.parkAvailable === 0, learn: false }
 
   let panel
   if (tab === 'grow' || tab === 'park') {
     const total = s.split[tab]
-    const toPlace = tab === 'grow' ? d.available : total
-    const placed = total - toPlace
+    const toPlace = tab === 'grow' ? d.available : d.parkAvailable
+    const inSip = total - toPlace
     panel = (
       <>
         <div className="place">
           <div className="place-row" id="toPlace"><b>{inr(toPlace)}</b> a month in {BUCKET_NAME[tab]} to place</div>
-          <Meter pct={total ? (placed / total) * 100 : 0} color={`var(--${tab})`} />
-          {placed > 0 && <p className="tiny" style={{ marginTop: 6 }}>{inr(placed)} a month already goes into your SIP</p>}
-          {tab === 'park' && d.goalMonthly > 0 && (
-            <p className="tiny" style={{ marginTop: 6 }}>For your {goal.toLowerCase()} · {inr(s.goalAmt)} in {s.goalMonths} months</p>
+          <Meter pct={total ? (inSip / total) * 100 : 0} color={`var(--${tab})`} />
+          {inSip > 0 && (
+            <p className="tiny" style={{ marginTop: 6 }}>
+              {inr(inSip)} a month already goes into your {tab === 'grow' ? 'index fund' : 'liquid fund'} SIP
+            </p>
           )}
+          {tab === 'park' && d.parkGoals.map(g => (
+            <p className="tiny" key={g.id} style={{ marginTop: 6 }}>For {goalLine(g, inr)} · {inr(monthlyFor(g))} a month</p>
+          ))}
+          {tab === 'grow' && d.growGoals.map(g => (
+            <p className="tiny" key={g.id} style={{ marginTop: 6 }}>
+              Includes {goalLine(g, inr)} · moves to Park {MOVE_BEFORE_MONTHS} months before
+            </p>
+          ))}
         </div>
         {CATS[tab].map(c => (
           <div className="card cat" key={c.id}>
@@ -84,8 +100,9 @@ export function Categories() {
       </div>
       <div className="tabs" role="tablist" aria-label="Bucket">
         {(['grow', 'park', 'learn'] as Tab[]).map(k => (
-          <button key={k} className="tab" role="tab" aria-selected={tab === k} onClick={() => set({ tab: k })}>
-            <i style={{ background: `var(--${k})` }} />{BUCKET_NAME[k]}
+          <button key={k} className="tab" role="tab" aria-selected={tab === k} data-tab={k} onClick={() => set({ tab: k })}>
+            {placed[k] ? <span className="tab-ok" aria-label="placed"><Icon.check size={12} /></span> : <i style={{ background: `var(--${k})` }} />}
+            {BUCKET_NAME[k]}
           </button>
         ))}
       </div>
@@ -95,28 +112,43 @@ export function Categories() {
   )
 }
 
-export function orderCheck(n: number, avail: number): { ok: boolean; msg: string } {
+export function orderCheck(n: number, avail: number, bucket = 'Grow'): { ok: boolean; msg: string } {
   if (!n) return { ok: false, msg: 'Enter an amount.' }
   if (n < 100) return { ok: false, msg: 'The minimum for this sample fund is ₹100.' }
-  if (avail <= 0) return { ok: false, msg: "There's no Grow money left to place each month. You can change your plan first." }
-  if (n > avail) return { ok: false, msg: `That's more than the ${inr(avail)} a month in Grow to place. Invest less, or change your plan first.` }
-  return { ok: true, msg: n < avail ? `${inr(avail - n)} a month will stay in Grow to place.` : 'All your Grow money goes into this SIP each month.' }
+  if (avail <= 0) return { ok: false, msg: `There's no ${bucket} money left to place each month. You can change your plan first.` }
+  if (n > avail) return { ok: false, msg: `That's more than the ${inr(avail)} a month in ${bucket} to place. Invest less, or change your plan first.` }
+  return { ok: true, msg: n < avail ? `${inr(avail - n)} a month will stay in ${bucket} to place.` : `All your ${bucket} money goes into this SIP each month.` }
 }
 
-/* Mock order screen between Screen 4 and Screen 5. */
+const FUNDS = {
+  grow: { av: 'LC', name: 'Large-cap index fund (sample)', kind: 'Index fund · Large-cap · Sample for this prototype' },
+  park: { av: 'LQ', name: 'Liquid fund (sample)', kind: 'Debt fund · Liquid · Sample for this prototype' },
+}
+
+/* Mock order screen. Grow orders go on to the commit card; Park's liquid-fund SIP starts here. */
 export function Order() {
-  const { s, d, set, go } = useStore()
-  const v = orderCheck(s.orderAmt, d.available)
+  const { s, d, set, go, back, say } = useStore()
+  const park = s.orderFor === 'park'
+  const avail = park ? d.parkAvailable : d.available
+  const v = orderCheck(s.orderAmt, avail, park ? 'Park' : 'Grow')
+  const fund = FUNDS[s.orderFor]
+  const startPark = () => {
+    set(prev => ({ parkInvested: prev.parkInvested + prev.orderAmt }))
+    say(`Liquid fund SIP set up: ${inr(s.orderAmt)} every salary day${d.parkLabel ? `, for ${d.parkLabel}` : ''}.`)
+    back()
+  }
   return (
-    <Shell title="Invest" footer={<button className="btn-primary" id="orderGo" disabled={!v.ok} onClick={() => go('commit')}>Continue</button>}>
+    <Shell title="Invest" footer={park
+      ? <button className="btn-primary" id="orderGo" disabled={!v.ok} onClick={startPark}>Start SIP {inr(s.orderAmt)} a month</button>
+      : <button className="btn-primary" id="orderGo" disabled={!v.ok} onClick={() => go('commit')}>Continue</button>}>
       <div className="fund-head">
-        <span className="fund-av">LC</span>
+        <span className="fund-av">{fund.av}</span>
         <div>
-          <div className="fund-name">Large-cap index fund (sample)</div>
-          <p className="tiny">Index fund · Large-cap · Sample for this prototype</p>
+          <div className="fund-name">{fund.name}</div>
+          <p className="tiny">{fund.kind}</p>
         </div>
       </div>
-      <span className="tag"><i className="b-dot" /><span>From your Grow money · {inr(d.available)} a month to place</span></span>
+      <span className={'tag' + (park ? ' park' : '')}><i className="b-dot" /><span>From your {park ? 'Park' : 'Grow'} money · {inr(avail)} a month to place</span></span>
       <label className="amt-label" htmlFor="orderInput">Monthly SIP amount</label>
       <AmountField id="orderInput" value={s.orderAmt} onChange={n => set({ orderAmt: n })} describedBy="orderMsg" />
       <Msg id="orderMsg">{v.msg}</Msg>
@@ -125,6 +157,11 @@ export function Order() {
         <div className="kv"><span>Date</span><b>Every salary day</b></div>
         <div className="kv"><span>Minimum</span><b>₹100</b></div>
       </div>
+      {park && (
+        <p className="hint" style={{ marginTop: 14 }}>
+          Liquid funds lend money for up to 91 days at a time, so prices move little. They can still dip slightly; they're not a bank deposit.
+        </p>
+      )}
     </Shell>
   )
 }
