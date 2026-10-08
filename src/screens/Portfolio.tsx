@@ -5,6 +5,8 @@ import {
   bucketOf, monthlyFor, type BucketKey,
 } from '../lib/plan'
 import { BucketIcon, BUCKET_NAME, Dot, Icon, Meter, Shell } from '../components/ui'
+import { PRODUCTS } from '../lib/products'
+import type { State } from '../state/store'
 
 // Neutral ramp: asset types are a different dimension from the bucket colours, and nothing here is judged.
 const ASSETS = [
@@ -29,7 +31,7 @@ function PortfolioSoFar() {
       </Shell>
     )
   }
-  const balance = Math.max(0, s.added - s.invested - s.parkInvested)
+  const balance = Math.max(0, s.added - s.invested - s.parkInvested - s.extra.reduce((a, x) => a + x.amt, 0))
   const unplaced = !s.invested || (s.split.park > 0 && !s.parkInvested)
   const rows: { k: BucketKey; what: string; amt: string }[] = [
     { k: 'grow', what: 'Large-cap index fund (sample)', amt: s.invested ? `${inr(s.invested)} a month SIP` : 'Not placed yet' },
@@ -50,6 +52,12 @@ function PortfolioSoFar() {
         <div className="kv-list">
           {rows.map(r => (
             <div className="kv" key={r.k} data-hold={r.k}><span><Dot k={r.k} /> {BUCKET_NAME[r.k]} · {r.what}</span><b>{r.amt}</b></div>
+          ))}
+          {s.extra.map(x => (
+            <div className="kv" key={x.id} data-hold="extra">
+              <span>{x.toward === 'outside' ? 'Outside your plan' : <><Dot k={x.toward} /> {BUCKET_NAME[x.toward]}</>} · {PRODUCTS[x.product].name}</span>
+              <b>{inr(x.amt)}{PRODUCTS[x.product].sip ? ' a month SIP' : ' bought'}</b>
+            </div>
           ))}
           <div className="kv" data-hold="balance"><span>Groww balance{s.split.learn > 0 ? `, incl. ${inr(Math.min(balance, s.split.learn))} for stocks` : ''}</span><b>{inr(balance)}</b></div>
         </div>
@@ -178,6 +186,8 @@ function PortfolioMonth3() {
         </section>
       )}
 
+      <OtherPurchases extra={s.extra} />
+
       <section className="card sec">
         <h2 className="sec-title">Your fund vs its index</h2>
         <div className="facts">
@@ -199,5 +209,24 @@ function PortfolioMonth3() {
       <button className="link block" style={{ marginTop: 10 }} onClick={() => openSheet('gr1Portfolio')}>Ask GR 1 about your portfolio</button>
       <p className="tiny center">Sample numbers for this prototype.</p>
     </Shell>
+  )
+}
+
+/* Anything bought besides the plan's own SIPs, with what it counts toward. */
+function OtherPurchases({ extra }: { extra: State['extra'] }) {
+  if (!extra.length) return null
+  return (
+    <section className="card sec" id="otherPurchases">
+      <h2 className="sec-title">Other purchases</h2>
+      <div className="facts">
+        {extra.map(x => (
+          <div key={x.id}>
+            <span>{PRODUCTS[x.product].name} · {PRODUCTS[x.product].sip ? 'monthly SIP' : 'one-time buy'}</span>
+            <b>{inr(x.amt)} · {x.toward === 'outside' ? 'outside your plan' : `counts toward ${BUCKET_NAME[x.toward]}`}</b>
+          </div>
+        ))}
+      </div>
+      <p className="sec-note">Each one counts where you chose when you bought it.</p>
+    </section>
   )
 }

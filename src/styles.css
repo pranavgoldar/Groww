@@ -277,6 +277,13 @@ button:disabled { cursor: not-allowed; }
 .fund-av { width: 44px; height: 44px; border-radius: 12px; background: #eef1f3; display: grid; place-items: center; font-weight: 700; font-size: 14px; color: var(--ink-2); flex: none; }
 .fund-av.sm { width: 30px; height: 30px; border-radius: 9px; font-size: 11px; }
 .fund-name { font-size: 17px; font-weight: 600; line-height: 23px; }
+.counts { margin: 16px 0 4px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 12px; }
+.counts-row { display: flex; align-items: center; gap: 8px; font-size: 14px; }
+.counts-label { color: var(--ink-2); }
+.counts-row b { font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+.counts-row .link-inline { margin-left: auto; }
+.counts .chip-row { margin-top: 10px; }
+.counts .tiny { margin: 8px 0 0; }
 
 /* ---------- screen 5 ---------- */
 .s5-fund { font-size: 15px; color: var(--ink-2); margin: 12px 0 14px; }

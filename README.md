@@ -29,12 +29,16 @@ Money gets a plan before it is added. The app never asks "what's this for?" afte
 4. **What you could invest.** ₹15,000 free each month: keep ₹6,000 in the bank as the cushion, invest ₹9,000 a month through Groww. Careful, Balanced or Growth are rules-based model plans the user chooses; when safety and comfort disagree, it starts from the more careful one.
 5. **Monthly plan.** Four sliders that always add up to ₹15,000, with common starting ranges.
 6. **Add money.** Prefilled with the plan's ₹9,000 (Park ₹3,000 + Grow ₹5,500 + Invest in stocks ₹500). Keep stays in the bank.
-7. **Categories.** Unranked categories per bucket. Liquid funds opens a ₹3,000 Park SIP; Large-cap index funds opens a ₹5,500 Grow SIP. Tabs tick once their money is placed.
+7. **Categories.** Unranked categories per bucket. Liquid funds opens a ₹3,000 Park SIP; Large-cap index funds opens a ₹5,500 Grow SIP. The other categories and stocks open sample products too. Tabs tick once their money is placed.
 8. **Commit card.** Before the first purchase: how bad years have looked, and what you'll do if it falls.
 9. **Salary day.** Next month, ₹15,000 split as planned: ₹9,000 into Groww, ₹6,000 stays in the bank.
 10. **First-fall check-in, month 3.** Your ₹11,500 is now ₹10,500, read against your own plan. Selling stays one tap away.
 11. **My need changed.** Draw from Keep, then Park, before Grow.
 12. **Is your money doing its job? (Portfolio).** Plan vs actual, each goal's progress by what's been put in, fund vs its index, patterns in stock trades. No scores or grades.
+
+### Buying other funds or stocks
+
+Every order shows what it **counts toward**, set by type (funds that hold shares → Grow, liquid and short-duration funds → Park, single stocks → Invest in stocks) and changeable in one tap, including **Outside my plan**. Going over what's left in a bucket never blocks a buy: a neutral line says by how much, and Portfolio shows it next to the plan. Outside-plan buys leave the plan untouched and are listed separately.
 
 ### Goals never promise returns
 
