@@ -477,10 +477,13 @@ button:disabled { cursor: not-allowed; }
   .side-summary { display: block; border: 1px solid var(--line); border-radius: 12px; padding: 20px; }
   .side-summary .row-between { margin-bottom: 12px; }
   .side-total { font-size: 20px; font-weight: 600; }
-  .side-legend { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 16px; margin: 14px 0 12px; }
-  .side-legend div { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; color: var(--ink-2); }
-  .side-legend i { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; }
-  .side-legend b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+  .side-legend { display: flex; flex-direction: column; gap: 10px; margin: 16px 0 14px; }
+  .side-legend > div { display: flex; align-items: flex-start; gap: 10px; }
+  .side-legend i { flex: none; width: 8px; height: 8px; border-radius: 2px; margin-top: 6px; }
+  .sl-name { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .sl-name b { font-size: 14px; font-weight: 500; line-height: 20px; color: var(--ink); }
+  .sl-name small { font-size: 12px; line-height: 16px; color: var(--ink-2); }
+  .sl-amt { font-size: 14px; line-height: 20px; color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
   .ftr { border: 1px solid var(--line); border-radius: 12px; padding: 20px; border-image: none; }
 
   .h1 { font-size: 32px; line-height: 40px; }
