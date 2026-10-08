@@ -326,6 +326,18 @@ button:disabled { cursor: not-allowed; }
 .split-rows li:last-child { border-bottom: 0; }
 .split-rows b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
 .ok-ic { flex: none; width: 22px; height: 22px; border-radius: 11px; background: var(--accent-soft); color: var(--accent-ink); display: grid; place-items: center; margin-top: -1px; }
+.split-rows.pending .ok-ic { background: var(--soft); color: var(--ink-2); }
+.notif-stack .notif-card:not(:last-child) { opacity: 0.72; }
+.pay-opt b { display: block; font-weight: 600; }
+.pay-opt small { display: block; margin-top: 2px; font-size: 13px; line-height: 18px; font-weight: 400; color: var(--ink-2); }
+.pay-auto { margin-top: 12px; padding: 14px; border-radius: 12px; background: var(--soft); }
+.pay-pickers { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pay-pickers label { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--ink-2); }
+.pay-pickers select { height: 44px; padding: 0 12px; border: 1px solid var(--line-2); border-radius: 8px; background: #fff; font: inherit; font-size: 15px; color: var(--ink); }
+.pay-steps { list-style: none; margin: 14px 0 10px; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.pay-steps li { display: flex; gap: 10px; align-items: flex-start; font-size: 13px; line-height: 18px; color: var(--ink-2); }
+.pay-steps li svg { flex: none; width: 18px; height: 18px; color: var(--ink); margin-top: 1px; }
+.pay-steps b { display: block; color: var(--ink); font-weight: 600; }
 .no-action { text-align: center; font-size: 15px; font-weight: 600; margin: 18px 0 2px; }
 .sheet-options { display: flex; flex-direction: column; gap: 8px; margin-top: 14px; }
 .sheet-option { text-align: left; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--line-2); background: #fff; font-size: 15px; font-weight: 500; }

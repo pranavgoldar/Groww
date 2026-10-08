@@ -31,10 +31,11 @@ Money gets a plan before it is added. The app never asks "what's this for?" afte
 6. **Add money.** Prefilled with the plan's ₹9,000 (Park ₹3,000 + Grow ₹5,500 + Invest in stocks ₹500). Keep stays in the bank.
 7. **Categories.** Unranked categories per bucket. Liquid funds opens a ₹3,000 Park SIP; Large-cap index funds opens a ₹5,500 Grow SIP. The other categories and stocks open sample products too. Tabs tick once their money is placed.
 8. **Commit card.** Before the first purchase: how bad years have looked, and what you'll do if it falls.
-9. **Salary day.** Next month, ₹15,000 split as planned: ₹9,000 into Groww, ₹6,000 stays in the bank.
-10. **First-fall check-in, month 3.** Your ₹11,500 is now ₹10,500, read against your own plan. Selling stays one tap away.
-11. **My need changed.** Draw from Keep, then Park, before Grow.
-12. **Is your money doing its job? (Portfolio).** Plan vs actual, each goal's progress by what's been put in, fund vs its index, patterns in stock trades. No scores or grades.
+9. **Each month.** Asked once, after the money is placed: **I'll confirm each month** (the default: nothing leaves the account until a tap, and any month can be skipped) or **Autopay on a fixed day**, with the day and time picked and a reminder the day before and 3 hours before.
+10. **Next month.** By default: "Ready to invest ₹9,000 as planned?" with Confirm and pay, or Skip this month. With autopay: the two reminders, then "₹9,000 invested as planned". Keep's ₹6,000 stays in the bank either way.
+11. **First-fall check-in, month 3.** Your ₹11,500 is now ₹10,500, read against your own plan. Selling stays one tap away.
+12. **My need changed.** Draw from Keep, then Park, before Grow.
+13. **Is your money doing its job? (Portfolio).** Plan vs actual, each goal's progress by what's been put in, fund vs its index, patterns in stock trades. No scores or grades.
 
 ### Buying other funds or stocks
 
@@ -44,9 +45,9 @@ Every order shows what it **counts toward**, set by type (funds that hold shares
 
 Goal maths counts only what is put in (₹60,000 ÷ 20 months = ₹3,000 a month), and the app says so: "We don't count on returns; anything extra is a bonus." Time decides where goal money waits, and 12 months before a long-term goal the app suggests moving it from Grow to Park (see the **Goal reminder** screen).
 
-Supporting screens: Explore, Order, Invested, Plan noted, Goal reminder, Your money plan.
+Supporting screens: Explore, Order, Invested, Each month, Plan noted, Goal reminder, Your money plan.
 
-**Your money plan** lives under the profile (avatar menu, or Money Plan in the top bar once set up). It shows the split, each goal, and the salary-day setting (split automatically, or confirm with one tap), with Edit my split and Change salary, expenses or goals. Saving an edit returns to the page it was opened from.
+**Your money plan** lives under the profile (avatar menu, or Money Plan in the top bar once set up). It shows the split, each goal, and how money goes in each month (confirm each month, or autopay with its day, time and reminders), with Edit my split and Change salary, expenses or goals. Saving an edit returns to the page it was opened from.
 
 ## Layout
 

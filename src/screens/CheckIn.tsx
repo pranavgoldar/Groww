@@ -3,6 +3,7 @@ import { inr, inrRange } from '../lib/format'
 import { MARKET_FALL_PCT, badRange, fallPct } from '../lib/plan'
 import { DISCLAIMER, Dot, Icon, RangeScale, Shell } from '../components/ui'
 import { commitLabel } from './Commit'
+import { ordinal } from '../lib/pay'
 
 const REFLECT = [
   'Has your need for this money changed?',
@@ -87,13 +88,13 @@ export function CheckIn() {
 
 /* Calm confirmation after "Stick with my plan". */
 export function Noted() {
-  const { d, go } = useStore()
+  const { s, d, go } = useStore()
   return (
     <Shell title="" footer={<button className="btn-primary" onClick={() => go('portfolio')}>Go to portfolio</button>}>
       <div className="done">
         <span className="done-ic neutral"><Icon.check size={30} /></span>
         <h1 className="h2">Noted. Your plan is unchanged.</h1>
-        <p className="lead">Your {inr(d.m3.indexNow)} stays in Grow, for 3+ years. Your {inr(d.sip)} a month keeps going in on salary day.</p>
+        <p className="lead">Your {inr(d.m3.indexNow)} stays in Grow, for 3+ years. Your {inr(d.sip)} a month keeps going in {s.pay === 'autopay' ? `by autopay on the ${ordinal(s.payDay)}` : 'each month when you confirm it'}.</p>
       </div>
       <div className="card"><Decided /></div>
       <p className="tiny center" style={{ marginTop: 16 }}>You can still sell any time.</p>

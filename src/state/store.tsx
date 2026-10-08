@@ -3,11 +3,12 @@ import {
   PERSONA, goalMonthlyOf, goalsIn, goalsLabel, investableOf, keepTargetOf, month3, needFor, planSplit, suggestPlan, surplusOf,
   type Answers, type BucketKey, type Goal, type Month3, type PlanId, type Split,
 } from '../lib/plan'
+import type { PayMode } from '../lib/pay'
 import { PRODUCTS, type Placeable, type ProductId, type Purchase, type Toward } from '../lib/products'
 
 export type ScreenId =
   | 'start' | 'explore' | 'basics' | 'risk' | 'pick' | 'plan' | 'addMoney' | 'categories' | 'order'
-  | 'commit' | 'invested' | 'salary' | 'checkin' | 'noted' | 'need' | 'portfolio' | 'goalNear' | 'myPlan'
+  | 'commit' | 'invested' | 'payMode' | 'salary' | 'checkin' | 'noted' | 'need' | 'portfolio' | 'goalNear' | 'myPlan'
 
 /** Screen order: drives the switcher and the slide direction of jumps. */
 export const SCREENS: { id: ScreenId; label: string; n?: string; main: boolean }[] = [
@@ -22,6 +23,7 @@ export const SCREENS: { id: ScreenId; label: string; n?: string; main: boolean }
   { id: 'order', label: 'Order', main: false },
   { id: 'commit', label: 'Commit', n: '8', main: true },
   { id: 'invested', label: 'Invested', main: false },
+  { id: 'payMode', label: 'Each month', main: false },
   { id: 'salary', label: 'Salary day', n: '9', main: true },
   { id: 'checkin', label: 'Check-in', n: '10', main: true },
   { id: 'noted', label: 'Plan noted', main: false },
@@ -34,7 +36,7 @@ const ORDER = SCREENS.map(s => s.id)
 const PARENT: Partial<Record<ScreenId, ScreenId>> = {
   explore: 'start', basics: 'start', risk: 'basics', pick: 'risk', plan: 'pick', addMoney: 'plan',
   categories: 'addMoney', order: 'categories',
-  commit: 'order', invested: 'categories', salary: 'invested', checkin: 'salary', noted: 'checkin',
+  commit: 'order', invested: 'categories', payMode: 'categories', salary: 'payMode', checkin: 'salary', noted: 'checkin',
   need: 'checkin', portfolio: 'checkin', goalNear: 'portfolio', myPlan: 'categories',
 }
 
@@ -48,7 +50,9 @@ export interface State extends Answers {
   goals: Goal[]
   plan: PlanId
   split: Split
-  auto: boolean
+  pay: PayMode // confirm each month (default), or autopay on a fixed day
+  payDay: number // autopay day of the month
+  payHour: number // autopay time, 24-hour
   tab: 'grow' | 'park' | 'learn'
   added: number // first money added to Groww, after the plan exists (0 = not yet)
   orderId: ProductId // what the order screen is buying
@@ -79,7 +83,9 @@ export const DEFAULTS: State = {
   ...DEFAULT_ANSWERS,
   plan: DEFAULT_PLAN,
   split: DEFAULT_SPLIT,
-  auto: true,
+  pay: 'manual',
+  payDay: 2,
+  payHour: 10,
   tab: 'grow',
   added: 0,
   orderId: 'largecap',
