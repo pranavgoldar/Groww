@@ -71,6 +71,12 @@ export function Categories() {
 
   return (
     <Shell title="Place your money" footer={<button className="btn-primary" onClick={() => go('salary')}>Done for now</button>}>
+      {s.added > 0 && (
+        <div className="success" role="status" style={{ margin: '4px 0 18px' }}>
+          <span className="success-ic"><Icon.check /></span>
+          <div><b>{inr(s.added)} added to your Groww balance</b><span className="tiny">Now give each part a place</span></div>
+        </div>
+      )}
       <h1 className="h2">Match money to when you'll need it</h1>
       <p className="lead">These are categories, not picks, in no particular order.</p>
       <div className="keep-note">

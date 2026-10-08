@@ -49,7 +49,7 @@ export function MonthlyPlan() {
     set(prev => ({ split: rebalance(dragBase.current ?? prev.split, k, v, total) }))
 
   const u = s.update
-  const save = () => go(u ? 'portfolio' : 'categories')
+  const save = () => go(!s.added ? 'addMoney' : u ? 'portfolio' : 'categories')
   const setAuto = (auto: boolean) => set({ auto })
 
   return (
@@ -66,12 +66,6 @@ export function MonthlyPlan() {
             {u.from.includes('park') ? ` Park now has ${inr(d.m3.park)} for your ${goal.toLowerCase()}.` : ''}
             {' '}Your monthly plan stays {inr(total)}.
           </span>
-        </div>
-      )}
-      {!u && s.funded > 0 && (
-        <div className="success" role="status" style={{ margin: '0 0 16px' }}>
-          <span className="success-ic"><Icon.check /></span>
-          <div><b>{inr(s.funded)} added to your Groww balance</b><span className="tiny">From your bank account · just now</span></div>
         </div>
       )}
       <h1 className="h2" style={{ margin: '4px 0 12px' }}>Your monthly plan: {inr(total)}</h1>

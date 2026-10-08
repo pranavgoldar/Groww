@@ -1,33 +1,36 @@
 import { createContext, useCallback, useContext, useMemo, useRef, useState, type ReactNode } from 'react'
 import {
-  PERSONA, goalMonthlyOf, keepTargetOf, month3, planSplit, suggestPlan, surplusOf,
+  PERSONA, goalMonthlyOf, investableOf, keepTargetOf, month3, planSplit, suggestPlan, surplusOf,
   type Answers, type BucketKey, type Month3, type PlanId, type Split,
 } from '../lib/plan'
 
 export type ScreenId =
-  | 'start' | 'explore' | 'basics' | 'pick' | 'plan' | 'categories' | 'order' | 'commit'
-  | 'invested' | 'salary' | 'checkin' | 'noted' | 'need' | 'portfolio'
+  | 'start' | 'explore' | 'basics' | 'risk' | 'pick' | 'plan' | 'addMoney' | 'categories' | 'order'
+  | 'commit' | 'invested' | 'salary' | 'checkin' | 'noted' | 'need' | 'portfolio'
 
 /** Screen order: drives the switcher and the slide direction of jumps. */
 export const SCREENS: { id: ScreenId; label: string; n?: string; main: boolean }[] = [
   { id: 'start', label: 'Before adding money', n: '1', main: true },
   { id: 'explore', label: 'Explore', main: false },
-  { id: 'basics', label: 'Money basics', n: '2', main: true },
-  { id: 'pick', label: 'What you can invest', n: '2b', main: true },
-  { id: 'plan', label: 'Monthly plan', n: '3', main: true },
-  { id: 'categories', label: 'Categories', n: '4', main: true },
+  { id: 'basics', label: 'Your money', n: '2', main: true },
+  { id: 'risk', label: 'Risk', n: '3', main: true },
+  { id: 'pick', label: 'What to invest', n: '4', main: true },
+  { id: 'plan', label: 'Monthly plan', n: '5', main: true },
+  { id: 'addMoney', label: 'Add money', n: '6', main: true },
+  { id: 'categories', label: 'Categories', n: '7', main: true },
   { id: 'order', label: 'Order', main: false },
-  { id: 'commit', label: 'Commit', n: '5', main: true },
+  { id: 'commit', label: 'Commit', n: '8', main: true },
   { id: 'invested', label: 'Invested', main: false },
-  { id: 'salary', label: 'Salary day', main: true },
-  { id: 'checkin', label: 'Check-in', n: '6', main: true },
+  { id: 'salary', label: 'Salary day', n: '9', main: true },
+  { id: 'checkin', label: 'Check-in', n: '10', main: true },
   { id: 'noted', label: 'Plan noted', main: false },
-  { id: 'need', label: 'Need changed', n: '7', main: true },
-  { id: 'portfolio', label: 'Portfolio', main: true },
+  { id: 'need', label: 'Need changed', n: '11', main: true },
+  { id: 'portfolio', label: 'Portfolio', n: '12', main: true },
 ]
 const ORDER = SCREENS.map(s => s.id)
 const PARENT: Partial<Record<ScreenId, ScreenId>> = {
-  explore: 'start', basics: 'start', pick: 'basics', plan: 'pick', categories: 'plan', order: 'categories',
+  explore: 'start', basics: 'start', risk: 'basics', pick: 'risk', plan: 'pick', addMoney: 'plan',
+  categories: 'addMoney', order: 'categories',
   commit: 'order', invested: 'categories', salary: 'invested', checkin: 'salary', noted: 'checkin',
   need: 'checkin', portfolio: 'checkin',
 }
@@ -46,8 +49,8 @@ export interface State extends Answers {
   split: Split
   auto: boolean
   tab: 'grow' | 'park' | 'learn'
+  added: number // first money added to Groww, after the plan exists (0 = not yet)
   orderAmt: number
-  funded: number // added to the Groww balance from Screen 2b (0 = not yet)
   invested: number // monthly SIP set up from Grow (0 = none yet)
   commit: Commit | null
   ff: boolean // jumped ahead to month 3
@@ -75,8 +78,8 @@ export const DEFAULTS: State = {
   split: DEFAULT_SPLIT,
   auto: true,
   tab: 'grow',
+  added: 0,
   orderAmt: DEFAULT_SPLIT.grow,
-  funded: 0,
   invested: 0,
   commit: null,
   ff: false,
@@ -91,6 +94,8 @@ export interface Derived {
   surplus: number
   goalMonthly: number
   keepTarget: number
+  /** What goes into Groww each month: everything except Keep, which stays in the bank. */
+  investable: number
   suggested: PlanId
   /** Grow money a month not yet in the SIP. */
   available: number
@@ -105,6 +110,7 @@ export function derive(s: State): Derived {
     surplus: surplusOf(s.salary, s.expenses),
     goalMonthly: goalMonthlyOf(s.goalAmt, s.goalMonths),
     keepTarget: keepTargetOf(s.expenses),
+    investable: investableOf(s.split),
     suggested: suggestPlan(s),
     available: Math.max(0, s.split.grow - s.invested),
     sip,
@@ -174,7 +180,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 
   const back = useCallback(() => {
     if (current === 'start') {
-      say("This would return to Add money. That screen isn't part of this prototype.")
+      say("This would return to Groww's home screen. It isn't part of this prototype.")
       return
     }
     const h = hist.current
@@ -194,6 +200,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     // Later screens assume the SIP exists, and month-3 screens assume time has passed.
     set(prev => {
       const patch: Partial<State> = {}
+      if (ORDER.indexOf(id) >= ORDER.indexOf('categories') && !prev.added) patch.added = investableOf(prev.split)
       if (['invested', 'salary', 'checkin', 'noted', 'need', 'portfolio'].includes(id) && !prev.invested) {
         patch.invested = prev.orderAmt || prev.split.grow
         patch.orderAmt = patch.invested

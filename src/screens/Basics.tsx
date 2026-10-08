@@ -8,27 +8,30 @@ const DEPENDENTS: [State['dependents'], string][] = [['yes', 'Yes'], ['no', 'No'
 const STEADY: [State['steady'], string][] = [['yes', 'Yes'], ['notalways', 'Not always']]
 const APPETITE: [Appetite, string][] = [['hold', 'Hold calmly'], ['worry', 'Worry but hold'], ['sell', 'Sell']]
 
-/* Screen 2: money basics. Capacity (safety) and appetite (comfort) are asked separately. */
-export function Basics() {
-  const { s, d, set, go } = useStore()
-
-  // Any change re-applies the suggested model plan to the new surplus, so later screens stay consistent.
-  const update = (patch: Partial<State>) => set(prev => {
+/** Any answer re-applies the suggested model plan to the new surplus, so later screens stay consistent. */
+function useAnswer() {
+  const { set } = useStore()
+  return (patch: Partial<State>) => set(prev => {
     const next = { ...prev, ...patch }
     const plan = suggestPlan(next)
     const nd = derive(next)
     const split = planSplit(plan, nd.surplus, nd.goalMonthly)
     return { ...patch, plan, split, orderAmt: prev.invested ? prev.orderAmt : split.grow }
   })
+}
 
+/* Screen 2: salary first. Expenses and the goal set how much is free to plan. */
+export function Basics() {
+  const { s, d, go } = useStore()
+  const update = useAnswer()
   const ok = d.surplus > 0
   return (
     <Shell title="Money Plan" footer={
-      <button className="btn-primary" disabled={!ok} onClick={() => go('pick')}>See what I can invest</button>
+      <button className="btn-primary" disabled={!ok} onClick={() => go('risk')}>Next</button>
     }>
-      <p className="eyebrow">Step 1 of 2</p>
-      <h1 className="h1">Your money basics</h1>
-      <p className="lead">About your money, not about you. We'll use this to work out how much you can invest each month.</p>
+      <p className="eyebrow">Step 1 of 3</p>
+      <h1 className="h1">Your money</h1>
+      <p className="lead">Start with what comes in and what goes out. We'll work out what's free to invest.</p>
 
       <section className="q">
         <label className="q-label" htmlFor="salary">Monthly take-home salary</label>
@@ -60,6 +63,19 @@ export function Basics() {
             : 'No goal for now. Park can stay empty.'}
         </p>
       </section>
+    </Shell>
+  )
+}
+
+/* Screen 3: risk. Capacity (safety) and appetite (comfort) are asked separately. */
+export function Risk() {
+  const { s, go } = useStore()
+  const update = useAnswer()
+  return (
+    <Shell title="Money Plan" footer={<button className="btn-primary" onClick={() => go('pick')}>See what I could invest</button>}>
+      <p className="eyebrow">Step 2 of 3</p>
+      <h1 className="h1">How much risk your money can take</h1>
+      <p className="lead">About your money, not about you. Your answers shape how much of it can take ups and downs.</p>
 
       <section className="q">
         <h2 className="group-title">Your safety net</h2>

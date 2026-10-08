@@ -95,6 +95,9 @@ export function rebalance(base: Split, key: BucketKey, value: number, total: num
 
 export const sumSplit = (s: Split) => KEYS.reduce((a, k) => a + s[k], 0)
 
+/** Money that goes into Groww each month. Keep stays in the bank. */
+export const investableOf = (s: Split) => s.park + s.grow + s.learn
+
 /** Screen 7: draw what's needed from Keep, then Park, then Grow, then Learn. */
 export function computeDraw(need: number, balances: Split): Split & { short: number } {
   let left = need

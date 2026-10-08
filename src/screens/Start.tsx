@@ -1,14 +1,13 @@
 import { useStore } from '../state/store'
-import { inr } from '../lib/format'
 import { Icon, Shell } from '../components/ui'
 
 const STEPS: [string, string][] = [
-  ['Your salary and expenses', 'What comes in and what goes out each month.'],
+  ['Your salary and expenses', 'What comes in, what goes out, and any goal coming up.'],
   ['Your safety net and comfort with risk', 'A few quick taps. No right or wrong answers.'],
-  ['What you could invest', 'Your monthly amount, worked out for you, with a few ways to split it.'],
+  ['What you could invest', 'Worked out for you, with plans to pick from. Then you add money.'],
 ]
 
-/* Screen 1: before any money is added, offer to work out how much to invest. */
+/* Screen 1: shown when someone taps Add money for the first time. Plan first, then add money. */
 export function Start() {
   const { go } = useStore()
   return (
@@ -34,9 +33,9 @@ export function Start() {
 
 /* Placeholder for Groww's existing explore screen. */
 export function Explore() {
-  const { d, go } = useStore()
+  const { go } = useStore()
   return (
-    <Shell title="Explore" footer={<button className="btn-primary" onClick={() => go('basics')}>Work out my amount</button>}>
+    <Shell title="Explore" footer={<button className="btn-primary" onClick={() => go('basics')}>Plan my money</button>}>
       <div className="search"><Icon.search /><span>Search stocks and funds</span></div>
       <div className="ph-chips"><span>Stocks</span><span>Mutual funds</span><span>ETFs</span><span>FDs</span></div>
       <div className="card soft"><p className="ph-note">Groww's usual explore screen would be here. It isn't part of this prototype.</p></div>
@@ -44,8 +43,8 @@ export function Explore() {
         {[0, 1, 2, 3].map(i => <div className="sk-row" key={i}><span className="sk-av" /><span className="sk-lines"><i /><i /></span></div>)}
       </div>
       <div className="card" style={{ marginTop: 20 }}>
-        <b style={{ fontSize: 15 }}>Not sure how much to add?</b>
-        <p className="hint" style={{ marginTop: 4 }}>People with a salary like yours often have around {inr(d.surplus)} a month to invest. It takes 2 minutes to work out yours.</p>
+        <b style={{ fontSize: 15 }}>Not sure how much to invest?</b>
+        <p className="hint" style={{ marginTop: 4 }}>Plan it first, from your salary and goals. It takes 2 minutes.</p>
       </div>
     </Shell>
   )

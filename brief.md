@@ -190,3 +190,17 @@ Bucket meanings (updated):
 - Portfolio total is rebuilt from the plan: ₹27,950 (Mutual funds ₹11,850 · Stocks ₹7,100 · Liquid ₹9,000), instead of ₹54,300, which didn't reconcile with month 3.
 - Screen 5 states the bad-year range per ₹10,000 put in (₹7,000–8,000) and repeats the appetite answer instead of the removed unease slider.
 - "Update my plan" on Screen 7 takes the money from bucket balances; the monthly ₹15,000 split stays as it is.
+
+## Revision: plan before money is added
+
+Asking "what is this money for?" after it has already been added is too late. The flow now starts when the user taps Add money for the first time:
+
+1. Before you add money: "Let's work out how much to invest."
+2. Your money: salary first, then expenses and a goal.
+3. Risk: safety (capacity) and comfort (appetite) questions.
+4. What you could invest: salary − expenses = ₹15,000 free each month; Keep ₹6,000 stays in the bank, ₹9,000 a month is invested through Groww (Balanced). The split comes from model plans the user chooses.
+5. Monthly plan editor.
+6. Add money, prefilled with the plan's ₹9,000.
+7. Categories onward, as before. Salary day is now next month's.
+
+Copy says what she "could" invest rather than "should": the amount is calculated from her own numbers, and compliance requires model plans to be chosen, not assigned.

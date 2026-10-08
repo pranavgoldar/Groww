@@ -20,13 +20,13 @@ export function SalaryDay() {
   }
   return (
     <Shell title="Salary day" footer={<button className="btn-primary" onClick={() => setLock(true)}>View my money</button>}>
-      <p className="eyebrow">Month 1 · your salary is in</p>
+      <p className="eyebrow">Next month · your salary is in</p>
       <div className="notif-card" role="status">
         <span className="notif-ic"><Mark size={26} /></span>
         <span className="notif-txt">
           <span className="notif-top"><span>groww</span><span>now</span></span>
           <b>{s.auto ? `${inr(d.surplus)} split as planned` : `${inr(d.surplus)} ready to split`}</b>
-          <span>{s.auto ? 'Your monthly plan ran on its own.' : 'Auto-apply is off for this plan.'}</span>
+          <span>{s.auto ? `${inr(d.investable)} moved into Groww. ${inr(s.split.keep)} stayed in your bank.` : 'Auto-apply is off for this plan.'}</span>
         </span>
       </div>
       <ul className="split-rows card" aria-label="Where this month's money went">

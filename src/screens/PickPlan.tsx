@@ -1,11 +1,11 @@
 import type { KeyboardEvent } from 'react'
 import { useStore } from '../state/store'
 import { inr } from '../lib/format'
-import { KEYS, PLAN_NAMES, PLAN_ORDER, planSplit, type PlanId } from '../lib/plan'
-import { BUCKET_NAME, BucketIcon, Icon, Shell, StackBar } from '../components/ui'
+import { KEYS, PLAN_NAMES, PLAN_ORDER, investableOf, planSplit, type PlanId } from '../lib/plan'
+import { BUCKET_NAME, Dot, Icon, Shell, StackBar } from '../components/ui'
 
-/* Screen 2b: what the user could invest, worked out from salary and expenses,
-   then rules-based model plans to split it. Plans are chosen, never assigned. */
+/* Screen 4: what she could invest each month, worked out from salary, expenses and goals.
+   The split comes from rules-based model plans the user chooses from. Never assigned. */
 export function PickPlan() {
   const { s, d, set, go } = useStore()
   const choose = (p: PlanId) => set(prev => {
@@ -17,45 +17,41 @@ export function PickPlan() {
   }
   const start = () => {
     choose(s.plan)
-    set({ funded: d.surplus })
     go('plan')
   }
-  const park = Math.min(d.goalMonthly, d.surplus)
-  const rest = d.surplus - park
-  const goal = s.goalName.trim() || 'goal'
+  const sp = planSplit(s.plan, d.surplus, d.goalMonthly)
+  const invest = investableOf(sp)
+  const goal = (s.goalName.trim() || 'goal').toLowerCase()
+
   return (
     <Shell title="Money Plan" footer={
-      <button className="btn-primary" onClick={start}>Add {inr(d.surplus)} and start with {PLAN_NAMES[s.plan]}</button>
+      <button className="btn-primary" onClick={start}>Start with {PLAN_NAMES[s.plan]}</button>
     }>
-      <p className="eyebrow">Step 2 of 2</p>
-      <h1 className="h1">You could invest {inr(d.surplus)} a month</h1>
-      <p className="lead">Worked out from what you earn and what you spend.</p>
-      <div className="card breakdown" aria-label="How we worked it out">
-        <div className="kv"><span>Take-home salary</span><b>{inr(s.salary)}</b></div>
-        <div className="kv"><span>Monthly expenses</span><b>−{inr(s.expenses)}</b></div>
-        <div className="kv total"><span>You could invest</span><b>{inr(d.surplus)}<small> a month</small></b></div>
+      <p className="eyebrow">Step 3 of 3</p>
+      <h1 className="h1">Here's what you could invest</h1>
+
+      <div className="card calc" style={{ marginTop: 16 }} aria-label="How much is free each month">
+        <div className="calc-row"><span>Salary</span><b>{inr(s.salary)}</b></div>
+        <div className="calc-row"><span>Expenses</span><b>{inr(-s.expenses)}</b></div>
+        <div className="calc-row total"><span>Free each month</span><b id="freeAmt">{inr(d.surplus)}</b></div>
       </div>
-      <h2 className="group-title" style={{ marginTop: 24 }}>How {inr(d.surplus)} could work for you</h2>
-      {park > 0 && (
-        <div className="goal-line">
-          <BucketIcon k="park" />
-          <div>
-            <b>{inr(park)} a month to Park for your {goal.toLowerCase()}</b>
-            <span className="job-desc">
-              {park < d.goalMonthly
-                ? `Your ${goal.toLowerCase()} needs ${inr(d.goalMonthly)} a month, so all of it goes here for now.`
-                : `${inr(s.goalAmt)} in ${s.goalMonths} months. This stays the same in every plan.`}
-            </span>
-          </div>
+
+      <div className="invest-split">
+        <div className="is-row">
+          <span className="is-label"><Dot k="keep" />Keep in your bank</span>
+          <b id="keepAmt">{inr(sp.keep)}</b>
+          <span className="is-note">Your emergency cushion, until it reaches {inr(d.keepTarget)}</span>
         </div>
-      )}
-      {rest > 0 && (
-        <p className="hint" style={{ marginTop: park > 0 ? 12 : 4 }}>
-          {park > 0 ? <>The other <b>{inr(rest)}</b></> : <>All <b>{inr(rest)}</b></>} goes to your emergency cushion, long-term growth and learning.
-          Pick how to split it.
-        </p>
-      )}
-      <div className="callback" style={{ marginTop: 14 }}>
+        <div className="is-row main">
+          <span className="is-label">Invest through Groww</span>
+          <b id="investAmt">{inr(invest)} a month</b>
+          <span className="is-note">
+            Park {inr(sp.park)}{d.goalMonthly ? ` for your ${goal}` : ''} · Grow {inr(sp.grow)} · Learn {inr(sp.learn)}
+          </span>
+        </div>
+      </div>
+
+      <div className="callback" style={{ marginTop: 18 }}>
         <Icon.scale />
         <p>Your answers on safety and on comfort with risk both count. When they differ, we start from the more careful one.</p>
       </div>
@@ -64,7 +60,7 @@ export function PickPlan() {
       </p>
       <div className="plans" role="radiogroup" aria-label={`Ways to split ${inr(d.surplus)} a month`}>
         {PLAN_ORDER.map(p => {
-          const sp = planSplit(p, d.surplus, d.goalMonthly)
+          const split = planSplit(p, d.surplus, d.goalMonthly)
           const on = s.plan === p
           return (
             <div key={p} className="plan-opt" role="radio" aria-checked={on} tabIndex={on ? 0 : -1}
@@ -74,12 +70,13 @@ export function PickPlan() {
                 <b>{PLAN_NAMES[p]}</b>
                 {p === d.suggested && <span className="tag sm">Common for answers like yours</span>}
               </div>
-              <StackBar split={sp} />
+              <StackBar split={split} />
               <div className="plan-amts">
                 {KEYS.map(k => (
-                  <span key={k}><i style={{ background: `var(--${k})` }} />{BUCKET_NAME[k]}<b>{inr(sp[k])}</b></span>
+                  <span key={k}><i style={{ background: `var(--${k})` }} />{BUCKET_NAME[k]}<b>{inr(split[k])}</b></span>
                 ))}
               </div>
+              <p className="plan-invest">Invest {inr(investableOf(split))} a month · keep {inr(split.keep)} in the bank</p>
             </div>
           )
         })}
